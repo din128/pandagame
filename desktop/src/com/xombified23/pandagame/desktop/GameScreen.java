@@ -3,6 +3,7 @@ package com.xombified23.pandagame.desktop;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -10,6 +11,8 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+
+import java.util.EmptyStackException;
 
 public class GameScreen implements Screen {
     private final MyGame game;
@@ -20,6 +23,12 @@ public class GameScreen implements Screen {
     private TiledMapRenderer tiledMapRenderer;
     private int mapPixelWidth;
     private int mapPixelHeight;
+    private int numXTiles;
+    private int numYTiles;
+    private int tilePixelWidth;
+    private int tilePixelHeight;
+    private MapActor[][] mapActorList;
+    private Texture mapTexture;
 
     public GameScreen(final MyGame game) {
         // Assign Game and SpriteBatch object
@@ -31,27 +40,30 @@ public class GameScreen implements Screen {
         camera = new OrthographicCamera();
         tiledMap = new TmxMapLoader().load("MainMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+        mapTexture = new Texture(Gdx.files.internal("blacktile.png"));
 
         // Get dimensions for the tiledMap
         MapProperties prop = tiledMap.getProperties();
-        int mapWidth = prop.get("width", Integer.class);
-        int mapHeight = prop.get("height", Integer.class);
-        int tilePixelWidth = prop.get("tilewidth", Integer.class);
-        int tilePixelHeight = prop.get("tileheight", Integer.class);
-        mapPixelWidth = mapWidth * tilePixelWidth;
-        mapPixelHeight = mapHeight * tilePixelHeight;
+        numXTiles = prop.get("width", Integer.class);
+        numYTiles = prop.get("height", Integer.class);
+        tilePixelWidth = prop.get("tilewidth", Integer.class);
+        tilePixelHeight = prop.get("tileheight", Integer.class);
+        mapPixelWidth = numXTiles * tilePixelWidth;
+        mapPixelHeight = numYTiles * tilePixelHeight;
+
+
     }
 
     @Override
     public void dispose() {
         stage.dispose();
         tiledMap.dispose();
+        mapTexture.dispose();
     }
 
     @Override
     public void render(float delta) {
         camera.update();
-        camera.position.set(mapPixelWidth / 2, mapPixelHeight / 2, 0);
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
         stage.draw();
@@ -59,6 +71,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
+        // Temporally zoom in to the map
         camera.viewportWidth = width / 2;
         camera.viewportHeight = height / 2;
     }
@@ -70,7 +83,15 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
+        // Setup camera to align Stage with Tiled Map
+        camera.position.set(mapPixelWidth / 2, mapPixelHeight / 2, 0);
+        stage.getViewport().setCamera(camera);
+
+        // Add input interface to the Stage
         Gdx.input.setInputProcessor(stage);
+
+        // Inflate rest of Actors
+        createMapActors();
     }
 
     @Override
@@ -81,6 +102,25 @@ public class GameScreen implements Screen {
     @Override
     public void resume() {
         // Irrelevant on desktop, ignore this
+    }
+
+    /**
+     * Custom methods start here
+     */
+
+    public void createMapActors() {
+        if (numXTiles == 0 || numYTiles == 0) {
+            throw new EmptyStackException();
+        }
+
+        mapActorList = new MapActor[numXTiles][numYTiles];
+
+        for (int j = 0; j < numYTiles; j++) {
+            for (int i = 0; i < numXTiles; i++) {
+                mapActorList[i][j] = new MapActor(i, j, tilePixelWidth, tilePixelHeight, mapTexture);
+                stage.addActor(mapActorList[i][j]);
+            }
+        }
     }
 }
 
