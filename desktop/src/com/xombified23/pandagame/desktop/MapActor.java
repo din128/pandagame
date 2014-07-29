@@ -1,5 +1,6 @@
 package com.xombified23.pandagame.desktop;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -16,6 +17,8 @@ public class MapActor extends Actor {
     private int tilePixelHeight;
     private Texture mapTexture;
     private boolean isRevealed;
+    private float transparencyLvl;
+    private float fadeSpeed;
 
     public MapActor(int x, int y, int tilePixelWidth, int tilePixelHeight, Texture mapTexture) {
         this.x = x;
@@ -24,6 +27,9 @@ public class MapActor extends Actor {
         this.tilePixelHeight = tilePixelHeight;
         this.mapTexture = mapTexture;
         isRevealed = false;
+        transparencyLvl = 0.5f;
+        fadeSpeed = 1f;
+        fadeSpeed = 1f;
 
         // Set Map Actor boundaries
         setBounds(x * tilePixelWidth, y * tilePixelHeight, tilePixelWidth, tilePixelHeight);
@@ -44,10 +50,21 @@ public class MapActor extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         if (isRevealed) {
-            batch.setColor(0, 0, 0, 0f);
+            if (transparencyLvl > 0) {
+                transparencyLvl -= Gdx.graphics.getDeltaTime() * fadeSpeed;
+            }
+            if (transparencyLvl <= 0) {
+                transparencyLvl = 0;
+            }
         } else {
-            batch.setColor(0, 0, 0, 0.5f);
+            if (transparencyLvl < 0.5f) {
+                transparencyLvl += Gdx.graphics.getDeltaTime() * fadeSpeed;
+            }
+            if (transparencyLvl >= 0.5f) {
+                transparencyLvl = 0.5f;
+            }
         }
+        batch.setColor(0, 0, 0, transparencyLvl);
         batch.draw(mapTexture, x * tilePixelWidth, y * tilePixelHeight);
     }
 
