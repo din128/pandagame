@@ -28,8 +28,7 @@ public class MapActor extends Actor {
         this.mapTexture = mapTexture;
         isRevealed = false;
         transparencyLvl = 0.5f;
-        fadeSpeed = 1f;
-        fadeSpeed = 1f;
+        fadeSpeed = 1.5f;
 
         // Set Map Actor boundaries
         setBounds(x * tilePixelWidth, y * tilePixelHeight, tilePixelWidth, tilePixelHeight);

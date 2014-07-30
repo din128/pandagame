@@ -13,6 +13,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import java.util.EmptyStackException;
+import java.util.Random;
 
 public class GameScreen implements Screen {
     private final MyGame game;
@@ -29,6 +30,7 @@ public class GameScreen implements Screen {
     private int tilePixelHeight;
     private MapActor[][] mapActorList;
     private Texture mapTexture;
+    private Texture playerTexture;
 
     public GameScreen(final MyGame game) {
         // Assign Game and SpriteBatch object
@@ -41,6 +43,7 @@ public class GameScreen implements Screen {
         tiledMap = new TmxMapLoader().load("MainMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         mapTexture = new Texture(Gdx.files.internal("blacktile.png"));
+        playerTexture = new Texture(Gdx.files.internal("playerSprite.png"));
 
         // Get dimensions for the tiledMap
         MapProperties prop = tiledMap.getProperties();
@@ -50,8 +53,6 @@ public class GameScreen implements Screen {
         tilePixelHeight = prop.get("tileheight", Integer.class);
         mapPixelWidth = numXTiles * tilePixelWidth;
         mapPixelHeight = numYTiles * tilePixelHeight;
-
-
     }
 
     @Override
@@ -59,6 +60,7 @@ public class GameScreen implements Screen {
         stage.dispose();
         tiledMap.dispose();
         mapTexture.dispose();
+        playerTexture.dispose();
     }
 
     @Override
@@ -92,6 +94,7 @@ public class GameScreen implements Screen {
 
         // Inflate rest of Actors
         createMapActors();
+        spawnPlayer();
     }
 
     @Override
@@ -108,6 +111,9 @@ public class GameScreen implements Screen {
      * Custom methods start here
      */
 
+    /**
+     * Create Actors for Tiled Map
+     */
     public void createMapActors() {
         if (numXTiles == 0 || numYTiles == 0) {
             throw new EmptyStackException();
@@ -121,6 +127,38 @@ public class GameScreen implements Screen {
                 stage.addActor(mapActorList[i][j]);
             }
         }
+    }
+
+    /**
+     * Spawn player at either corner
+     */
+    public void spawnPlayer() {
+        Random rand = new Random();
+        int randomInt = rand.nextInt(4);
+        float x;
+        float y;
+
+        switch (randomInt) {
+            case 0:
+                x = mapActorList[0][0].getX();
+                y = mapActorList[0][0].getY();
+                break;
+            case 1:
+                x = mapActorList[0][numYTiles - 1].getX();
+                y = mapActorList[0][numYTiles - 1].getY();
+                break;
+            case 2:
+                x = mapActorList[numXTiles - 1][0].getX();
+                y = mapActorList[numXTiles - 1][0].getY();
+                break;
+            default:
+                x = mapActorList[numXTiles - 1][numYTiles - 1].getX();
+                y = mapActorList[numXTiles - 1][numYTiles - 1].getY();
+                break;
+        }
+
+        PlayerActor playerActor = new PlayerActor(x, y, tilePixelWidth, tilePixelHeight, playerTexture);
+        stage.addActor(playerActor);
     }
 }
 
