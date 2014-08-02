@@ -4,12 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import java.util.EmptyStackException;
@@ -17,7 +19,6 @@ import java.util.Random;
 
 public class GameScreen implements Screen {
     private final MyGame game;
-    private final SpriteBatch batch;
     private Stage stage;
     private OrthographicCamera camera;
     private TiledMap tiledMap;
@@ -31,11 +32,11 @@ public class GameScreen implements Screen {
     private MapActor[][] mapActorList;
     private Texture mapTexture;
     private Texture playerTexture;
+    private PlayerActor playerActor;
 
     public GameScreen(final MyGame game) {
         // Assign Game and SpriteBatch object
         this.game = game;
-        this.batch = game.batch;
 
         // Create New Objects
         stage = new Stage();
@@ -69,11 +70,14 @@ public class GameScreen implements Screen {
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
         stage.draw();
+
+        revealAround();
+
     }
 
     @Override
     public void resize(int width, int height) {
-        // Temporally zoom in to the map
+        // TODO: Temporally zoom in to the map
         camera.viewportWidth = width / 2;
         camera.viewportHeight = height / 2;
     }
@@ -95,6 +99,7 @@ public class GameScreen implements Screen {
         // Inflate rest of Actors
         createMapActors();
         spawnPlayer();
+        addStageTouch();
     }
 
     @Override
@@ -108,13 +113,9 @@ public class GameScreen implements Screen {
     }
 
     /**
-     * Custom methods start here
-     */
-
-    /**
      * Create Actors for Tiled Map
      */
-    public void createMapActors() {
+    private void createMapActors() {
         if (numXTiles == 0 || numYTiles == 0) {
             throw new EmptyStackException();
         }
@@ -132,33 +133,74 @@ public class GameScreen implements Screen {
     /**
      * Spawn player at either corner
      */
-    public void spawnPlayer() {
+    private void spawnPlayer() {
         Random rand = new Random();
         int randomInt = rand.nextInt(4);
-        float x;
-        float y;
+        int x;
+        int y;
 
-        switch (randomInt) {
+        switch (2) {
             case 0:
-                x = mapActorList[0][0].getX();
-                y = mapActorList[0][0].getY();
+                x = 0;
+                y = 0;
                 break;
             case 1:
-                x = mapActorList[0][numYTiles - 1].getX();
-                y = mapActorList[0][numYTiles - 1].getY();
+                x = 0;
+                y = numYTiles - 1;
                 break;
             case 2:
-                x = mapActorList[numXTiles - 1][0].getX();
-                y = mapActorList[numXTiles - 1][0].getY();
+                x = numXTiles - 1;
+                y = 0;
                 break;
             default:
-                x = mapActorList[numXTiles - 1][numYTiles - 1].getX();
-                y = mapActorList[numXTiles - 1][numYTiles - 1].getY();
+                x = numXTiles - 1;
+                y = numYTiles - 1;
                 break;
         }
 
-        PlayerActor playerActor = new PlayerActor(x, y, tilePixelWidth, tilePixelHeight, playerTexture);
+        playerActor = new PlayerActor(x, y, tilePixelWidth, tilePixelHeight, playerTexture);
         stage.addActor(playerActor);
+    }
+
+    /**
+     * Add Input Listener to the Stage
+     */
+    private void addStageTouch() {
+        stage.addListener(new InputListener() {
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                Actor currActor = stage.hit(x, y, true);
+                if (currActor != null) {
+                    if (currActor instanceof MapActor) {
+
+                    } else {
+                    }
+                }
+                return true;
+            }
+        });
+    }
+
+    /**
+     * Reveal around the player
+     */
+    private void revealAround() {
+        int pX = playerActor.xTile;
+        int pY = playerActor.yTile;
+
+        // Reveal tiles with the player
+        mapActorList[pX][pY].setRevealed(true);
+        if (pX-1 >= 0) {
+            mapActorList[pX - 1][pY].setRevealed(true);
+        }
+        if (pY-1 >= 0) {
+            mapActorList[pX][pY - 1].setRevealed(true);
+        }
+        if (pX+1 < numXTiles) {
+            mapActorList[pX + 1][pY].setRevealed(true);
+        }
+        if (pY+1 < numYTiles) {
+            mapActorList[pX][pY + 1].setRevealed(true);
+        }
     }
 }
 

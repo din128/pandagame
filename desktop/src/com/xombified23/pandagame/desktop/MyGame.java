@@ -3,7 +3,6 @@ package com.xombified23.pandagame.desktop;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 /**
  * The {@link com.badlogic.gdx.ApplicationListener} for this project, create(), resize() and
@@ -14,10 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class MyGame extends Game {
     private GameScreen gamescreen;
 
-    public SpriteBatch batch;
-
     public void create() {
-        batch = new SpriteBatch();
         gamescreen = new GameScreen(this);
         this.setScreen(gamescreen);
     }
