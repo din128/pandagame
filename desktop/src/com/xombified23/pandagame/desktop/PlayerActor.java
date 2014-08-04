@@ -40,12 +40,6 @@ public class PlayerActor extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        switch (playerStatus) {
-            case MOVING:
-                setBounds(nextXTile * tilePixelWidth, nextYTile * tilePixelHeight, tilePixelWidth, tilePixelHeight);
-                this.addAction(Actions.moveTo(nextYTile * tilePixelWidth, nextYTile * tilePixelHeight, 0.5f));
-                playerStatus = PlayerStatus.STANDING;
-        }
         batch.draw(playerTexture, getX(), getY());
     }
 
@@ -71,43 +65,55 @@ public class PlayerActor extends Actor {
             System.out.println ("count" + count);
 
             // Move next path with lowest count
-            if (xTile - 1 >= 0) {
-                if (count > mapSteps[xTile-1][yTile] && mapSteps[xTile-1][yTile] >= 0) {
-                    count = mapSteps[xTile-1][yTile];
-                    nextXTile = xTile-1;
-                    nextYTile = yTile;
+            if (currXTile - 1 >= 0) {
+                if (count > mapSteps[currXTile-1][currYTile] && mapSteps[currXTile-1][currYTile] >= 0) {
+                    count = mapSteps[currXTile-1][currYTile];
+                    nextXTile = currXTile-1;
+                    nextYTile = currYTile;
+                    System.out.println("HERE1");
                 }
             }
 
-            if (xTile + 1 < numXTiles) {
-                if (count > mapSteps[xTile+1][yTile] && mapSteps[xTile+1][yTile] >= 0) {
-                    count = mapSteps[xTile+1][yTile];
-                    nextXTile = xTile+1;
-                    nextYTile = yTile;
+            if (currXTile + 1 < numXTiles) {
+                if (count > mapSteps[currXTile+1][currYTile] && mapSteps[currXTile+1][currYTile] >= 0) {
+                    count = mapSteps[currXTile+1][currYTile];
+                    nextXTile = currXTile+1;
+                    nextYTile = currYTile;
+                    System.out.println("HERE2");
                 }
             }
 
-            if (yTile - 1 >= 0) {
-                if (count > mapSteps[xTile][yTile-1] && mapSteps[xTile][yTile-1] >= 0) {
-                    count = mapSteps[xTile][yTile-1];
-                    nextXTile = xTile;
-                    nextYTile = yTile-1;
+            if (currYTile - 1 >= 0) {
+                if (count > mapSteps[currXTile][currYTile-1] && mapSteps[currXTile][currYTile-1] >= 0) {
+                    count = mapSteps[currXTile][currYTile-1];
+                    nextXTile = currXTile;
+                    nextYTile = currYTile-1;
+                    System.out.println("HERE3");
                 }
             }
 
-            if (yTile + 1 < numYTiles) {
-                if (count > mapSteps[xTile][yTile+1] && mapSteps[xTile][yTile+1] >= 0) {
-                    count = mapSteps[xTile][yTile+1];
-                    nextXTile = xTile;
-                    nextYTile = yTile+1;
+            System.out.println("NEW currYTile " + currYTile);
+            if (currYTile + 1 < numYTiles) {
+                if (count > mapSteps[currXTile][currYTile+1] && mapSteps[currXTile][currYTile+1] >= 0) {
+                    count = mapSteps[currXTile][currYTile+1];
+                    System.out.println("NEW currYTile " + currYTile);
+                    nextXTile = currXTile;
+                    nextYTile = currYTile+1;
+                    System.out.println("HERE4");
                 }
             }
 
-            playerStatus = PlayerStatus.MOVING;
             currXTile = nextXTile;
             currYTile = nextYTile;
+
+            System.out.println("nextXTile " + nextXTile);
+            System.out.println("nextYTile " + nextYTile);
+
+            this.addAction(Actions.moveTo(nextXTile * tilePixelWidth, nextYTile * tilePixelHeight, 0.5f));
             xTile = nextXTile;
             yTile = nextYTile;
+            setBounds(nextXTile * tilePixelWidth, nextYTile * tilePixelHeight, tilePixelWidth, tilePixelHeight);
+
         }
     }
 }
