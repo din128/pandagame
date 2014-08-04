@@ -5,8 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 
 /**
  * Created by Xombified on 7/27/2014.
@@ -19,6 +17,7 @@ public class MapActor extends Actor {
     private int tilePixelHeight;
     private Texture mapTexture;
     private boolean isRevealed;
+    private boolean isVisited;
     private float transparencyLvl;
     private float fadeSpeed;
 
@@ -34,19 +33,6 @@ public class MapActor extends Actor {
 
         // Set Map Actor boundaries
         setBounds(xTile * tilePixelWidth, yTile * tilePixelHeight, tilePixelWidth, tilePixelHeight);
-
-        // TODO: Test listener
-        // Add Inputlistener
-        addListener(new InputListener() {
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                if (isRevealed) {
-                    isRevealed = false;
-                } else {
-                    isRevealed = true;
-                }
-                return true;
-            }
-        });
     }
 
     @Override
@@ -67,7 +53,7 @@ public class MapActor extends Actor {
             }
         }
         batch.setColor(0, 0, 0, transparencyLvl);
-        batch.draw(mapTexture, xTile * tilePixelWidth, yTile * tilePixelHeight);
+        batch.draw(mapTexture, getX(), getY());
 
         // Reset color to default to allow other textures render properly
         batch.setColor(Color.WHITE);
@@ -79,6 +65,14 @@ public class MapActor extends Actor {
 
     public void setRevealed(boolean revealed) {
         isRevealed = revealed;
+    }
+
+    public boolean isVisited() {
+        return isVisited;
+    }
+
+    public void setVisited(boolean visited) {
+        isVisited = visited;
     }
 
 
