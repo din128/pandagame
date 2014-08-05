@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
+import com.badlogic.gdx.utils.Timer;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -55,14 +57,9 @@ public class PlayerActor extends Actor {
         int count = 99;
         int currXTile = xTile;
         int currYTile = yTile;
-
-        System.out.println ("moveCoord currXTile" + currXTile);
-        System.out.println ("moveCoord currYTile" + currYTile);
-        System.out.println ("moveCoord destXTile" + destXTile);
-        System.out.println ("moveCoord destYTile" + destYTile);
+        SequenceAction sequenceAction = new SequenceAction();
 
         while ((currXTile != destXTile) || (currYTile != destYTile)) {
-            System.out.println ("count" + count);
 
             // Move next path with lowest count
             if (currXTile - 1 >= 0) {
@@ -96,7 +93,6 @@ public class PlayerActor extends Actor {
             if (currYTile + 1 < numYTiles) {
                 if (count > mapSteps[currXTile][currYTile+1] && mapSteps[currXTile][currYTile+1] >= 0) {
                     count = mapSteps[currXTile][currYTile+1];
-                    System.out.println("NEW currYTile " + currYTile);
                     nextXTile = currXTile;
                     nextYTile = currYTile+1;
                     System.out.println("HERE4");
@@ -109,11 +105,17 @@ public class PlayerActor extends Actor {
             System.out.println("nextXTile " + nextXTile);
             System.out.println("nextYTile " + nextYTile);
 
-            this.addAction(Actions.moveTo(nextXTile * tilePixelWidth, nextYTile * tilePixelHeight, 0.5f));
-            xTile = nextXTile;
-            yTile = nextYTile;
-            setBounds(nextXTile * tilePixelWidth, nextYTile * tilePixelHeight, tilePixelWidth, tilePixelHeight);
+            // System.out.println("this.getActions().size =  " + this.getActions().size);
+            sequenceAction.addAction(Actions.moveTo(nextXTile * tilePixelWidth, nextYTile * tilePixelHeight, 0.5f));
+
 
         }
+
+        this.addAction(sequenceAction);
+        xTile = nextXTile;
+        yTile = nextYTile;
+        // setBounds(nextXTile * tilePixelWidth, nextYTile * tilePixelHeight, tilePixelWidth, tilePixelHeight);
+        System.out.println("################");
     }
+
 }

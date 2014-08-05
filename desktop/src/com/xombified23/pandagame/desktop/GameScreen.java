@@ -216,96 +216,95 @@ public class GameScreen implements Screen {
     }
 
     private void movePlayer(int destXTile, int destYTile) {
-        class Point {
-            int x;
-            int y;
-        }
-        int count = 0;
-        int [][] mapSteps = new int[numXTiles][numYTiles];
-        for (int j = 0; j < numYTiles; j++) {
-            for (int i = 0; i < numXTiles; i++) {
-                mapSteps[i][j] = -1;
+        if (playerActor.getActions().size == 0) {
+            class Point {
+                int x;
+                int y;
             }
-        }
-
-        Stack stack = new Stack();
-        Point initPos = new Point();
-        initPos.x = destXTile;
-        initPos.y = destYTile;
-        stack.push(initPos);
-
-        // Make new destination point as visited to allow pathfinding
-        mapActorList[initPos.x][initPos.y].setVisited(true);
-        mapSteps[initPos.x][initPos.y] = 0;
-
-        while (!stack.isEmpty()) {
-            Point currPos = (Point)stack.pop();
-
-            System.out.println ("currPos.x = " + currPos.x);
-            System.out.println ("currPos.y = " + currPos.y);
-            System.out.println ("#########");
-            //System.out.println ("mapActorList[currPos.x - 1][currPos.y].isVisited() = "
-            //        + mapActorList[currPos.x - 1][currPos.y].isVisited());
-            //System.out.println ("mapSteps[currPos.x - 1][currPos.y] = "
-            //        + mapSteps[currPos.x - 1][currPos.y]);
-
-            if (currPos.x == playerActor.xTile && currPos.y == playerActor.yTile) {
-                System.out.println ("Pass Map");
-                playerActor.moveCoord (mapSteps, destXTile, destYTile, numXTiles, numYTiles);
+            int count = 0;
+            int[][] mapSteps = new int[numXTiles][numYTiles];
+            for (int j = 0; j < numYTiles; j++) {
+                for (int i = 0; i < numXTiles; i++) {
+                    mapSteps[i][j] = -1;
+                }
             }
 
-            // Add an extra count for each step away from destination
-            ++count;
+            Stack stack = new Stack();
+            Point initPos = new Point();
+            initPos.x = destXTile;
+            initPos.y = destYTile;
+            stack.push(initPos);
 
-            if ((currPos.x - 1 >= 0) && (mapActorList[currPos.x - 1][currPos.y].isVisited())
-                    && (mapSteps[currPos.x - 1][currPos.y] == -1)) {
-                Point newPos = new Point();
-                newPos.x = currPos.x - 1;
-                newPos.y = currPos.y;
-                stack.push(newPos);
-                mapSteps[newPos.x][newPos.y] = count;
+            // Make new destination point as visited to allow pathfinding
+            mapActorList[initPos.x][initPos.y].setVisited(true);
+            mapSteps[initPos.x][initPos.y] = 0;
 
-                System.out.println ("newPos.x" + newPos.x);
-                System.out.println ("newPos.y" + newPos.y);
+            while (!stack.isEmpty()) {
+                Point currPos = (Point) stack.pop();
+
+                //System.out.println ("currPos.x = " + currPos.x);
+                //System.out.println ("currPos.y = " + currPos.y);
+                //System.out.println ("#########");
+                //System.out.println ("mapActorList[currPos.x - 1][currPos.y].isVisited() = "
+                //        + mapActorList[currPos.x - 1][currPos.y].isVisited());
+                //System.out.println ("mapSteps[currPos.x - 1][currPos.y] = "
+                //        + mapSteps[currPos.x - 1][currPos.y]);
+
+                if (currPos.x == playerActor.xTile && currPos.y == playerActor.yTile) {
+                    playerActor.moveCoord(mapSteps, destXTile, destYTile, numXTiles, numYTiles);
+                    break;
+                }
+
+                // Add an extra count for each step away from destination
+                ++count;
+
+                if ((currPos.x - 1 >= 0) && (mapActorList[currPos.x - 1][currPos.y].isVisited())
+                        && (mapSteps[currPos.x - 1][currPos.y] == -1)) {
+                    Point newPos = new Point();
+                    newPos.x = currPos.x - 1;
+                    newPos.y = currPos.y;
+                    stack.push(newPos);
+                    mapSteps[newPos.x][newPos.y] = count;
+                }
+
+                if (currPos.x + 1 < numXTiles && mapActorList[currPos.x + 1][currPos.y].isVisited()
+                        && mapSteps[currPos.x + 1][currPos.y] == -1) {
+                    Point newPos = new Point();
+                    newPos.x = currPos.x + 1;
+                    newPos.y = currPos.y;
+                    stack.push(newPos);
+                    mapSteps[newPos.x][newPos.y] = count;
+
+                    System.out.println("newPos.x" + newPos.x);
+                    System.out.println("newPos.y" + newPos.y);
+                }
+
+                if (currPos.y - 1 >= 0 && mapActorList[currPos.x][currPos.y - 1].isVisited()
+                        && mapSteps[currPos.x][currPos.y - 1] == -1) {
+                    Point newPos = new Point();
+                    newPos.x = currPos.x;
+                    newPos.y = currPos.y - 1;
+                    stack.push(newPos);
+                    mapSteps[newPos.x][newPos.y] = count;
+
+                    System.out.println("newPos.x" + newPos.x);
+                    System.out.println("newPos.y" + newPos.y);
+                }
+
+                if (currPos.y + 1 < numYTiles && mapActorList[currPos.x][currPos.y + 1].isVisited()
+                        && mapSteps[currPos.x][currPos.y + 1] == -1) {
+                    Point newPos = new Point();
+                    newPos.x = currPos.x;
+                    newPos.y = currPos.y + 1;
+                    stack.push(newPos);
+                    mapSteps[newPos.x][newPos.y] = count;
+
+                    System.out.println("newPos.x" + newPos.x);
+                    System.out.println("newPos.y" + newPos.y);
+                }
+
+                // System.out.println ("Loop ends");
             }
-
-            if (currPos.x + 1 < numXTiles && mapActorList[currPos.x + 1][currPos.y].isVisited()
-                    && mapSteps[currPos.x + 1][currPos.y] == -1) {
-                Point newPos = new Point();
-                newPos.x = currPos.x + 1;
-                newPos.y = currPos.y;
-                stack.push(newPos);
-                mapSteps[newPos.x][newPos.y] = count;
-
-                System.out.println ("newPos.x" + newPos.x);
-                System.out.println ("newPos.y" + newPos.y);
-            }
-
-            if (currPos.y - 1 >= 0 && mapActorList[currPos.x][currPos.y - 1].isVisited()
-                    && mapSteps[currPos.x][currPos.y - 1] == -1) {
-                Point newPos = new Point();
-                newPos.x = currPos.x;
-                newPos.y = currPos.y - 1;
-                stack.push(newPos);
-                mapSteps[newPos.x][newPos.y] = count;
-
-                System.out.println ("newPos.x" + newPos.x);
-                System.out.println ("newPos.y" + newPos.y);
-            }
-
-            if (currPos.y + 1 < numYTiles && mapActorList[currPos.x][currPos.y + 1].isVisited()
-                    && mapSteps[currPos.x][currPos.y + 1] == -1) {
-                Point newPos = new Point();
-                newPos.x = currPos.x;
-                newPos.y = currPos.y + 1;
-                stack.push(newPos);
-                mapSteps[newPos.x][newPos.y] = count;
-
-                System.out.println ("newPos.x" + newPos.x);
-                System.out.println ("newPos.y" + newPos.y);
-            }
-
-            System.out.println ("Loop ends");
         }
     }
 }
