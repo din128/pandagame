@@ -32,6 +32,7 @@ public class GameScreen implements Screen {
     private Texture mapTexture;
     private Texture playerTexture;
     private PlayerActor playerActor;
+    private int[][] mapSteps;
 
     public GameScreen(final MyGame game) {
         // Assign Game and SpriteBatch object
@@ -53,6 +54,9 @@ public class GameScreen implements Screen {
         tilePixelHeight = prop.get("tileheight", Integer.class);
         mapPixelWidth = numXTiles * tilePixelWidth;
         mapPixelHeight = numYTiles * tilePixelHeight;
+
+        // Initialize mapSteps
+        mapSteps = new int[numXTiles][numYTiles];
     }
 
     @Override
@@ -72,7 +76,6 @@ public class GameScreen implements Screen {
         stage.draw();
 
         revealAround();
-        keepTrackMoves();
     }
 
     @Override
@@ -158,7 +161,7 @@ public class GameScreen implements Screen {
                 break;
         }
 
-        playerActor = new PlayerActor(x, y, tilePixelWidth, tilePixelHeight, playerTexture, mapActorList);
+        playerActor = new PlayerActor(x, y, tilePixelWidth, tilePixelHeight, playerTexture);
         stage.addActor(playerActor);
     }
 
@@ -189,30 +192,25 @@ public class GameScreen implements Screen {
      * Reveal around the player
      */
     private void revealAround() {
-        int pX = playerActor.xTile;
-        int pY = playerActor.yTile;
+        if (playerActor.getActions().size == 0) {
+            int pX = playerActor.xTile;
+            int pY = playerActor.yTile;
 
-        // Reveal tiles with the player
-        mapActorList[pX][pY].setRevealed(true);
-        if (pX - 1 >= 0) {
-            mapActorList[pX - 1][pY].setRevealed(true);
+            // Reveal tiles with the player
+            mapActorList[pX][pY].setRevealed(true);
+            if (pX - 1 >= 0) {
+                mapActorList[pX - 1][pY].setRevealed(true);
+            }
+            if (pY - 1 >= 0) {
+                mapActorList[pX][pY - 1].setRevealed(true);
+            }
+            if (pX + 1 < numXTiles) {
+                mapActorList[pX + 1][pY].setRevealed(true);
+            }
+            if (pY + 1 < numYTiles) {
+                mapActorList[pX][pY + 1].setRevealed(true);
+            }
         }
-        if (pY - 1 >= 0) {
-            mapActorList[pX][pY - 1].setRevealed(true);
-        }
-        if (pX + 1 < numXTiles) {
-            mapActorList[pX + 1][pY].setRevealed(true);
-        }
-        if (pY + 1 < numYTiles) {
-            mapActorList[pX][pY + 1].setRevealed(true);
-        }
-    }
-
-    private void keepTrackMoves() {
-        int pX = playerActor.xTile;
-        int pY = playerActor.yTile;
-
-        mapActorList[pX][pY].setVisited(true);
     }
 
     private void movePlayer(int destXTile, int destYTile) {
@@ -222,7 +220,8 @@ public class GameScreen implements Screen {
                 int y;
             }
             int count = 0;
-            int[][] mapSteps = new int[numXTiles][numYTiles];
+
+            // Reset mapSteps to check for shortest path
             for (int j = 0; j < numYTiles; j++) {
                 for (int i = 0; i < numXTiles; i++) {
                     mapSteps[i][j] = -1;
@@ -235,21 +234,13 @@ public class GameScreen implements Screen {
             initPos.y = destYTile;
             stack.push(initPos);
 
-            // Make new destination point as visited to allow pathfinding
-            mapActorList[initPos.x][initPos.y].setVisited(true);
+            // Add first tile weighted as 0. Subsequent tiles away from initial point, will increase "count"
             mapSteps[initPos.x][initPos.y] = 0;
 
             while (!stack.isEmpty()) {
                 Point currPos = (Point) stack.pop();
 
-                //System.out.println ("currPos.x = " + currPos.x);
-                //System.out.println ("currPos.y = " + currPos.y);
-                //System.out.println ("#########");
-                //System.out.println ("mapActorList[currPos.x - 1][currPos.y].isVisited() = "
-                //        + mapActorList[currPos.x - 1][currPos.y].isVisited());
-                //System.out.println ("mapSteps[currPos.x - 1][currPos.y] = "
-                //        + mapSteps[currPos.x - 1][currPos.y]);
-
+                // If path is found, pass the mapSteps to let PlayerActor animate
                 if (currPos.x == playerActor.xTile && currPos.y == playerActor.yTile) {
                     playerActor.moveCoord(mapSteps, destXTile, destYTile, numXTiles, numYTiles);
                     break;
@@ -258,7 +249,7 @@ public class GameScreen implements Screen {
                 // Add an extra count for each step away from destination
                 ++count;
 
-                if ((currPos.x - 1 >= 0) && (mapActorList[currPos.x - 1][currPos.y].isVisited())
+                if ((currPos.x - 1 >= 0) && (mapActorList[currPos.x - 1][currPos.y].isRevealed())
                         && (mapSteps[currPos.x - 1][currPos.y] == -1)) {
                     Point newPos = new Point();
                     newPos.x = currPos.x - 1;
@@ -267,45 +258,34 @@ public class GameScreen implements Screen {
                     mapSteps[newPos.x][newPos.y] = count;
                 }
 
-                if (currPos.x + 1 < numXTiles && mapActorList[currPos.x + 1][currPos.y].isVisited()
+                if (currPos.x + 1 < numXTiles && mapActorList[currPos.x + 1][currPos.y].isRevealed()
                         && mapSteps[currPos.x + 1][currPos.y] == -1) {
                     Point newPos = new Point();
                     newPos.x = currPos.x + 1;
                     newPos.y = currPos.y;
                     stack.push(newPos);
                     mapSteps[newPos.x][newPos.y] = count;
-
-                    System.out.println("newPos.x" + newPos.x);
-                    System.out.println("newPos.y" + newPos.y);
                 }
 
-                if (currPos.y - 1 >= 0 && mapActorList[currPos.x][currPos.y - 1].isVisited()
+                if (currPos.y - 1 >= 0 && mapActorList[currPos.x][currPos.y - 1].isRevealed()
                         && mapSteps[currPos.x][currPos.y - 1] == -1) {
                     Point newPos = new Point();
                     newPos.x = currPos.x;
                     newPos.y = currPos.y - 1;
                     stack.push(newPos);
                     mapSteps[newPos.x][newPos.y] = count;
-
-                    System.out.println("newPos.x" + newPos.x);
-                    System.out.println("newPos.y" + newPos.y);
                 }
 
-                if (currPos.y + 1 < numYTiles && mapActorList[currPos.x][currPos.y + 1].isVisited()
+                if (currPos.y + 1 < numYTiles && mapActorList[currPos.x][currPos.y + 1].isRevealed()
                         && mapSteps[currPos.x][currPos.y + 1] == -1) {
                     Point newPos = new Point();
                     newPos.x = currPos.x;
                     newPos.y = currPos.y + 1;
                     stack.push(newPos);
                     mapSteps[newPos.x][newPos.y] = count;
-
-                    System.out.println("newPos.x" + newPos.x);
-                    System.out.println("newPos.y" + newPos.y);
                 }
-
-                // System.out.println ("Loop ends");
-            }
-        }
+            } // end of while loop
+        } // end of if
     }
 }
 

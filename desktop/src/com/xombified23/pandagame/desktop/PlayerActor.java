@@ -16,27 +16,21 @@ import java.util.Queue;
 public class PlayerActor extends Actor {
     public int xTile;
     public int yTile;
-    public PlayerStatus playerStatus;
+    public int destXTile;
+    public int destYTile;
 
-    private MapActor[][] mapActorList;
-    private int destXTile;
-    private int destYTile;
-    private int nextXTile;
-    private int nextYTile;
     private int tilePixelWidth;
     private int tilePixelHeight;
     private Texture playerTexture;
     private float moveSpeed;
 
-    public PlayerActor(int x, int y, int tilePixelWidth, int tilePixelHeight, Texture playerTexture, MapActor[][] mapActorList) {
+    public PlayerActor(int x, int y, int tilePixelWidth, int tilePixelHeight, Texture playerTexture) {
         xTile = x;
         yTile = y;
-        this.mapActorList = mapActorList;
         this.playerTexture = playerTexture;
         this.tilePixelWidth = tilePixelWidth;
         this.tilePixelHeight = tilePixelHeight;
-        playerStatus = PlayerStatus.STANDING;
-        moveSpeed = 1.0f;
+        moveSpeed = 0.2f;
         setBounds(xTile * tilePixelWidth, yTile * tilePixelHeight, tilePixelWidth, tilePixelHeight);
     }
 
@@ -45,77 +39,53 @@ public class PlayerActor extends Actor {
         batch.draw(playerTexture, getX(), getY());
     }
 
-    public enum PlayerStatus {
-        STANDING, MOVING
-    }
-
     public void moveCoord (int [][] mapSteps, int destXTile, int destYTile, int numXTiles, int numYTiles) {
         this.destXTile = destXTile;
         this.destYTile = destYTile;
-        nextXTile = 99;
-        nextYTile = 99;
-        int count = 99;
-        int currXTile = xTile;
-        int currYTile = yTile;
+        int nextXTile = 999;
+        int nextYTile = 999;
+        int count = 999;
         SequenceAction sequenceAction = new SequenceAction();
 
-        while ((currXTile != destXTile) || (currYTile != destYTile)) {
-
-            // Move next path with lowest count
-            if (currXTile - 1 >= 0) {
-                if (count > mapSteps[currXTile-1][currYTile] && mapSteps[currXTile-1][currYTile] >= 0) {
-                    count = mapSteps[currXTile-1][currYTile];
-                    nextXTile = currXTile-1;
-                    nextYTile = currYTile;
-                    System.out.println("HERE1");
+        // Find shortest path
+        while ((xTile != destXTile) || (yTile != destYTile)) {
+            if (xTile - 1 >= 0) {
+                if (count > mapSteps[xTile-1][yTile] && mapSteps[xTile-1][yTile] >= 0) {
+                    count = mapSteps[xTile-1][yTile];
+                    nextXTile = xTile-1;
+                    nextYTile = yTile;
                 }
             }
 
-            if (currXTile + 1 < numXTiles) {
-                if (count > mapSteps[currXTile+1][currYTile] && mapSteps[currXTile+1][currYTile] >= 0) {
-                    count = mapSteps[currXTile+1][currYTile];
-                    nextXTile = currXTile+1;
-                    nextYTile = currYTile;
-                    System.out.println("HERE2");
+            if (xTile + 1 < numXTiles) {
+                if (count > mapSteps[xTile+1][yTile] && mapSteps[xTile+1][yTile] >= 0) {
+                    count = mapSteps[xTile+1][yTile];
+                    nextXTile = xTile+1;
+                    nextYTile = yTile;
                 }
             }
 
-            if (currYTile - 1 >= 0) {
-                if (count > mapSteps[currXTile][currYTile-1] && mapSteps[currXTile][currYTile-1] >= 0) {
-                    count = mapSteps[currXTile][currYTile-1];
-                    nextXTile = currXTile;
-                    nextYTile = currYTile-1;
-                    System.out.println("HERE3");
+            if (yTile - 1 >= 0) {
+                if (count > mapSteps[xTile][yTile-1] && mapSteps[xTile][yTile-1] >= 0) {
+                    count = mapSteps[xTile][yTile-1];
+                    nextXTile = xTile;
+                    nextYTile = yTile-1;
                 }
             }
 
-            System.out.println("NEW currYTile " + currYTile);
-            if (currYTile + 1 < numYTiles) {
-                if (count > mapSteps[currXTile][currYTile+1] && mapSteps[currXTile][currYTile+1] >= 0) {
-                    count = mapSteps[currXTile][currYTile+1];
-                    nextXTile = currXTile;
-                    nextYTile = currYTile+1;
-                    System.out.println("HERE4");
+            if (yTile + 1 < numYTiles) {
+                if (count > mapSteps[xTile][yTile+1] && mapSteps[xTile][yTile+1] >= 0) {
+                    count = mapSteps[xTile][yTile+1];
+                    nextXTile = xTile;
+                    nextYTile = yTile+1;
                 }
             }
+            xTile = nextXTile;
+            yTile = nextYTile;
 
-            currXTile = nextXTile;
-            currYTile = nextYTile;
-
-            System.out.println("nextXTile " + nextXTile);
-            System.out.println("nextYTile " + nextYTile);
-
-            // System.out.println("this.getActions().size =  " + this.getActions().size);
-            sequenceAction.addAction(Actions.moveTo(nextXTile * tilePixelWidth, nextYTile * tilePixelHeight, 0.5f));
-
-
+            // Add one action at a time for smooth walking
+            sequenceAction.addAction(Actions.moveTo(nextXTile * tilePixelWidth, nextYTile * tilePixelHeight, moveSpeed));
         }
-
         this.addAction(sequenceAction);
-        xTile = nextXTile;
-        yTile = nextYTile;
-        // setBounds(nextXTile * tilePixelWidth, nextYTile * tilePixelHeight, tilePixelWidth, tilePixelHeight);
-        System.out.println("################");
     }
-
 }
