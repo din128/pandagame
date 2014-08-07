@@ -13,8 +13,6 @@ public class MapActor extends Actor {
     public int xTile;
     public int yTile;
 
-    private int tilePixelWidth;
-    private int tilePixelHeight;
     private Texture mapTexture;
     private boolean isRevealed;
     private boolean isVisited;
@@ -24,8 +22,6 @@ public class MapActor extends Actor {
     public MapActor(int x, int y, int tilePixelWidth, int tilePixelHeight, Texture mapTexture) {
         xTile = x;
         yTile = y;
-        this.tilePixelWidth = tilePixelWidth;
-        this.tilePixelHeight = tilePixelHeight;
         this.mapTexture = mapTexture;
         isRevealed = false;
         transparencyLvl = 0.5f;
@@ -66,14 +62,4 @@ public class MapActor extends Actor {
     public void setRevealed(boolean revealed) {
         isRevealed = revealed;
     }
-
-    public boolean isVisited() {
-        return isVisited;
-    }
-
-    public void setVisited(boolean visited) {
-        isVisited = visited;
-    }
-
-
 }

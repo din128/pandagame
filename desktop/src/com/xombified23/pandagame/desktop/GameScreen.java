@@ -4,6 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
@@ -31,6 +34,7 @@ public class GameScreen implements Screen {
     private MapActor[][] mapActorList;
     private Texture mapTexture;
     private Texture playerTexture;
+
     private PlayerActor playerActor;
     private int[][] mapSteps;
 
@@ -45,6 +49,7 @@ public class GameScreen implements Screen {
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         mapTexture = new Texture(Gdx.files.internal("blacktile.png"));
         playerTexture = new Texture(Gdx.files.internal("playerSprite.png"));
+
 
         // Get dimensions for the tiledMap
         MapProperties prop = tiledMap.getProperties();
@@ -65,6 +70,7 @@ public class GameScreen implements Screen {
         tiledMap.dispose();
         mapTexture.dispose();
         playerTexture.dispose();
+        playerActor.dispose();
     }
 
     @Override
@@ -142,7 +148,7 @@ public class GameScreen implements Screen {
         int x;
         int y;
 
-        switch (0) {
+        switch (randomInt) {
             case 0:
                 x = 0;
                 y = 0;
@@ -196,6 +202,8 @@ public class GameScreen implements Screen {
             int pX = playerActor.xTile;
             int pY = playerActor.yTile;
 
+            playerActor.playerStatus = PlayerActor.PlayerStatus.STANDING;
+
             // Reveal tiles with the player
             mapActorList[pX][pY].setRevealed(true);
             if (pX - 1 >= 0) {
@@ -228,17 +236,18 @@ public class GameScreen implements Screen {
                 }
             }
 
-            Stack stack = new Stack();
+            // TODO: USE QUEUE! Stack will not find shortest path
+            Queue<Point> queue = new LinkedList<Point>();
             Point initPos = new Point();
             initPos.x = destXTile;
             initPos.y = destYTile;
-            stack.push(initPos);
+            queue.add(initPos);
 
             // Add first tile weighted as 0. Subsequent tiles away from initial point, will increase "count"
             mapSteps[initPos.x][initPos.y] = 0;
 
-            while (!stack.isEmpty()) {
-                Point currPos = (Point) stack.pop();
+            while (!queue.isEmpty()) {
+                Point currPos = queue.poll();
 
                 // If path is found, pass the mapSteps to let PlayerActor animate
                 if (currPos.x == playerActor.xTile && currPos.y == playerActor.yTile) {
@@ -254,7 +263,7 @@ public class GameScreen implements Screen {
                     Point newPos = new Point();
                     newPos.x = currPos.x - 1;
                     newPos.y = currPos.y;
-                    stack.push(newPos);
+                    queue.add(newPos);
                     mapSteps[newPos.x][newPos.y] = count;
                 }
 
@@ -263,7 +272,7 @@ public class GameScreen implements Screen {
                     Point newPos = new Point();
                     newPos.x = currPos.x + 1;
                     newPos.y = currPos.y;
-                    stack.push(newPos);
+                    queue.add(newPos);
                     mapSteps[newPos.x][newPos.y] = count;
                 }
 
@@ -272,7 +281,7 @@ public class GameScreen implements Screen {
                     Point newPos = new Point();
                     newPos.x = currPos.x;
                     newPos.y = currPos.y - 1;
-                    stack.push(newPos);
+                    queue.add(newPos);
                     mapSteps[newPos.x][newPos.y] = count;
                 }
 
@@ -281,11 +290,13 @@ public class GameScreen implements Screen {
                     Point newPos = new Point();
                     newPos.x = currPos.x;
                     newPos.y = currPos.y + 1;
-                    stack.push(newPos);
+                    queue.add(newPos);
                     mapSteps[newPos.x][newPos.y] = count;
                 }
             } // end of while loop
         } // end of if
     }
+
+
 }
 
