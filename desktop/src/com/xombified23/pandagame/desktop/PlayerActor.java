@@ -1,16 +1,12 @@
 package com.xombified23.pandagame.desktop;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
-import com.badlogic.gdx.utils.Timer;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
@@ -23,35 +19,23 @@ public class PlayerActor extends Actor {
     public int yTile;
     public int destXTile;
     public int destYTile;
-
-    private TextureAtlas textureAtlas;
-    private int tilePixelWidth;
-    private int tilePixelHeight;
-    private Texture playerTexture;
-    private float moveSpeed;
     public PlayerStatus playerStatus;
-    private PlayerStatus nextMoveStatus = null;
-    private Timer timer;
-
-
     public Animation moveUpAnim;
     public Animation moveDownAnim;
     public Animation moveLeftAnim;
     public Animation moveRightAnim;
-
+    private TextureAtlas textureAtlas;
+    private int tilePixelWidth;
+    private int tilePixelHeight;
+    private float moveSpeed;
+    private PlayerStatus nextMoveStatus = null;
     private float elapsedTime = 0;
 
-    public enum PlayerStatus {
-        STANDING, MOVINGLEFT, MOVINGRIGHT, MOVINGUP, MOVINGDOWN
-    }
-
-    public PlayerActor(int x, int y, int tilePixelWidth, int tilePixelHeight, Texture playerTexture) {
+    public PlayerActor(int x, int y, int tilePixelWidth, int tilePixelHeight) {
         xTile = x;
         yTile = y;
-        this.playerTexture = playerTexture;
         this.tilePixelWidth = tilePixelWidth;
         this.tilePixelHeight = tilePixelHeight;
-        timer = new Timer();
         moveSpeed = 0.2f;
         playerStatus = PlayerStatus.STANDING;
         setBounds(xTile * tilePixelWidth, yTile * tilePixelHeight, tilePixelWidth, tilePixelHeight);
@@ -87,11 +71,12 @@ public class PlayerActor extends Actor {
                 batch.draw(moveUpAnim.getKeyFrame(elapsedTime, true), getX(), getY());
                 break;
 
-            default: batch.draw(playerTexture, getX(), getY());
+            default:
+                batch.draw(textureAtlas.findRegion("slice10"), getX(), getY());
         }
     }
 
-    public void moveCoord (int [][] mapSteps, int destXTile, int destYTile, int numXTiles, int numYTiles) {
+    public void moveCoord(int[][] mapSteps, int destXTile, int destYTile, int numXTiles, int numYTiles) {
         this.destXTile = destXTile;
         this.destYTile = destYTile;
         int nextXTile = 999;
@@ -102,37 +87,37 @@ public class PlayerActor extends Actor {
         // Find shortest path
         while ((xTile != destXTile) || (yTile != destYTile)) {
             if (xTile - 1 >= 0) {
-                if (count > mapSteps[xTile-1][yTile] && mapSteps[xTile-1][yTile] >= 0) {
-                    count = mapSteps[xTile-1][yTile];
-                    nextXTile = xTile-1;
+                if (count > mapSteps[xTile - 1][yTile] && mapSteps[xTile - 1][yTile] >= 0) {
+                    count = mapSteps[xTile - 1][yTile];
+                    nextXTile = xTile - 1;
                     nextYTile = yTile;
                     nextMoveStatus = PlayerStatus.MOVINGLEFT;
                 }
             }
 
             if (xTile + 1 < numXTiles) {
-                if (count > mapSteps[xTile+1][yTile] && mapSteps[xTile+1][yTile] >= 0) {
-                    count = mapSteps[xTile+1][yTile];
-                    nextXTile = xTile+1;
+                if (count > mapSteps[xTile + 1][yTile] && mapSteps[xTile + 1][yTile] >= 0) {
+                    count = mapSteps[xTile + 1][yTile];
+                    nextXTile = xTile + 1;
                     nextYTile = yTile;
                     nextMoveStatus = PlayerStatus.MOVINGRIGHT;
                 }
             }
 
             if (yTile - 1 >= 0) {
-                if (count > mapSteps[xTile][yTile-1] && mapSteps[xTile][yTile-1] >= 0) {
-                    count = mapSteps[xTile][yTile-1];
+                if (count > mapSteps[xTile][yTile - 1] && mapSteps[xTile][yTile - 1] >= 0) {
+                    count = mapSteps[xTile][yTile - 1];
                     nextXTile = xTile;
-                    nextYTile = yTile-1;
+                    nextYTile = yTile - 1;
                     nextMoveStatus = PlayerStatus.MOVINGDOWN;
                 }
             }
 
             if (yTile + 1 < numYTiles) {
-                if (count > mapSteps[xTile][yTile+1] && mapSteps[xTile][yTile+1] >= 0) {
-                    count = mapSteps[xTile][yTile+1];
+                if (count > mapSteps[xTile][yTile + 1] && mapSteps[xTile][yTile + 1] >= 0) {
+                    count = mapSteps[xTile][yTile + 1];
                     nextXTile = xTile;
-                    nextYTile = yTile+1;
+                    nextYTile = yTile + 1;
                     nextMoveStatus = PlayerStatus.MOVINGUP;
                 }
             }
@@ -142,7 +127,7 @@ public class PlayerActor extends Actor {
                     moveSpeed), run(new Runnable() {
                 @Override
                 public void run() {
-                   switch (nextMoveStatus) {
+                    switch (nextMoveStatus) {
                         case MOVINGDOWN:
                             playerStatus = PlayerStatus.MOVINGDOWN;
                             break;
@@ -155,7 +140,8 @@ public class PlayerActor extends Actor {
                         case MOVINGUP:
                             playerStatus = PlayerStatus.MOVINGUP;
                             break;
-                       default: playerStatus = PlayerStatus.STANDING;
+                        default:
+                            playerStatus = PlayerStatus.STANDING;
                     }
                 }
             })));
@@ -195,6 +181,10 @@ public class PlayerActor extends Actor {
         moveRight[1] = (textureAtlas.findRegion("slice07"));
         moveRight[2] = (textureAtlas.findRegion("slice08"));
         moveRightAnim = new Animation(moveSpeed, moveRight);
+    }
+
+    public enum PlayerStatus {
+        STANDING, MOVINGLEFT, MOVINGRIGHT, MOVINGUP, MOVINGDOWN
     }
 
 

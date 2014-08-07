@@ -4,9 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
@@ -17,7 +14,10 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-import java.util.*;
+import java.util.EmptyStackException;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Random;
 
 public class GameScreen implements Screen {
     private final MyGame game;
@@ -32,11 +32,10 @@ public class GameScreen implements Screen {
     private int tilePixelWidth;
     private int tilePixelHeight;
     private MapActor[][] mapActorList;
+    private int[][] mapSteps;
     private Texture mapTexture;
     private Texture playerTexture;
-
     private PlayerActor playerActor;
-    private int[][] mapSteps;
 
     public GameScreen(final MyGame game) {
         // Assign Game and SpriteBatch object
@@ -49,7 +48,6 @@ public class GameScreen implements Screen {
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         mapTexture = new Texture(Gdx.files.internal("blacktile.png"));
         playerTexture = new Texture(Gdx.files.internal("playerSprite.png"));
-
 
         // Get dimensions for the tiledMap
         MapProperties prop = tiledMap.getProperties();
@@ -66,11 +64,11 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        stage.dispose();
         tiledMap.dispose();
         mapTexture.dispose();
         playerTexture.dispose();
         playerActor.dispose();
+        stage.dispose();
     }
 
     @Override
@@ -108,6 +106,8 @@ public class GameScreen implements Screen {
         // Inflate rest of Actors
         createMapActors();
         spawnPlayer();
+
+        // Add Stage Touch
         addStageTouch();
     }
 
@@ -167,7 +167,7 @@ public class GameScreen implements Screen {
                 break;
         }
 
-        playerActor = new PlayerActor(x, y, tilePixelWidth, tilePixelHeight, playerTexture);
+        playerActor = new PlayerActor(x, y, tilePixelWidth, tilePixelHeight);
         stage.addActor(playerActor);
     }
 
@@ -185,7 +185,7 @@ public class GameScreen implements Screen {
                             movePlayer(((MapActor) currActor).xTile, ((MapActor) currActor).yTile);
                         }
                     } else {
-                        // TODO
+                        // TODO: Abilities?
                         System.out.println("PlayerActor clicked");
                     }
                 }
@@ -236,7 +236,6 @@ public class GameScreen implements Screen {
                 }
             }
 
-            // TODO: USE QUEUE! Stack will not find shortest path
             Queue<Point> queue = new LinkedList<Point>();
             Point initPos = new Point();
             initPos.x = destXTile;
@@ -296,7 +295,5 @@ public class GameScreen implements Screen {
             } // end of while loop
         } // end of if
     }
-
-
 }
 

@@ -15,7 +15,6 @@ public class MapActor extends Actor {
 
     private Texture mapTexture;
     private boolean isRevealed;
-    private boolean isVisited;
     private float transparencyLvl;
     private float fadeSpeed;
 
