@@ -49,30 +49,31 @@ public class PlayerActor extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
+        // TODO: Hard coded sprite size and position. Need to fix with new assets
         elapsedTime += Gdx.graphics.getDeltaTime();
         switch (playerStatus) {
             case STANDING:
-                batch.draw(textureAtlas.findRegion("slice10"), getX(), getY());
+                batch.draw(textureAtlas.findRegion("slice10"), getX() + 8, getY(), 16, 35);
                 break;
 
             case MOVINGDOWN:
-                batch.draw(moveDownAnim.getKeyFrame(elapsedTime, true), getX(), getY());
+                batch.draw(moveDownAnim.getKeyFrame(elapsedTime, true), getX() + 8, getY(), 16, 35);
                 break;
 
             case MOVINGLEFT:
-                batch.draw(moveLeftAnim.getKeyFrame(elapsedTime, true), getX(), getY());
+                batch.draw(moveLeftAnim.getKeyFrame(elapsedTime, true), getX() + 8, getY(), 16, 35);
                 break;
 
             case MOVINGRIGHT:
-                batch.draw(moveRightAnim.getKeyFrame(elapsedTime, true), getX(), getY());
+                batch.draw(moveRightAnim.getKeyFrame(elapsedTime, true), getX() + 8, getY(), 16, 35);
                 break;
 
             case MOVINGUP:
-                batch.draw(moveUpAnim.getKeyFrame(elapsedTime, true), getX(), getY());
+                batch.draw(moveUpAnim.getKeyFrame(elapsedTime, true), getX() + 8, getY(), 16, 35);
                 break;
 
             default:
-                batch.draw(textureAtlas.findRegion("slice10"), getX(), getY());
+                batch.draw(textureAtlas.findRegion("slice10"), getX() + 8, getY(), 16, 35);
         }
     }
 

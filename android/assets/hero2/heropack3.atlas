@@ -1,0 +1,117 @@
+
+heropack3.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+slice14
+  rotate: false
+  xy: 1, 1
+  size: 20, 42
+  orig: 20, 42
+  offset: 0, 0
+  index: 14
+slice15
+  rotate: false
+  xy: 23, 8
+  size: 17, 35
+  orig: 17, 35
+  offset: 0, 0
+  index: 15
+slice04
+  rotate: false
+  xy: 42, 8
+  size: 16, 35
+  orig: 16, 35
+  offset: 0, 0
+  index: 4
+slice08
+  rotate: false
+  xy: 60, 8
+  size: 16, 35
+  orig: 16, 35
+  offset: 0, 0
+  index: 8
+slice10
+  rotate: false
+  xy: 78, 8
+  size: 16, 35
+  orig: 16, 35
+  offset: 0, 0
+  index: 10
+slice12
+  rotate: false
+  xy: 78, 8
+  size: 16, 35
+  orig: 16, 35
+  offset: 0, 0
+  index: 12
+slice13
+  rotate: false
+  xy: 96, 8
+  size: 16, 35
+  orig: 16, 35
+  offset: 0, 0
+  index: 13
+slice16
+  rotate: false
+  xy: 114, 8
+  size: 16, 35
+  orig: 16, 35
+  offset: 0, 0
+  index: 16
+slice02
+  rotate: false
+  xy: 132, 8
+  size: 15, 35
+  orig: 15, 35
+  offset: 0, 0
+  index: 2
+slice06
+  rotate: false
+  xy: 149, 8
+  size: 15, 35
+  orig: 15, 35
+  offset: 0, 0
+  index: 6
+slice09
+  rotate: false
+  xy: 166, 8
+  size: 15, 35
+  orig: 15, 35
+  offset: 0, 0
+  index: 9
+slice11
+  rotate: false
+  xy: 183, 8
+  size: 15, 35
+  orig: 15, 35
+  offset: 0, 0
+  index: 11
+slice01
+  rotate: false
+  xy: 200, 8
+  size: 13, 35
+  orig: 13, 35
+  offset: 0, 0
+  index: 1
+slice03
+  rotate: false
+  xy: 215, 8
+  size: 13, 35
+  orig: 13, 35
+  offset: 0, 0
+  index: 3
+slice05
+  rotate: false
+  xy: 230, 8
+  size: 13, 35
+  orig: 13, 35
+  offset: 0, 0
+  index: 5
+slice07
+  rotate: false
+  xy: 230, 8
+  size: 13, 35
+  orig: 13, 35
+  offset: 0, 0
+  index: 7
