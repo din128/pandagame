@@ -61,3 +61,7 @@ build/
 
 ## OS Specific
 .DS_Store
+
+*.MF
+*.MF
+android/META-INF/MANIFEST.MF

@@ -18,16 +18,21 @@ public class MapActor extends Actor {
     private float transparencyLvl;
     private float fadeSpeed;
 
-    public MapActor(int x, int y, int tilePixelWidth, int tilePixelHeight, Texture mapTexture) {
+    public MapActor(int x, int y) {
         xTile = x;
         yTile = y;
         this.mapTexture = mapTexture;
         isRevealed = false;
         transparencyLvl = 0.5f;
         fadeSpeed = 1.5f;
+        mapTexture = new Texture(Gdx.files.internal("blacktile.png"));
 
         // Set Map Actor boundaries
-        setBounds(xTile * tilePixelWidth, yTile * tilePixelHeight, tilePixelWidth, tilePixelHeight);
+        setBounds(xTile * Parameters.tilePixelWidth, yTile * Parameters.tilePixelHeight, Parameters.tilePixelWidth, Parameters.tilePixelHeight);
+    }
+
+    public void dispose() {
+        mapTexture.dispose();
     }
 
     @Override

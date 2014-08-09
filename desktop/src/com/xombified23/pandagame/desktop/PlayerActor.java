@@ -8,6 +8,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 
@@ -25,20 +28,20 @@ public class PlayerActor extends Actor {
     public Animation moveLeftAnim;
     public Animation moveRightAnim;
     private TextureAtlas textureAtlas;
-    private int tilePixelWidth;
-    private int tilePixelHeight;
     private float moveSpeed;
     private PlayerStatus nextMoveStatus = null;
+    // TODO TEST
+    private Queue queueMoves = new LinkedList();
+
     private float elapsedTime = 0;
 
-    public PlayerActor(int x, int y, int tilePixelWidth, int tilePixelHeight) {
+    public PlayerActor(int x, int y) {
         xTile = x;
         yTile = y;
-        this.tilePixelWidth = tilePixelWidth;
-        this.tilePixelHeight = tilePixelHeight;
         moveSpeed = 0.2f;
         playerStatus = PlayerStatus.STANDING;
-        setBounds(xTile * tilePixelWidth, yTile * tilePixelHeight, tilePixelWidth, tilePixelHeight);
+        setBounds(xTile * Parameters.tilePixelWidth, yTile * Parameters.tilePixelHeight, Parameters.tilePixelWidth,
+                Parameters.tilePixelHeight);
         textureAtlas = new TextureAtlas(Gdx.files.internal("hero/heropack.atlas"));
         createAnimations(textureAtlas);
     }
@@ -49,7 +52,7 @@ public class PlayerActor extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        // TODO: Hard coded sprite size and position. Need to fix with new assets
+        // TODO: Hard coded sprite size and position for testing. Need to fix with new assets
         elapsedTime += Gdx.graphics.getDeltaTime();
         switch (playerStatus) {
             case STANDING:
@@ -123,12 +126,16 @@ public class PlayerActor extends Actor {
                 }
             }
 
+            queueMoves.add(nextMoveStatus);
+
             // Add one action at a time for smooth walking
-            sequenceAction.addAction(parallel(moveTo(nextXTile * tilePixelWidth, nextYTile * tilePixelHeight,
+            sequenceAction.addAction(parallel(moveTo(nextXTile * Parameters.tilePixelWidth,
+                    nextYTile * Parameters.tilePixelHeight,
                     moveSpeed), run(new Runnable() {
                 @Override
                 public void run() {
-                    switch (nextMoveStatus) {
+                    PlayerStatus nextMove = (PlayerStatus) queueMoves.poll();
+                    switch (nextMove) {
                         case MOVINGDOWN:
                             playerStatus = PlayerStatus.MOVINGDOWN;
                             break;

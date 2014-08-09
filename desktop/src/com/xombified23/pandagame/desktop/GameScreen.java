@@ -29,12 +29,8 @@ public class GameScreen implements Screen {
     private int mapPixelHeight;
     private int numXTiles;
     private int numYTiles;
-    private int tilePixelWidth;
-    private int tilePixelHeight;
     private MapActor[][] mapActorList;
     private int[][] mapSteps;
-    private Texture mapTexture;
-    private Texture playerTexture;
     private PlayerActor playerActor;
 
     public GameScreen(final MyGame game) {
@@ -46,17 +42,15 @@ public class GameScreen implements Screen {
         camera = new OrthographicCamera();
         tiledMap = new TmxMapLoader().load("MainMap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-        mapTexture = new Texture(Gdx.files.internal("blacktile.png"));
-        playerTexture = new Texture(Gdx.files.internal("playerSprite.png"));
 
         // Get dimensions for the tiledMap
         MapProperties prop = tiledMap.getProperties();
         numXTiles = prop.get("width", Integer.class);
         numYTiles = prop.get("height", Integer.class);
-        tilePixelWidth = prop.get("tilewidth", Integer.class);
-        tilePixelHeight = prop.get("tileheight", Integer.class);
-        mapPixelWidth = numXTiles * tilePixelWidth;
-        mapPixelHeight = numYTiles * tilePixelHeight;
+        Parameters.tilePixelWidth = prop.get("tilewidth", Integer.class);
+        Parameters.tilePixelHeight = prop.get("tileheight", Integer.class);
+        mapPixelWidth = numXTiles * Parameters.tilePixelWidth;
+        mapPixelHeight = numYTiles * Parameters.tilePixelHeight;
 
         // Initialize mapSteps
         mapSteps = new int[numXTiles][numYTiles];
@@ -65,9 +59,13 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         tiledMap.dispose();
-        mapTexture.dispose();
-        playerTexture.dispose();
         playerActor.dispose();
+        for (int j = 0; j < numYTiles; j++) {
+            for (int i = 0; i < numXTiles; i++) {
+                mapActorList[i][j].dispose();
+            }
+        }
+
         stage.dispose();
     }
 
@@ -133,7 +131,7 @@ public class GameScreen implements Screen {
 
         for (int j = 0; j < numYTiles; j++) {
             for (int i = 0; i < numXTiles; i++) {
-                mapActorList[i][j] = new MapActor(i, j, tilePixelWidth, tilePixelHeight, mapTexture);
+                mapActorList[i][j] = new MapActor(i, j);
                 stage.addActor(mapActorList[i][j]);
             }
         }
@@ -167,7 +165,7 @@ public class GameScreen implements Screen {
                 break;
         }
 
-        playerActor = new PlayerActor(x, y, tilePixelWidth, tilePixelHeight);
+        playerActor = new PlayerActor(x, y);
         stage.addActor(playerActor);
     }
 
