@@ -1,4 +1,4 @@
-package com.xombified23.pandagame.desktop;
+package com.xombified23.pandagame;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -17,16 +17,12 @@ public class MonsterActor extends Actor {
         xTile = x;
         yTile = y;
         monsterTexture = new Texture(Gdx.files.internal("playerSprite.PNG"));
-        setBounds(xTile * Parameters.tilePixelWidth, yTile * Parameters.tilePixelHeight, Parameters.tilePixelWidth,
+        setBounds(x * Parameters.tilePixelWidth, y * Parameters.tilePixelHeight, Parameters.tilePixelWidth,
                 Parameters.tilePixelHeight);
     }
 
-    public void dispose() {
-        monsterTexture.dispose();
-    }
-
     @Override
-    public void draw(Batch batch, float parentAlpha) {
+    public void draw (Batch batch, float parentAlpha) {
         batch.draw(monsterTexture, getX(), getY());
     }
 }

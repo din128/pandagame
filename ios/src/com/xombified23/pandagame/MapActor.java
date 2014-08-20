@@ -1,4 +1,4 @@
-package com.xombified23.pandagame.desktop;
+package com.xombified23.pandagame;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -17,14 +17,12 @@ public class MapActor extends Actor {
     private boolean isRevealed;
     private float transparencyLvl;
     private float fadeSpeed;
-    private boolean containsMonster;
 
     public MapActor(int x, int y) {
         xTile = x;
         yTile = y;
         this.mapTexture = mapTexture;
         isRevealed = false;
-        containsMonster = false;
         transparencyLvl = 0.5f;
         fadeSpeed = 1.5f;
         mapTexture = new Texture(Gdx.files.internal("blacktile.png"));
@@ -67,13 +65,5 @@ public class MapActor extends Actor {
 
     public void setRevealed(boolean revealed) {
         isRevealed = revealed;
-    }
-
-    public void setContainsMonster(boolean contains) {
-        containsMonster = contains;
-    }
-
-    public boolean itContainsMonster() {
-        return containsMonster;
     }
 }

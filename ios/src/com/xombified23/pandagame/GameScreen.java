@@ -1,4 +1,4 @@
-package com.xombified23.pandagame.desktop;
+package com.xombified23.pandagame;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -20,8 +20,6 @@ import java.util.Random;
 
 public class GameScreen implements Screen {
     private final MyGame game;
-    private final int NUM_MONSTERS = 5;
-
     private Stage stage;
     private OrthographicCamera camera;
     private TiledMap tiledMap;
@@ -105,8 +103,6 @@ public class GameScreen implements Screen {
         // Inflate rest of Actors
         createMapActors();
         spawnPlayer();
-        revealAround();
-        spawnMonsters(NUM_MONSTERS);
 
         // Add Stage Touch
         addStageTouch();
@@ -127,7 +123,7 @@ public class GameScreen implements Screen {
      */
     private void createMapActors() {
         if (numXTiles == 0 || numYTiles == 0) {
-            throw new Error();
+            throw new EmptyStackException();
         }
 
         mapActorList = new MapActor[numXTiles][numYTiles];
@@ -138,34 +134,6 @@ public class GameScreen implements Screen {
                 stage.addActor(mapActorList[i][j]);
             }
         }
-    }
-
-    /**
-     * Spawn monsters
-     */
-    private void spawnMonsters(int numMonsters) {
-        if (numMonsters > (numXTiles * numYTiles)) {
-            throw new Error();
-        }
-
-        Random rand = new Random();
-        int xTile;
-        int yTile;
-        int count = 0;
-
-        while (count < numMonsters) {
-            xTile = rand.nextInt(numXTiles);
-            yTile = rand.nextInt(numYTiles);
-
-            if (!mapActorList[xTile][yTile].isRevealed() && !mapActorList[xTile][yTile].itContainsMonster()) {
-                MonsterActor monsterActor = new MonsterActor(xTile, yTile);
-                mapActorList[xTile][yTile].setContainsMonster(true);
-                stage.addActor(monsterActor);
-                count++;
-            }
-
-        }
-
     }
 
     /**
