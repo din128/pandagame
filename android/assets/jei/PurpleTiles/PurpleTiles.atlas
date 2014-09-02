@@ -1,0 +1,36 @@
+
+PurpleTiles.png
+format: RGB565
+filter: Nearest,Nearest
+repeat: none
+Single_clean
+  rotate: false
+  xy: 1, 1
+  size: 851, 851
+  orig: 851, 851
+  offset: 0, 0
+  index: -1
+
+PurpleTiles2.png
+format: RGB565
+filter: Nearest,Nearest
+repeat: none
+Single_flatjpg
+  rotate: false
+  xy: 1, 1
+  size: 851, 851
+  orig: 851, 851
+  offset: 0, 0
+  index: -1
+
+PurpleTiles3.png
+format: RGB565
+filter: Nearest,Nearest
+repeat: none
+Single_rugged
+  rotate: false
+  xy: 1, 1
+  size: 851, 851
+  orig: 851, 851
+  offset: 0, 0
+  index: -1
