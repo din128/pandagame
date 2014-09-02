@@ -3,7 +3,10 @@ package com.xombified23.pandagame.desktop;
 /**
  * Created by Xombified on 8/9/2014.
  */
-public class Parameters {
-    public static int tilePixelWidth;
-    public static int tilePixelHeight;
+public final class Parameters {
+    public final static int NUM_X_TILES = 6;
+    public final static int NUM_Y_TILES = 7;
+    public final static int TILE_PIXEL_WIDTH = 216;
+    public final static int TILE_PIXEL_HEIGHT = 216;
+    public final static int NUM_MONSTERS = 5;
 }

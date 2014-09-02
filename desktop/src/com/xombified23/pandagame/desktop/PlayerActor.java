@@ -40,8 +40,8 @@ public class PlayerActor extends Actor {
         yTile = y;
         moveSpeed = 0.2f;
         playerStatus = PlayerStatus.STANDING;
-        setBounds(xTile * Parameters.tilePixelWidth, yTile * Parameters.tilePixelHeight, Parameters.tilePixelWidth,
-                Parameters.tilePixelHeight);
+        setBounds(xTile * Parameters.TILE_PIXEL_WIDTH, yTile * Parameters.TILE_PIXEL_HEIGHT, Parameters.TILE_PIXEL_WIDTH,
+                Parameters.TILE_PIXEL_HEIGHT);
         textureAtlas = new TextureAtlas(Gdx.files.internal("hero/heropack.atlas"));
         createAnimations(textureAtlas);
     }
@@ -53,30 +53,38 @@ public class PlayerActor extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         // TODO: Hard coded sprite size and position for testing. Need to fix with new assets
+        int sizeX = 160;
+        int sizeY = 350;
+
         elapsedTime += Gdx.graphics.getDeltaTime();
         switch (playerStatus) {
             case STANDING:
-                batch.draw(textureAtlas.findRegion("slice10"), getX() + 8, getY(), 16, 35);
+                batch.draw(textureAtlas.findRegion("slice10"), getX(), getY(), sizeX,
+                        sizeY);
                 break;
 
             case MOVINGDOWN:
-                batch.draw(moveDownAnim.getKeyFrame(elapsedTime, true), getX() + 8, getY(), 16, 35);
+                batch.draw(moveDownAnim.getKeyFrame(elapsedTime, true), getX(),
+                        getY(), sizeX, sizeY);
                 break;
 
             case MOVINGLEFT:
-                batch.draw(moveLeftAnim.getKeyFrame(elapsedTime, true), getX() + 8, getY(), 16, 35);
+                batch.draw(moveLeftAnim.getKeyFrame(elapsedTime, true), getX(),
+                        getY(), sizeX, sizeY);
                 break;
 
             case MOVINGRIGHT:
-                batch.draw(moveRightAnim.getKeyFrame(elapsedTime, true), getX() + 8, getY(), 16, 35);
+                batch.draw(moveRightAnim.getKeyFrame(elapsedTime, true), getX(),
+                        getY(), sizeX, sizeY);
                 break;
 
             case MOVINGUP:
-                batch.draw(moveUpAnim.getKeyFrame(elapsedTime, true), getX() + 8, getY(), 16, 35);
+                batch.draw(moveUpAnim.getKeyFrame(elapsedTime, true), getX(),
+                        getY(), sizeX, sizeY);
                 break;
 
             default:
-                batch.draw(textureAtlas.findRegion("slice10"), getX() + 8, getY(), 16, 35);
+                batch.draw(textureAtlas.findRegion("slice10"), getX(), getY(), sizeX, sizeY);
         }
     }
 
@@ -129,8 +137,8 @@ public class PlayerActor extends Actor {
             queueMoves.add(nextMoveStatus);
 
             // Add one action at a time for smooth walking
-            sequenceAction.addAction(parallel(moveTo(nextXTile * Parameters.tilePixelWidth,
-                    nextYTile * Parameters.tilePixelHeight,
+            sequenceAction.addAction(parallel(moveTo(nextXTile * Parameters.TILE_PIXEL_WIDTH,
+                    nextYTile * Parameters.TILE_PIXEL_HEIGHT,
                     moveSpeed), run(new Runnable() {
                 @Override
                 public void run() {
