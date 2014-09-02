@@ -22,7 +22,6 @@ public class MainTileActor extends Actor {
     public MainTileActor(int x, int y) {
         xTile = x;
         yTile = y;
-        this.mapTexture = mapTexture;
         isRevealed = false;
         containsMonster = false;
         transparencyLvl = 0.5f;

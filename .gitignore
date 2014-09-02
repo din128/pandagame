@@ -65,3 +65,12 @@ build/
 *.MF
 *.MF
 android/META-INF/MANIFEST.MF
+HOW_TO_DEPLOY.txt
+android/android.eml
+android/assets/jei/playerSprite.png
+core/core.eml
+desktop/desktop.eml
+html/html.eml
+ios/ios.eml
+pandagame.eml
+pandagame.userlibraries

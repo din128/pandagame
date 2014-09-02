@@ -105,7 +105,6 @@ public class GameScreen implements Screen {
         createMainTilesActors();
         spawnPlayer();
         spawnMonsters(Parameters.NUM_MONSTERS);
-        revealAround();
 
         // Add Stage Touch
         addStageTouch();

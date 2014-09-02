@@ -23,7 +23,7 @@ public class MonsterActor extends Actor {
         this.xTile = xTile;
         this.yTile = yTile;
 
-        monsterTexture = new Texture(Gdx.files.internal("playerSprite.PNG"));
+        monsterTexture = new Texture(Gdx.files.internal("playerSprite.png"));
         setBounds(xTile * Parameters.TILE_PIXEL_WIDTH, yTile * Parameters.TILE_PIXEL_HEIGHT, Parameters.TILE_PIXEL_WIDTH,
                 Parameters.TILE_PIXEL_HEIGHT);
     }
