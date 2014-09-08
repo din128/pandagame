@@ -18,15 +18,13 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  * Created by Xombified on 7/27/2014.
  */
 public class PlayerActor extends Actor {
-    public int xTile;
-    public int yTile;
-    public int destXTile;
-    public int destYTile;
-    public PlayerStatus playerStatus;
-    public Animation moveUpAnim;
-    public Animation moveDownAnim;
-    public Animation moveLeftAnim;
-    public Animation moveRightAnim;
+    private int xTile;
+    private int yTile;
+    private PlayerStatus playerStatus;
+    private Animation moveUpAnim;
+    private Animation moveDownAnim;
+    private Animation moveLeftAnim;
+    private Animation moveRightAnim;
     private TextureAtlas textureAtlas;
     private float moveSpeed;
     private PlayerStatus nextMoveStatus = null;
@@ -89,8 +87,6 @@ public class PlayerActor extends Actor {
     }
 
     public void moveCoord(int[][] mapSteps, int destXTile, int destYTile, int numXTiles, int numYTiles) {
-        this.destXTile = destXTile;
-        this.destYTile = destYTile;
         int nextXTile = 999;
         int nextYTile = 999;
         int count = 999;
@@ -203,5 +199,20 @@ public class PlayerActor extends Actor {
         STANDING, MOVINGLEFT, MOVINGRIGHT, MOVINGUP, MOVINGDOWN
     }
 
+    public int getXTile() {
+        return xTile;
+    }
+
+    public int getYTile() {
+        return yTile;
+    }
+
+    public PlayerStatus getPlayerStatus() {
+        return playerStatus;
+    }
+
+    public void setPlayerStatus(PlayerStatus newPlayerStatus) {
+        playerStatus = newPlayerStatus;
+    }
 
 }

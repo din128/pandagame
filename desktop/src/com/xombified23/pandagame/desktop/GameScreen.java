@@ -83,7 +83,7 @@ public class GameScreen implements Screen {
             revealAround();
         }
 
-        // fpsLogger.log();
+        fpsLogger.log();
     }
 
     @Override
@@ -256,12 +256,15 @@ public class GameScreen implements Screen {
                         }
 
                     } else if (currActor instanceof MonsterActor) {
-                        if (mainTileActorMap[((MonsterActor) currActor).getXTile()][((MonsterActor) currActor).getYTile()
-                                ].isRevealed()) {
-                            mainTileActorMap[((MonsterActor) currActor).getXTile()][((MonsterActor) currActor).getYTile()
-                                    ].setContainsMonster(false);
+                        int currX = ((MonsterActor) currActor).getXTile();
+                        int currY = ((MonsterActor) currActor).getYTile();
+
+                        if (mainTileActorMap[currX][currY].isRevealed()
+                                && Math.abs(playerActor.getXTile() - currX) <= 1
+                                && Math.abs(playerActor.getYTile() - currY) <= 1
+                                && playerActor.getPlayerStatus() == PlayerActor.PlayerStatus.STANDING) {
+                            mainTileActorMap[currX][currY].setContainsMonster(false);
                             currActor.remove();
-      
                         }
 
                     } else {
@@ -278,10 +281,10 @@ public class GameScreen implements Screen {
      * Reveal around the player
      */
     private void revealAround() {
-        int pX = playerActor.xTile;
-        int pY = playerActor.yTile;
+        int pX = playerActor.getXTile();
+        int pY = playerActor.getYTile();
 
-        playerActor.playerStatus = PlayerActor.PlayerStatus.STANDING;
+        playerActor.setPlayerStatus(PlayerActor.PlayerStatus.STANDING);
 
         // Reveal tiles with the player
         mainTileActorMap[pX][pY].setRevealed(true);
@@ -328,7 +331,7 @@ public class GameScreen implements Screen {
                 Point currPos = queue.poll();
 
                 // If path is found, pass the mapSteps to let PlayerActor animate
-                if (currPos.x == playerActor.xTile && currPos.y == playerActor.yTile) {
+                if (currPos.x == playerActor.getXTile() && currPos.y == playerActor.getYTile()) {
                     playerActor.moveCoord(mapSteps, destXTile, destYTile, Parameters.NUM_X_TILES, Parameters.NUM_Y_TILES);
                     break;
                 }
