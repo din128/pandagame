@@ -20,6 +20,7 @@ public class MonsterActor extends Actor {
         if (mainTileActorMap == null)
             throw new Error();
 
+        this.mainTileActorMap = mainTileActorMap;
         this.xTile = xTile;
         this.yTile = yTile;
 
@@ -34,7 +35,7 @@ public class MonsterActor extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        if (isRevealed) {
+        if (mainTileActorMap[xTile][yTile].isRevealed()) {
             batch.draw(monsterTexture, getX(), getY(), monsterTexture.getWidth() * 5, monsterTexture.getHeight() * 5);
         }
     }
@@ -45,5 +46,13 @@ public class MonsterActor extends Actor {
 
     public void setRevealed(boolean revealed) {
         isRevealed = revealed;
+    }
+
+    public int getXTile() {
+        return xTile;
+    }
+
+    public int getYTile() {
+        return yTile;
     }
 }

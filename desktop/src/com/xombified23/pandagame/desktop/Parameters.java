@@ -8,5 +8,5 @@ public final class Parameters {
     public final static int NUM_Y_TILES = 7;
     public final static int TILE_PIXEL_WIDTH = 216;
     public final static int TILE_PIXEL_HEIGHT = 216;
-    public final static int NUM_MONSTERS = 5;
+    public final static int NUM_MONSTERS = 39;
 }

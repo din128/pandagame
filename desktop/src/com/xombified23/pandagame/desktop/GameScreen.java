@@ -2,6 +2,7 @@ package com.xombified23.pandagame.desktop;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -26,6 +27,7 @@ public class GameScreen implements Screen {
     private int[][] mapSteps;
     private PlayerActor playerActor;
     private TextureAtlas floorAtlas;
+    private FPSLogger fpsLogger;
 
     //private TiledMap tiledMap;
     //private TiledMapRenderer tiledMapRenderer;
@@ -36,6 +38,7 @@ public class GameScreen implements Screen {
 
         // Create New Objects
         stage = new Stage();
+        fpsLogger = new FPSLogger();
         camera = new OrthographicCamera();
         // tiledMap = new TmxMapLoader().load("MainMap.tmx");
         // tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
@@ -76,7 +79,11 @@ public class GameScreen implements Screen {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
 
-        revealAround();
+        if (playerActor.getActions().size == 0) {
+            revealAround();
+        }
+
+        // fpsLogger.log();
     }
 
     @Override
@@ -104,6 +111,7 @@ public class GameScreen implements Screen {
         createFloorTilesActors();
         createMainTilesActors();
         spawnPlayer();
+        revealAround();
         spawnMonsters(Parameters.NUM_MONSTERS);
 
         // Add Stage Touch
@@ -177,7 +185,7 @@ public class GameScreen implements Screen {
      * Spawn monsters
      */
     private void spawnMonsters(int numMonsters) {
-        if (numMonsters > (Parameters.NUM_X_TILES * Parameters.NUM_Y_TILES)) {
+        if (numMonsters > (Parameters.NUM_X_TILES * Parameters.NUM_Y_TILES - 3)) {
             throw new Error();
         }
 
@@ -192,6 +200,7 @@ public class GameScreen implements Screen {
             yTile = rand.nextInt(Parameters.NUM_Y_TILES);
 
             if (!mainTileActorMap[xTile][yTile].isRevealed() && !mainTileActorMap[xTile][yTile].itContainsMonster()) {
+
                 monsterActorMap[xTile][yTile] = new MonsterActor(xTile, yTile, mainTileActorMap);
                 mainTileActorMap[xTile][yTile].setContainsMonster(true);
                 stage.addActor(monsterActorMap[xTile][yTile]);
@@ -243,11 +252,21 @@ public class GameScreen implements Screen {
                     if (currActor instanceof MainTileActor) {
                         System.out.println("MapActor clicked");
                         if (((MainTileActor) currActor).isRevealed()) {
-                            movePlayer(((MainTileActor) currActor).xTile, ((MainTileActor) currActor).yTile);
+                            movePlayer(((MainTileActor) currActor).getXTile(), ((MainTileActor) currActor).getYTile());
                         }
+
+                    } else if (currActor instanceof MonsterActor) {
+                        if (mainTileActorMap[((MonsterActor) currActor).getXTile()][((MonsterActor) currActor).getYTile()
+                                ].isRevealed()) {
+                            mainTileActorMap[((MonsterActor) currActor).getXTile()][((MonsterActor) currActor).getYTile()
+                                    ].setContainsMonster(false);
+                            currActor.remove();
+      
+                        }
+
                     } else {
                         // TODO: Abilities?
-                        System.out.println("PlayerActor clicked");
+                        System.out.println("Nothing clicked");
                     }
                 }
                 return true;
@@ -259,42 +278,25 @@ public class GameScreen implements Screen {
      * Reveal around the player
      */
     private void revealAround() {
-        if (playerActor.getActions().size == 0) {
-            int pX = playerActor.xTile;
-            int pY = playerActor.yTile;
+        int pX = playerActor.xTile;
+        int pY = playerActor.yTile;
 
-            playerActor.playerStatus = PlayerActor.PlayerStatus.STANDING;
+        playerActor.playerStatus = PlayerActor.PlayerStatus.STANDING;
 
-            // Reveal tiles with the player
-            mainTileActorMap[pX][pY].setRevealed(true);
-            if (pX - 1 >= 0) {
-                mainTileActorMap[pX - 1][pY].setRevealed(true);
+        // Reveal tiles with the player
+        mainTileActorMap[pX][pY].setRevealed(true);
 
-                if (monsterActorMap[pX - 1][pY] != null) {
-                    monsterActorMap[pX - 1][pY].setRevealed(true);
-                }
-            }
-            if (pY - 1 >= 0) {
-                mainTileActorMap[pX][pY - 1].setRevealed(true);
-
-                if (monsterActorMap[pX][pY - 1] != null) {
-                    monsterActorMap[pX][pY - 1].setRevealed(true);
-                }
-            }
-            if (pX + 1 < Parameters.NUM_X_TILES) {
-                mainTileActorMap[pX + 1][pY].setRevealed(true);
-
-                if (monsterActorMap[pX + 1][pY] != null) {
-                    monsterActorMap[pX + 1][pY].setRevealed(true);
-                }
-            }
-            if (pY + 1 < Parameters.NUM_Y_TILES) {
-                mainTileActorMap[pX][pY + 1].setRevealed(true);
-
-                if (monsterActorMap[pX][pY + 1] != null) {
-                    monsterActorMap[pX][pY + 1].setRevealed(true);
-                }
-            }
+        if (pX - 1 >= 0) {
+            mainTileActorMap[pX - 1][pY].setRevealed(true);
+        }
+        if (pY - 1 >= 0) {
+            mainTileActorMap[pX][pY - 1].setRevealed(true);
+        }
+        if (pX + 1 < Parameters.NUM_X_TILES) {
+            mainTileActorMap[pX + 1][pY].setRevealed(true);
+        }
+        if (pY + 1 < Parameters.NUM_Y_TILES) {
+            mainTileActorMap[pX][pY + 1].setRevealed(true);
         }
     }
 

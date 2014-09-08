@@ -10,9 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
  * Created by Xombified on 7/27/2014.
  */
 public class MainTileActor extends Actor {
-    public int xTile;
-    public int yTile;
-
+    private int xTile;
+    private int yTile;
     private Texture mapTexture;
     private boolean isRevealed;
     private float transparencyLvl;
@@ -68,11 +67,19 @@ public class MainTileActor extends Actor {
         isRevealed = revealed;
     }
 
+    public boolean itContainsMonster() {
+        return containsMonster;
+    }
+
     public void setContainsMonster(boolean contains) {
         containsMonster = contains;
     }
 
-    public boolean itContainsMonster() {
-        return containsMonster;
+    public int getXTile() {
+        return xTile;
+    }
+
+    public int getYTile() {
+        return yTile;
     }
 }
