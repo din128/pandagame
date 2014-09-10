@@ -13,9 +13,8 @@ import java.util.Queue;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
-
 /**
- * Created by Xombified on 7/27/2014.
+ *  Created by Xombified on 7/27/2014.
  */
 public class PlayerActor extends Actor {
     private int xTile;
@@ -27,25 +26,23 @@ public class PlayerActor extends Actor {
     private Animation moveRightAnim;
     private TextureAtlas textureAtlas;
     private float moveSpeed;
-    private PlayerStatus nextMoveStatus = null;
-    // TODO TEST
-    private Queue queueMoves = new LinkedList();
+    private PlayerStatus nextMoveStatus;
+    private Queue<PlayerStatus> queueMoves;
+    private float elapsedTime;
 
-    private float elapsedTime = 0;
-
-    public PlayerActor(int x, int y) {
+    public PlayerActor(int x, int y, TextureAtlas textureAtlas) {
         xTile = x;
         yTile = y;
+        nextMoveStatus = null;
+        elapsedTime = 0;
+        queueMoves = new LinkedList<PlayerStatus>();
+        this.textureAtlas = textureAtlas;
+
         moveSpeed = 0.2f;
         playerStatus = PlayerStatus.STANDING;
         setBounds(xTile * Parameters.TILE_PIXEL_WIDTH, yTile * Parameters.TILE_PIXEL_HEIGHT, Parameters.TILE_PIXEL_WIDTH,
                 Parameters.TILE_PIXEL_HEIGHT);
-        textureAtlas = new TextureAtlas(Gdx.files.internal("hero/heropack.atlas"));
         createAnimations(textureAtlas);
-    }
-
-    public void dispose() {
-        textureAtlas.dispose();
     }
 
     @Override
@@ -86,7 +83,7 @@ public class PlayerActor extends Actor {
         }
     }
 
-    public void moveCoord(int[][] mapSteps, int destXTile, int destYTile, int numXTiles, int numYTiles) {
+    public void moveCoord(int[][] mapSteps, int destXTile, int destYTile) {
         int nextXTile = 999;
         int nextYTile = 999;
         int count = 999;
@@ -103,7 +100,7 @@ public class PlayerActor extends Actor {
                 }
             }
 
-            if (xTile + 1 < numXTiles) {
+            if (xTile + 1 < Parameters.NUM_X_TILES) {
                 if (count > mapSteps[xTile + 1][yTile] && mapSteps[xTile + 1][yTile] >= 0) {
                     count = mapSteps[xTile + 1][yTile];
                     nextXTile = xTile + 1;
@@ -121,7 +118,7 @@ public class PlayerActor extends Actor {
                 }
             }
 
-            if (yTile + 1 < numYTiles) {
+            if (yTile + 1 < Parameters.NUM_Y_TILES) {
                 if (count > mapSteps[xTile][yTile + 1] && mapSteps[xTile][yTile + 1] >= 0) {
                     count = mapSteps[xTile][yTile + 1];
                     nextXTile = xTile;
@@ -138,7 +135,7 @@ public class PlayerActor extends Actor {
                     moveSpeed), run(new Runnable() {
                 @Override
                 public void run() {
-                    PlayerStatus nextMove = (PlayerStatus) queueMoves.poll();
+                    PlayerStatus nextMove = queueMoves.poll();
                     switch (nextMove) {
                         case MOVINGDOWN:
                             playerStatus = PlayerStatus.MOVINGDOWN;
@@ -195,10 +192,6 @@ public class PlayerActor extends Actor {
         moveRightAnim = new Animation(moveSpeed, moveRight);
     }
 
-    public enum PlayerStatus {
-        STANDING, MOVINGLEFT, MOVINGRIGHT, MOVINGUP, MOVINGDOWN
-    }
-
     public int getXTile() {
         return xTile;
     }
@@ -213,6 +206,10 @@ public class PlayerActor extends Actor {
 
     public void setPlayerStatus(PlayerStatus newPlayerStatus) {
         playerStatus = newPlayerStatus;
+    }
+
+    public enum PlayerStatus {
+        STANDING, MOVINGLEFT, MOVINGRIGHT, MOVINGUP, MOVINGDOWN
     }
 
 }

@@ -4,80 +4,78 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
 
 public class GameScreen implements Screen {
-    private final MyGame game;
+    // General
+    // private final MyGame game;
     private Stage stage;
     private OrthographicCamera camera;
-    private int mapPixelWidth;
-    private int mapPixelHeight;
+
+    // Actors
     private MainTileActor[][] mainTileActorMap;
     private FloorActor[][] floorActorMap;
     private MonsterActor[][] monsterActorMap;
-    private int[][] mapSteps;
     private PlayerActor playerActor;
-    private TextureAtlas floorAtlas;
-    private FPSLogger fpsLogger;
+    private BackgroundActor backgroundActor;
 
-    //private TiledMap tiledMap;
-    //private TiledMapRenderer tiledMapRenderer;
+    // Textures
+    private TextureAtlas floorAtlas;
+    private TextureAtlas playerAtlas;
+    private Texture backTexture;
+    private Texture fogTexture;
+    private Texture monsterTexture;
+
+    // Others
+    private FPSLogger fpsLogger;
+    // private Table UImainTable;
+    private Group gameAreaGroup;
+
+    // Double array to handle shortest path
+    private int[][] mapSteps;
 
     public GameScreen(final MyGame game) {
         // Assign Game and SpriteBatch object
-        this.game = game;
+        // this.game = game;
 
-        // Create New Objects
+        // Instantiate New Objects
+        gameAreaGroup = new Group();
+        // UImainTable = new Table();
         stage = new Stage();
         fpsLogger = new FPSLogger();
         camera = new OrthographicCamera();
-        // tiledMap = new TmxMapLoader().load("MainMap.tmx");
-        // tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         floorAtlas = new TextureAtlas(Gdx.files.internal("jei/PurpleTiles/PurpleTiles.atlas"));
-
-        // Get dimensions for the tiledMap
-        // MapProperties prop = tiledMap.getProperties();
-        //Parameters.NUM_X_TILES = 216;
-        //Parameters.NUM_Y_TILES = prop.get("height", Integer.class);
-        //Parameters.TILE_PIXEL_WIDTH = prop.get("tilewidth", Integer.class);
-        //Parameters.TILE_PIXEL_HEIGHT = prop.get("tileheight", Integer.class);
-        mapPixelWidth = Parameters.NUM_X_TILES * Parameters.TILE_PIXEL_WIDTH;
-        mapPixelHeight = Parameters.NUM_Y_TILES * Parameters.TILE_PIXEL_HEIGHT;
-
-        // Initialize mapSteps
+        playerAtlas = new TextureAtlas(Gdx.files.internal("hero/heropack.atlas"));
+        fogTexture = new Texture(Gdx.files.internal("blacktile.png"));
+        backTexture = new Texture(Gdx.files.internal("background.png"));
+        monsterTexture = new Texture(Gdx.files.internal("playerSprite.png"));
         mapSteps = new int[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
     }
 
     @Override
     public void dispose() {
-        // tiledMap.dispose();
-        playerActor.dispose();
+        backTexture.dispose();
+        playerAtlas.dispose();
         floorAtlas.dispose();
-        for (int j = 0; j < Parameters.NUM_Y_TILES; j++) {
-            for (int i = 0; i < Parameters.NUM_X_TILES; i++) {
-                mainTileActorMap[i][j].dispose();
-            }
-        }
-
+        fogTexture.dispose();
+        monsterTexture.dispose();
         stage.dispose();
     }
 
     @Override
     public void render(float delta) {
         camera.update();
-        //tiledMapRenderer.setView(camera);
-        //tiledMapRenderer.render();
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
+        Table.drawDebug(stage);
 
         if (playerActor.getActions().size == 0) {
             revealAround();
@@ -88,9 +86,10 @@ public class GameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        // TODO: Temporally zoom in to the map
+        // TODO: Temporally zoom in to the map for Desktop testing. Remove this for Android/iOS
         camera.viewportWidth = width * 3;
         camera.viewportHeight = height * 3;
+        camera.position.set(width / 2f, height / 2f, 0);
     }
 
     @Override
@@ -101,21 +100,34 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
         // Setup camera to align Stage with Tiled Map
-        camera.position.set(mapPixelWidth / 2, mapPixelHeight / 2, 0);
         stage.getViewport().setCamera(camera);
 
         // Add input interface to the Stage
         Gdx.input.setInputProcessor(stage);
 
+        backgroundActor = new BackgroundActor(backTexture);
+        gameAreaGroup.addActor(backgroundActor);
+
+        // Setup Table to hold UI
+        // table.setFillParent(true);
+        // table.top();
+        // table.debug();
+        // stage.addActor(table);
+
         // Inflate rest of Actors
         createFloorTilesActors();
         createMainTilesActors();
+
+        // table.add(group);
         spawnPlayer();
         revealAround();
         spawnMonsters(Parameters.NUM_MONSTERS);
 
         // Add Stage Touch
         addStageTouch();
+
+        // Add the group of actors to the stage
+        stage.addActor(gameAreaGroup);
     }
 
     @Override
@@ -132,16 +144,13 @@ public class GameScreen implements Screen {
      * Create Actors for Tiled Map
      */
     private void createMainTilesActors() {
-        if (Parameters.NUM_X_TILES == 0 || Parameters.NUM_Y_TILES == 0) {
-            throw new Error();
-        }
-
         mainTileActorMap = new MainTileActor[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
 
         for (int j = 0; j < Parameters.NUM_Y_TILES; j++) {
             for (int i = 0; i < Parameters.NUM_X_TILES; i++) {
-                mainTileActorMap[i][j] = new MainTileActor(i, j);
-                stage.addActor(mainTileActorMap[i][j]);
+                mainTileActorMap[i][j] = new MainTileActor(i, j, fogTexture);
+                // stage.addActor(mainTileActorMap[i][j]);
+                gameAreaGroup.addActor(mainTileActorMap[i][j]);
             }
         }
     }
@@ -150,7 +159,7 @@ public class GameScreen implements Screen {
      * Create Floor UI Tiles and store them in an array
      */
     private void createFloorTilesActors() {
-        if (Parameters.NUM_X_TILES == 0 || Parameters.NUM_Y_TILES == 0 || floorAtlas == null) {
+        if (floorAtlas == null) {
             throw new Error();
         }
 
@@ -176,7 +185,10 @@ public class GameScreen implements Screen {
                 }
 
                 floorActorMap[i][j] = new FloorActor(i, j, floorTile);
-                stage.addActor(floorActorMap[i][j]);
+                // stage.addActor(floorActorMap[i][j]);
+
+                // backgroundActor.addActor(floorActorMap[i][j]);
+                gameAreaGroup.addActor(floorActorMap[i][j]);
             }
         }
     }
@@ -185,6 +197,7 @@ public class GameScreen implements Screen {
      * Spawn monsters
      */
     private void spawnMonsters(int numMonsters) {
+        // TODO: Default right now, is revealing three spaces at start; it may change
         if (numMonsters > (Parameters.NUM_X_TILES * Parameters.NUM_Y_TILES - 3)) {
             throw new Error();
         }
@@ -201,9 +214,10 @@ public class GameScreen implements Screen {
 
             if (!mainTileActorMap[xTile][yTile].isRevealed() && !mainTileActorMap[xTile][yTile].itContainsMonster()) {
 
-                monsterActorMap[xTile][yTile] = new MonsterActor(xTile, yTile, mainTileActorMap);
+                monsterActorMap[xTile][yTile] = new MonsterActor(xTile, yTile, monsterTexture, mainTileActorMap);
                 mainTileActorMap[xTile][yTile].setContainsMonster(true);
-                stage.addActor(monsterActorMap[xTile][yTile]);
+                // stage.addActor(monsterActorMap[xTile][yTile]);
+                gameAreaGroup.addActor(monsterActorMap[xTile][yTile]);
                 count++;
             }
         }
@@ -237,8 +251,9 @@ public class GameScreen implements Screen {
                 break;
         }
 
-        playerActor = new PlayerActor(x, y);
-        stage.addActor(playerActor);
+        playerActor = new PlayerActor(x, y, playerAtlas);
+        // stage.addActor(playerActor);
+        gameAreaGroup.addActor(playerActor);
     }
 
     /**
@@ -252,10 +267,13 @@ public class GameScreen implements Screen {
                     if (currActor instanceof MainTileActor) {
                         System.out.println("MapActor clicked");
                         if (((MainTileActor) currActor).isRevealed()) {
-                            movePlayer(((MainTileActor) currActor).getXTile(), ((MainTileActor) currActor).getYTile());
+                            if (playerActor.getActions().size == 0) {
+                                movePlayer(((MainTileActor) currActor).getXTile(), ((MainTileActor) currActor).getYTile());
+                            }
                         }
 
                     } else if (currActor instanceof MonsterActor) {
+                        System.out.println("MonsterActor clicked");
                         int currX = ((MonsterActor) currActor).getXTile();
                         int currY = ((MonsterActor) currActor).getYTile();
 
@@ -303,83 +321,86 @@ public class GameScreen implements Screen {
         }
     }
 
+    /**
+     * Move players algorithm
+     * @param destXTile destination X
+     * @param destYTile destination Y
+     */
     private void movePlayer(int destXTile, int destYTile) {
-        if (playerActor.getActions().size == 0) {
-            class Point {
-                int x;
-                int y;
+        class Point {
+            int x;
+            int y;
+        }
+        int count = 0;
+
+        // Reset mapSteps to check for shortest path
+        for (int j = 0; j < Parameters.NUM_Y_TILES; j++) {
+            for (int i = 0; i < Parameters.NUM_X_TILES; i++) {
+                mapSteps[i][j] = -1;
             }
-            int count = 0;
+        }
 
-            // Reset mapSteps to check for shortest path
-            for (int j = 0; j < Parameters.NUM_Y_TILES; j++) {
-                for (int i = 0; i < Parameters.NUM_X_TILES; i++) {
-                    mapSteps[i][j] = -1;
-                }
+        Queue<Point> queue = new LinkedList<Point>();
+        Point initPos = new Point();
+        initPos.x = destXTile;
+        initPos.y = destYTile;
+        queue.add(initPos);
+
+        // Add first tile weighted as 0. Subsequent tiles away from initial point, will increase "count"
+        mapSteps[initPos.x][initPos.y] = 0;
+
+        while (!queue.isEmpty()) {
+            Point currPos = queue.poll();
+
+            // If path is found, pass the mapSteps to let PlayerActor animate and render
+            if (currPos.x == playerActor.getXTile() && currPos.y == playerActor.getYTile()) {
+                playerActor.moveCoord(mapSteps, destXTile, destYTile);
+                break;
             }
 
-            Queue<Point> queue = new LinkedList<Point>();
-            Point initPos = new Point();
-            initPos.x = destXTile;
-            initPos.y = destYTile;
-            queue.add(initPos);
+            // Add an extra count for each step away from destination
+            ++count;
 
-            // Add first tile weighted as 0. Subsequent tiles away from initial point, will increase "count"
-            mapSteps[initPos.x][initPos.y] = 0;
+            if ((currPos.x - 1 >= 0) && (mainTileActorMap[currPos.x - 1][currPos.y].isRevealed())
+                    && !mainTileActorMap[currPos.x - 1][currPos.y].itContainsMonster()
+                    && (mapSteps[currPos.x - 1][currPos.y] == -1)) {
+                Point newPos = new Point();
+                newPos.x = currPos.x - 1;
+                newPos.y = currPos.y;
+                queue.add(newPos);
+                mapSteps[newPos.x][newPos.y] = count;
+            }
 
-            while (!queue.isEmpty()) {
-                Point currPos = queue.poll();
+            if (currPos.x + 1 < Parameters.NUM_X_TILES && mainTileActorMap[currPos.x + 1][currPos.y].isRevealed()
+                    && !mainTileActorMap[currPos.x + 1][currPos.y].itContainsMonster()
+                    && mapSteps[currPos.x + 1][currPos.y] == -1) {
+                Point newPos = new Point();
+                newPos.x = currPos.x + 1;
+                newPos.y = currPos.y;
+                queue.add(newPos);
+                mapSteps[newPos.x][newPos.y] = count;
+            }
 
-                // If path is found, pass the mapSteps to let PlayerActor animate
-                if (currPos.x == playerActor.getXTile() && currPos.y == playerActor.getYTile()) {
-                    playerActor.moveCoord(mapSteps, destXTile, destYTile, Parameters.NUM_X_TILES, Parameters.NUM_Y_TILES);
-                    break;
-                }
+            if (currPos.y - 1 >= 0 && mainTileActorMap[currPos.x][currPos.y - 1].isRevealed()
+                    && !mainTileActorMap[currPos.x][currPos.y - 1].itContainsMonster()
+                    && mapSteps[currPos.x][currPos.y - 1] == -1) {
+                Point newPos = new Point();
+                newPos.x = currPos.x;
+                newPos.y = currPos.y - 1;
+                queue.add(newPos);
+                mapSteps[newPos.x][newPos.y] = count;
+            }
 
-                // Add an extra count for each step away from destination
-                ++count;
-
-                if ((currPos.x - 1 >= 0) && (mainTileActorMap[currPos.x - 1][currPos.y].isRevealed())
-                        && !mainTileActorMap[currPos.x - 1][currPos.y].itContainsMonster()
-                        && (mapSteps[currPos.x - 1][currPos.y] == -1)) {
-                    Point newPos = new Point();
-                    newPos.x = currPos.x - 1;
-                    newPos.y = currPos.y;
-                    queue.add(newPos);
-                    mapSteps[newPos.x][newPos.y] = count;
-                }
-
-                if (currPos.x + 1 < Parameters.NUM_X_TILES && mainTileActorMap[currPos.x + 1][currPos.y].isRevealed()
-                        && !mainTileActorMap[currPos.x + 1][currPos.y].itContainsMonster()
-                        && mapSteps[currPos.x + 1][currPos.y] == -1) {
-                    Point newPos = new Point();
-                    newPos.x = currPos.x + 1;
-                    newPos.y = currPos.y;
-                    queue.add(newPos);
-                    mapSteps[newPos.x][newPos.y] = count;
-                }
-
-                if (currPos.y - 1 >= 0 && mainTileActorMap[currPos.x][currPos.y - 1].isRevealed()
-                        && !mainTileActorMap[currPos.x][currPos.y - 1].itContainsMonster()
-                        && mapSteps[currPos.x][currPos.y - 1] == -1) {
-                    Point newPos = new Point();
-                    newPos.x = currPos.x;
-                    newPos.y = currPos.y - 1;
-                    queue.add(newPos);
-                    mapSteps[newPos.x][newPos.y] = count;
-                }
-
-                if (currPos.y + 1 < Parameters.NUM_Y_TILES && mainTileActorMap[currPos.x][currPos.y + 1].isRevealed()
-                        && !mainTileActorMap[currPos.x][currPos.y + 1].itContainsMonster()
-                        && mapSteps[currPos.x][currPos.y + 1] == -1) {
-                    Point newPos = new Point();
-                    newPos.x = currPos.x;
-                    newPos.y = currPos.y + 1;
-                    queue.add(newPos);
-                    mapSteps[newPos.x][newPos.y] = count;
-                }
-            } // end of while loop
-        } // end of if
+            if (currPos.y + 1 < Parameters.NUM_Y_TILES && mainTileActorMap[currPos.x][currPos.y + 1].isRevealed()
+                    && !mainTileActorMap[currPos.x][currPos.y + 1].itContainsMonster()
+                    && mapSteps[currPos.x][currPos.y + 1] == -1) {
+                Point newPos = new Point();
+                newPos.x = currPos.x;
+                newPos.y = currPos.y + 1;
+                queue.add(newPos);
+                mapSteps[newPos.x][newPos.y] = count;
+            }
+        } // end of while loop
     }
 }
 

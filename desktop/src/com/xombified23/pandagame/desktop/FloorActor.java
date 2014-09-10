@@ -5,22 +5,17 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 /**
- * Created by Xombified on 9/1/2014.
+ *  Created by Xombified on 9/1/2014.
  */
 public class FloorActor extends Actor {
-    private int xTile;
-    private int yTile;
     private TextureRegion floorTexture;
 
     public FloorActor(int xTile, int yTile, TextureRegion floorTexture) {
-        this.xTile = xTile;
-        this.yTile = yTile;
         this.floorTexture = floorTexture;
 
         setBounds(xTile * Parameters.TILE_PIXEL_WIDTH, yTile * Parameters.TILE_PIXEL_HEIGHT, Parameters.TILE_PIXEL_WIDTH,
                 Parameters.TILE_PIXEL_HEIGHT);
     }
-
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
