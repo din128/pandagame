@@ -36,7 +36,7 @@ public class GameScreen implements Screen {
 
     // Others
     private FPSLogger fpsLogger;
-    // private Table UImainTable;
+    private Table UImainTable;
     private Group gameAreaGroup;
 
     // Double array to handle shortest path
@@ -48,7 +48,7 @@ public class GameScreen implements Screen {
 
         // Instantiate New Objects
         gameAreaGroup = new Group();
-        // UImainTable = new Table();
+        UImainTable = new Table();
         stage = new Stage();
         fpsLogger = new FPSLogger();
         camera = new OrthographicCamera();
@@ -106,13 +106,7 @@ public class GameScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
 
         backgroundActor = new BackgroundActor(backTexture);
-        gameAreaGroup.addActor(backgroundActor);
-
-        // Setup Table to hold UI
-        // table.setFillParent(true);
-        // table.top();
-        // table.debug();
-        // stage.addActor(table);
+        // gameAreaGroup.addActor(backgroundActor);
 
         // Inflate rest of Actors
         createFloorTilesActors();
@@ -127,7 +121,16 @@ public class GameScreen implements Screen {
         addStageTouch();
 
         // Add the group of actors to the stage
-        stage.addActor(gameAreaGroup);
+        // stage.addActor(gameAreaGroup);
+
+        // TODO: Testing
+        UImainTable.debug();
+        UImainTable.setBounds(0, 0, Parameters.SCREEN_WIDTH, Parameters.SCREEN_HEIGHT);
+        UImainTable.add(gameAreaGroup).expand().left().bottom();
+        UImainTable.row();
+        UImainTable.add(new PlayerActor(0, 0, playerAtlas)).expandX().left().height(520);
+        stage.addActor(UImainTable);
+
     }
 
     @Override

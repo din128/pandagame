@@ -13,6 +13,7 @@ public class MonsterActor extends Actor {
     private int yTile;
     private Texture monsterTexture;
 
+    // TODO: USE INTERFACE for MainTileActor
     public MonsterActor(int xTile, int yTile, Texture monsterTexture, MainTileActor[][] mainTileActorMap) {
         if (mainTileActorMap == null)
             throw new Error();
