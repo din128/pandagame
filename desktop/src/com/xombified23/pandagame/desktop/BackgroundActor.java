@@ -1,5 +1,6 @@
 package com.xombified23.pandagame.desktop;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -13,6 +14,7 @@ public class BackgroundActor extends Actor {
     public BackgroundActor(Texture texture) {
         this.texture = texture;
 
+        // TODO: Use Gdx.graphics.getHeight() and getWidth()
         setBounds(0, 0, Parameters.SCREEN_WIDTH, Parameters.SCREEN_HEIGHT);
     }
 

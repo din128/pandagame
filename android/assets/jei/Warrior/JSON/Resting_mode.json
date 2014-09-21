@@ -1,0 +1,39 @@
+{"frames": [
+
+{
+	"filename": "resting0001.png",
+	"frame": {"x":88,"y":2,"w":82,"h":106},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":14,"y":11,"w":82,"h":106},
+	"sourceSize": {"w":128,"h":128},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "resting0002.png",
+	"frame": {"x":2,"y":2,"w":84,"h":108},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":13,"y":9,"w":84,"h":108},
+	"sourceSize": {"w":128,"h":128},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "resting0003.png",
+	"frame": {"x":172,"y":2,"w":82,"h":106},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":14,"y":11,"w":82,"h":106},
+	"sourceSize": {"w":128,"h":128},
+	"pivot": {"x":0.5,"y":0.5}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "Resting.png",
+	"format": "RGBA8888",
+	"size": {"w":256,"h":112},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:b26295d94de77569f56a6e32786d6dfa:402708bd69e423486569ad514a63c29c:152277c6199a598010c2d841dba206b1$"
+}
+}
