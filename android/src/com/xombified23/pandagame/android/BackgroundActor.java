@@ -12,8 +12,6 @@ public class BackgroundActor extends Actor {
 
     public BackgroundActor(Texture texture) {
         this.texture = texture;
-
-        // TODO: Use Gdx.graphics.getHeight() and getWidth()
         setBounds(0, 0, Parameters.SCREEN_WIDTH, Parameters.SCREEN_HEIGHT);
     }
 

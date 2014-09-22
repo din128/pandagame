@@ -42,7 +42,7 @@ public class GameScreen implements Screen {
     // Double array to handle shortest path
     private int[][] mapSteps;
 
-    public GameScreen(final MyGame game) {
+    public GameScreen(final MainGame game) {
         // Assign Game and SpriteBatch object
         // this.game = game;
 
@@ -53,10 +53,10 @@ public class GameScreen implements Screen {
         fpsLogger = new FPSLogger();
         camera = new OrthographicCamera();
         floorAtlas = new TextureAtlas(Gdx.files.internal("jei/PurpleTiles/PurpleTiles.atlas"));
-        playerAtlas = new TextureAtlas(Gdx.files.internal("hero/heropack.atlas"));
-        fogTexture = new Texture(Gdx.files.internal("blacktile.png"));
-        backTexture = new Texture(Gdx.files.internal("background.png"));
-        monsterTexture = new Texture(Gdx.files.internal("playerSprite.png"));
+        playerAtlas = new TextureAtlas(Gdx.files.internal("jei/Warrior/Warrior_all/Atlas/Hero_Atlas.atlas"));
+        fogTexture = new Texture(Gdx.files.internal("others/blacktile.png"));
+        backTexture = new Texture(Gdx.files.internal("others/background.png"));
+        monsterTexture = new Texture(Gdx.files.internal("others/playerSprite.png"));
         mapSteps = new int[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
     }
 
@@ -75,20 +75,22 @@ public class GameScreen implements Screen {
         camera.update();
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
-        Table.drawDebug(stage);
+
+        // This line causes memory leak!
+        // Table.drawDebug(stage);
 
         if (playerActor.getActions().size == 0) {
             revealAround();
         }
 
-        fpsLogger.log();
+        // fpsLogger.log();
     }
 
     @Override
     public void resize(int width, int height) {
-        // TODO: Temporally zoom in to the map for Desktop testing. Remove this for Android/iOS
-        camera.viewportWidth = width * 3;
-        camera.viewportHeight = height * 3;
+        camera.viewportWidth = width;
+        camera.viewportHeight = height;
+
         camera.position.set(width / 2f, height / 2f, 0);
     }
 
@@ -123,12 +125,12 @@ public class GameScreen implements Screen {
         // Add the group of actors to the stage
         // stage.addActor(gameAreaGroup);
 
-        // TODO: Testing
+        // TODO: UI Placeholder
         UImainTable.debug();
         UImainTable.setBounds(0, 0, Parameters.SCREEN_WIDTH, Parameters.SCREEN_HEIGHT);
         UImainTable.add(gameAreaGroup).expand().left().bottom();
         UImainTable.row();
-        UImainTable.add(new PlayerActor(0, 0, playerAtlas)).expandX().left().height(520);
+        // UImainTable.add(new PlayerActor(0, 0, playerAtlas)).expandX().left().height(420);
         stage.addActor(UImainTable);
 
     }
@@ -200,8 +202,7 @@ public class GameScreen implements Screen {
      * Spawn monsters
      */
     private void spawnMonsters(int numMonsters) {
-        // TODO: Default right now, is revealing three spaces at start; it may change
-        if (numMonsters > (Parameters.NUM_X_TILES * Parameters.NUM_Y_TILES - 3)) {
+        if (numMonsters > (Parameters.MAX_NUM_MONSTERS)) {
             throw new Error();
         }
 

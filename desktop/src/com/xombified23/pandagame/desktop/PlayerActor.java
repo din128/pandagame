@@ -20,11 +20,8 @@ public class PlayerActor extends Actor {
     private int xTile;
     private int yTile;
     private PlayerStatus playerStatus;
-    private Animation moveUpAnim;
-    private Animation moveDownAnim;
-    private Animation moveLeftAnim;
-    private Animation moveRightAnim;
-    private TextureAtlas textureAtlas;
+    private Animation moveAnim;
+    private Animation restAnim;
     private float moveSpeed;
     private PlayerStatus nextMoveStatus;
     private Queue<PlayerStatus> queueMoves;
@@ -36,7 +33,6 @@ public class PlayerActor extends Actor {
         nextMoveStatus = null;
         elapsedTime = 0;
         queueMoves = new LinkedList<PlayerStatus>();
-        this.textureAtlas = textureAtlas;
 
         moveSpeed = 0.2f;
         playerStatus = PlayerStatus.STANDING;
@@ -48,38 +44,33 @@ public class PlayerActor extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         // TODO: Hard coded sprite size and position for testing. Need to fix with new assets
-        int sizeX = 160;
-        int sizeY = 350;
+        int sizeX = 320;
+        int sizeY = 320;
+
+        // TODO: Need to remove this eventually
+        int margin = 40;
 
         elapsedTime += Gdx.graphics.getDeltaTime();
         switch (playerStatus) {
+            // TODO: Hard coding position
             case STANDING:
-                batch.draw(textureAtlas.findRegion("slice10"), getX(), getY(), sizeX,
-                        sizeY);
+                batch.draw(restAnim.getKeyFrame(elapsedTime, true), getX() - margin, getY(), sizeX, sizeY);
                 break;
-
             case MOVINGDOWN:
-                batch.draw(moveDownAnim.getKeyFrame(elapsedTime, true), getX(),
-                        getY(), sizeX, sizeY);
+                batch.draw(moveAnim.getKeyFrame(elapsedTime, true), getX() - margin, getY(), sizeX, sizeY);
                 break;
-
-            case MOVINGLEFT:
-                batch.draw(moveLeftAnim.getKeyFrame(elapsedTime, true), getX(),
-                        getY(), sizeX, sizeY);
-                break;
-
-            case MOVINGRIGHT:
-                batch.draw(moveRightAnim.getKeyFrame(elapsedTime, true), getX(),
-                        getY(), sizeX, sizeY);
-                break;
-
             case MOVINGUP:
-                batch.draw(moveUpAnim.getKeyFrame(elapsedTime, true), getX(),
-                        getY(), sizeX, sizeY);
+                batch.draw(moveAnim.getKeyFrame(elapsedTime, true), getX() - margin, getY(), sizeX, sizeY);
                 break;
-
+            case MOVINGLEFT:
+                batch.draw(moveAnim.getKeyFrame(elapsedTime, true), getX() - margin, getY(), sizeX, sizeY);
+                break;
+            case MOVINGRIGHT:
+                batch.draw(moveAnim.getKeyFrame(elapsedTime, true), getX() - margin, getY(), sizeX, sizeY);
+                break;
             default:
-                batch.draw(textureAtlas.findRegion("slice10"), getX(), getY(), sizeX, sizeY);
+                batch.draw(restAnim.getKeyFrame(elapsedTime, true), getX() - margin, getY(), sizeX, sizeY);
+                break;
         }
     }
 
@@ -161,35 +152,23 @@ public class PlayerActor extends Actor {
     }
 
     private void createAnimations(TextureAtlas textureAtlas) {
-        TextureRegion[] moveUp = new TextureRegion[3];
-        TextureRegion[] moveDown = new TextureRegion[3];
-        TextureRegion[] moveLeft = new TextureRegion[3];
-        TextureRegion[] moveRight = new TextureRegion[3];
-        float moveSpeed = 0.1f;
+        TextureRegion[] moveRegion = new TextureRegion[4];
+        TextureRegion[] restRegion = new TextureRegion[3];
+        float moveAnimSpeed = 0.1f;
+        float restAnimSpeed = 0.75f;
 
-        // Move Up
-        moveUp[0] = (textureAtlas.findRegion("slice13"));
-        moveUp[1] = (textureAtlas.findRegion("slice14"));
-        moveUp[2] = (textureAtlas.findRegion("slice15"));
-        moveUpAnim = new Animation(moveSpeed, moveUp);
+        // Move
+        moveRegion[0] = (textureAtlas.findRegion("walking0001"));
+        moveRegion[1] = (textureAtlas.findRegion("walking0002"));
+        moveRegion[2] = (textureAtlas.findRegion("walking0003"));
+        moveRegion[3] = (textureAtlas.findRegion("walking0004"));
+        moveAnim = new Animation(moveAnimSpeed, moveRegion);
 
-        // Move Down
-        moveDown[0] = (textureAtlas.findRegion("slice09"));
-        moveDown[1] = (textureAtlas.findRegion("slice10"));
-        moveDown[2] = (textureAtlas.findRegion("slice11"));
-        moveDownAnim = new Animation(moveSpeed, moveDown);
-
-        // Move Left
-        moveLeft[0] = (textureAtlas.findRegion("slice02"));
-        moveLeft[1] = (textureAtlas.findRegion("slice03"));
-        moveLeft[2] = (textureAtlas.findRegion("slice04"));
-        moveLeftAnim = new Animation(moveSpeed, moveLeft);
-
-        // Move Right
-        moveRight[0] = (textureAtlas.findRegion("slice06"));
-        moveRight[1] = (textureAtlas.findRegion("slice07"));
-        moveRight[2] = (textureAtlas.findRegion("slice08"));
-        moveRightAnim = new Animation(moveSpeed, moveRight);
+        // Resting
+        restRegion[0] = (textureAtlas.findRegion("resting0001"));
+        restRegion[1] = (textureAtlas.findRegion("resting0002"));
+        restRegion[2] = (textureAtlas.findRegion("resting0003"));
+        restAnim = new Animation(restAnimSpeed, restRegion);
     }
 
     public int getXTile() {

@@ -76,7 +76,7 @@ public class GameScreen implements Screen {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
 
-        // TODO: This line causes memory leak!
+        // This line causes memory leak!
         // Table.drawDebug(stage);
 
         if (playerActor.getActions().size == 0) {
@@ -88,7 +88,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        // TODO: Temporally zoom in to the map for Desktop testing. Remove this for Android/iOS
         camera.viewportWidth = width;
         camera.viewportHeight = height;
 
@@ -126,7 +125,7 @@ public class GameScreen implements Screen {
         // Add the group of actors to the stage
         // stage.addActor(gameAreaGroup);
 
-        // TODO: Testing
+        // TODO: UI Placeholder
         UImainTable.debug();
         UImainTable.setBounds(0, 0, Parameters.SCREEN_WIDTH, Parameters.SCREEN_HEIGHT);
         UImainTable.add(gameAreaGroup).expand().left().bottom();
@@ -203,8 +202,7 @@ public class GameScreen implements Screen {
      * Spawn monsters
      */
     private void spawnMonsters(int numMonsters) {
-        // TODO: Default right now, is revealing three spaces at start; it may change
-        if (numMonsters > (Parameters.NUM_X_TILES * Parameters.NUM_Y_TILES - 3)) {
+        if (numMonsters > (Parameters.MAX_NUM_MONSTERS)) {
             throw new Error();
         }
 
