@@ -53,7 +53,7 @@ public class GameScreen implements Screen {
         fpsLogger = new FPSLogger();
         camera = new OrthographicCamera();
         floorAtlas = new TextureAtlas(Gdx.files.internal("jei/PurpleTiles/PurpleTiles.atlas"));
-        playerAtlas = new TextureAtlas(Gdx.files.internal("others/Hero/heropack.atlas"));
+        playerAtlas = new TextureAtlas(Gdx.files.internal("jei/Warrior/Warrior_all/Atlas/Hero_Atlas.atlas"));
         fogTexture = new Texture(Gdx.files.internal("others/blacktile.png"));
         backTexture = new Texture(Gdx.files.internal("others/background.png"));
         monsterTexture = new Texture(Gdx.files.internal("others/playerSprite.png"));
@@ -131,7 +131,7 @@ public class GameScreen implements Screen {
         UImainTable.setBounds(0, 0, Parameters.SCREEN_WIDTH, Parameters.SCREEN_HEIGHT);
         UImainTable.add(gameAreaGroup).expand().left().bottom();
         UImainTable.row();
-        UImainTable.add(new PlayerActor(0, 0, playerAtlas)).expandX().left().height(420);
+        // UImainTable.add(new PlayerActor(0, 0, playerAtlas)).expandX().left().height(420);
         stage.addActor(UImainTable);
 
     }
