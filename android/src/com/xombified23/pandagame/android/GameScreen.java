@@ -2,12 +2,17 @@ package com.xombified23.pandagame.android;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import java.util.LinkedList;
@@ -39,6 +44,11 @@ public class GameScreen implements Screen {
     private Table UImainTable;
     private Group gameAreaGroup;
 
+    // TODO: Testing
+    private SpriteBatch batch;
+    private BitmapFont font;
+    private Label lifeLabel;
+
     // Double array to handle shortest path
     private int[][] mapSteps;
 
@@ -58,6 +68,10 @@ public class GameScreen implements Screen {
         backTexture = new Texture(Gdx.files.internal("others/background.png"));
         monsterTexture = new Texture(Gdx.files.internal("others/playerSprite.png"));
         mapSteps = new int[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
+
+        // TODO: Testing
+        batch = new SpriteBatch();
+        font = new BitmapFont();
     }
 
     @Override
@@ -68,6 +82,10 @@ public class GameScreen implements Screen {
         fogTexture.dispose();
         monsterTexture.dispose();
         stage.dispose();
+
+        // TODO: Testing
+        batch.dispose();
+        font.dispose();
     }
 
     @Override
@@ -82,6 +100,9 @@ public class GameScreen implements Screen {
         if (playerActor.getActions().size == 0) {
             revealAround();
         }
+
+        // TODO: Testing:
+        lifeLabel.setText("Life: ");
 
         // fpsLogger.log();
     }
@@ -126,11 +147,14 @@ public class GameScreen implements Screen {
         // stage.addActor(gameAreaGroup);
 
         // TODO: UI Placeholder
-        UImainTable.debug();
+        // UImainTable.debug();
         UImainTable.setBounds(0, 0, Parameters.SCREEN_WIDTH, Parameters.SCREEN_HEIGHT);
         UImainTable.add(gameAreaGroup).expand().left().bottom();
         UImainTable.row();
-        // UImainTable.add(new PlayerActor(0, 0, playerAtlas)).expandX().left().height(420);
+        font.setScale(8, 8);
+        LabelStyle labelStyle = new LabelStyle(font, Color.BLUE);
+        lifeLabel = new Label("", labelStyle);
+        UImainTable.add(lifeLabel).expandX().left().height(420);
         stage.addActor(UImainTable);
 
     }

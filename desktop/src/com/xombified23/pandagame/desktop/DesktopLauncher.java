@@ -12,6 +12,6 @@ public class DesktopLauncher {
         config.width = Parameters.SCREEN_HEIGHT;
         config.height = Parameters.SCREEN_WIDTH;
 
-        new LwjglApplication(new MyGame(), config);
+        new LwjglApplication(new MainGame(), config);
     }
 }
