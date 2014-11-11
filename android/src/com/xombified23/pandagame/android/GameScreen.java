@@ -21,7 +21,6 @@ import java.util.Random;
 
 public class GameScreen implements Screen {
     // General
-    // private final MyGame game;
     private Stage stage;
     private OrthographicCamera camera;
 
@@ -40,11 +39,11 @@ public class GameScreen implements Screen {
     private Texture monsterTexture;
 
     // Others
-    private FPSLogger fpsLogger;
+    // private FPSLogger fpsLogger;
     private Table UImainTable;
     private Group gameAreaGroup;
 
-    // TODO: Testing
+    // TODO: Testing Label
     private SpriteBatch batch;
     private BitmapFont font;
     private Label lifeLabel;
@@ -53,14 +52,12 @@ public class GameScreen implements Screen {
     private int[][] mapSteps;
 
     public GameScreen(final MainGame game) {
-        // Assign Game and SpriteBatch object
-        // this.game = game;
 
         // Instantiate New Objects
         gameAreaGroup = new Group();
         UImainTable = new Table();
         stage = new Stage();
-        fpsLogger = new FPSLogger();
+        // fpsLogger = new FPSLogger();
         camera = new OrthographicCamera();
         floorAtlas = new TextureAtlas(Gdx.files.internal("jei/PurpleTiles/PurpleTiles.atlas"));
         playerAtlas = new TextureAtlas(Gdx.files.internal("jei/Warrior/Warrior_all/Atlas/Hero_Atlas.atlas"));
@@ -69,7 +66,7 @@ public class GameScreen implements Screen {
         monsterTexture = new Texture(Gdx.files.internal("others/playerSprite.png"));
         mapSteps = new int[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
 
-        // TODO: Testing
+        // TODO: Testing Label
         batch = new SpriteBatch();
         font = new BitmapFont();
     }
@@ -94,23 +91,20 @@ public class GameScreen implements Screen {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
 
-        // This line causes memory leak!
-        // Table.drawDebug(stage);
-
         if (playerActor.getActions().size == 0) {
             revealAround();
         }
 
         // TODO: Testing:
         lifeLabel.setText("Life: ");
-
         // fpsLogger.log();
     }
 
     @Override
     public void resize(int width, int height) {
-        camera.viewportWidth = width;
-        camera.viewportHeight = height;
+        // TODO: Temporal Zoom out for older devices
+        camera.viewportWidth = width * 2;
+        camera.viewportHeight = height * 2;
 
         camera.position.set(width / 2f, height / 2f, 0);
     }
@@ -128,35 +122,16 @@ public class GameScreen implements Screen {
         // Add input interface to the Stage
         Gdx.input.setInputProcessor(stage);
 
-        backgroundActor = new BackgroundActor(backTexture);
-        // gameAreaGroup.addActor(backgroundActor);
-
-        // Inflate rest of Actors
+        createBackgroundActor();
         createFloorTilesActors();
         createMainTilesActors();
-
-        // table.add(group);
         spawnPlayer();
         revealAround();
         spawnMonsters(Parameters.NUM_MONSTERS);
-
-        // Add Stage Touch
         addStageTouch();
+        createUIFrame();  // TODO: UI Placeholder
 
-        // Add the group of actors to the stage
-        // stage.addActor(gameAreaGroup);
-
-        // TODO: UI Placeholder
-        // UImainTable.debug();
-        UImainTable.setBounds(0, 0, Parameters.SCREEN_WIDTH, Parameters.SCREEN_HEIGHT);
-        UImainTable.add(gameAreaGroup).expand().left().bottom();
-        UImainTable.row();
-        font.setScale(8, 8);
-        LabelStyle labelStyle = new LabelStyle(font, Color.BLUE);
-        lifeLabel = new Label("", labelStyle);
-        UImainTable.add(lifeLabel).expandX().left().height(420);
         stage.addActor(UImainTable);
-
     }
 
     @Override
@@ -169,6 +144,21 @@ public class GameScreen implements Screen {
         // Irrelevant on desktop, ignore this
     }
 
+    private void createBackgroundActor() {
+        backgroundActor = new BackgroundActor(backTexture);
+        gameAreaGroup.addActor(backgroundActor);
+    }
+
+    private void createUIFrame() {
+        UImainTable.setBounds(0, 0, Parameters.SCREEN_WIDTH, Parameters.SCREEN_HEIGHT);
+        UImainTable.add(gameAreaGroup).expand().left().bottom();
+        UImainTable.row();
+        font.setScale(8, 8);
+        LabelStyle labelStyle = new LabelStyle(font, Color.BLUE);
+        lifeLabel = new Label("", labelStyle);
+        UImainTable.add(lifeLabel).expandX().left().height(420);
+    }
+
     /**
      * Create Actors for Tiled Map
      */
@@ -178,7 +168,6 @@ public class GameScreen implements Screen {
         for (int j = 0; j < Parameters.NUM_Y_TILES; j++) {
             for (int i = 0; i < Parameters.NUM_X_TILES; i++) {
                 mainTileActorMap[i][j] = new MainTileActor(i, j, fogTexture);
-                // stage.addActor(mainTileActorMap[i][j]);
                 gameAreaGroup.addActor(mainTileActorMap[i][j]);
             }
         }
@@ -209,14 +198,7 @@ public class GameScreen implements Screen {
                         floorTile = floorAtlas.findRegion("Single_clean");
                 }
 
-                if (floorTile == null) {
-                    throw new Error();
-                }
-
                 floorActorMap[i][j] = new FloorActor(i, j, floorTile);
-                // stage.addActor(floorActorMap[i][j]);
-
-                // backgroundActor.addActor(floorActorMap[i][j]);
                 gameAreaGroup.addActor(floorActorMap[i][j]);
             }
         }
@@ -236,15 +218,14 @@ public class GameScreen implements Screen {
         int yTile;
         int count = 0;
 
+        // TODO: Need a better way to spawn monsters based on counter
         while (count < numMonsters) {
             xTile = rand.nextInt(Parameters.NUM_X_TILES);
             yTile = rand.nextInt(Parameters.NUM_Y_TILES);
 
             if (!mainTileActorMap[xTile][yTile].isRevealed() && !mainTileActorMap[xTile][yTile].itContainsMonster()) {
-
                 monsterActorMap[xTile][yTile] = new MonsterActor(xTile, yTile, monsterTexture, mainTileActorMap);
                 mainTileActorMap[xTile][yTile].setContainsMonster(true);
-                // stage.addActor(monsterActorMap[xTile][yTile]);
                 gameAreaGroup.addActor(monsterActorMap[xTile][yTile]);
                 count++;
             }
@@ -280,7 +261,6 @@ public class GameScreen implements Screen {
         }
 
         playerActor = new PlayerActor(x, y, playerAtlas);
-        // stage.addActor(playerActor);
         gameAreaGroup.addActor(playerActor);
     }
 
