@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Array;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -59,7 +60,7 @@ public class GameScreen implements Screen {
         stage = new Stage();
         // fpsLogger = new FPSLogger();
         camera = new OrthographicCamera();
-        floorAtlas = new TextureAtlas(Gdx.files.internal("jei/PurpleTiles/PurpleTiles.atlas"));
+        floorAtlas = new TextureAtlas(Gdx.files.internal("jei/StandardTiles/StandardTiles.atlas"));
         playerAtlas = new TextureAtlas(Gdx.files.internal("jei/Warrior/Warrior_all/Atlas/Hero_Atlas.atlas"));
         fogTexture = new Texture(Gdx.files.internal("others/blacktile.png"));
         backTexture = new Texture(Gdx.files.internal("others/background.png"));
@@ -187,15 +188,18 @@ public class GameScreen implements Screen {
             for (int i = 0; i < Parameters.NUM_X_TILES; i++) {
                 Random rand = new Random();
                 TextureRegion floorTile;
-                switch (rand.nextInt(3)) {
+                switch (rand.nextInt(4)) {
                     case 0:
-                        floorTile = floorAtlas.findRegion("Single_flatjpg");
+                        floorTile = floorAtlas.findRegion("tile1");
                         break;
                     case 1:
-                        floorTile = floorAtlas.findRegion("Single_rugged");
+                        floorTile = floorAtlas.findRegion("tile2");
+                        break;
+                    case 2:
+                        floorTile = floorAtlas.findRegion("tile3");
                         break;
                     default:
-                        floorTile = floorAtlas.findRegion("Single_clean");
+                        floorTile = floorAtlas.findRegion("tile4");
                 }
 
                 floorActorMap[i][j] = new FloorActor(i, j, floorTile);

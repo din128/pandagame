@@ -1,0 +1,54 @@
+
+StandardTiles.png
+format: RGB565
+filter: Nearest,Nearest
+repeat: none
+wood
+  rotate: false
+  xy: 1, 233
+  size: 212, 231
+  orig: 212, 231
+  offset: 0, 0
+  index: -1
+locker
+  rotate: false
+  xy: 1, 1
+  size: 212, 230
+  orig: 212, 230
+  offset: 0, 0
+  index: -1
+tile1
+  rotate: false
+  xy: 215, 252
+  size: 212, 212
+  orig: 212, 212
+  offset: 0, 0
+  index: -1
+tile2
+  rotate: false
+  xy: 215, 38
+  size: 212, 212
+  orig: 212, 212
+  offset: 0, 0
+  index: -1
+tile3
+  rotate: false
+  xy: 429, 252
+  size: 212, 212
+  orig: 212, 212
+  offset: 0, 0
+  index: -1
+tile4
+  rotate: false
+  xy: 429, 38
+  size: 212, 212
+  orig: 212, 212
+  offset: 0, 0
+  index: -1
+tile_cracked
+  rotate: false
+  xy: 643, 252
+  size: 212, 212
+  orig: 212, 212
+  offset: 0, 0
+  index: -1
