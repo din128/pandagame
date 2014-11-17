@@ -150,83 +150,6 @@ public class PlayerActor extends Actor implements TileInterface {
         this.addAction(moveAction);
     }
 
-    public void moveCoord(int[][] mapSteps, int destXTile, int destYTile) {
-        nextXTile = 999;
-        nextYTile = 999;
-        int count = 999;
-        SequenceAction sequenceAction = new SequenceAction();
-
-        // Find shortest path
-        while ((xTile != destXTile) || (yTile != destYTile)) {
-            if (xTile - 1 >= 0) {
-                if (count > mapSteps[xTile - 1][yTile] && mapSteps[xTile - 1][yTile] >= 0) {
-                    count = mapSteps[xTile - 1][yTile];
-                    nextXTile = xTile - 1;
-                    nextYTile = yTile;
-                    nextMoveStatus = PlayerStatus.MOVINGLEFT;
-                }
-            }
-
-            if (xTile + 1 < Parameters.NUM_X_TILES) {
-                if (count > mapSteps[xTile + 1][yTile] && mapSteps[xTile + 1][yTile] >= 0) {
-                    count = mapSteps[xTile + 1][yTile];
-                    nextXTile = xTile + 1;
-                    nextYTile = yTile;
-                    nextMoveStatus = PlayerStatus.MOVINGRIGHT;
-                }
-            }
-
-            if (yTile - 1 >= 0) {
-                if (count > mapSteps[xTile][yTile - 1] && mapSteps[xTile][yTile - 1] >= 0) {
-                    count = mapSteps[xTile][yTile - 1];
-                    nextXTile = xTile;
-                    nextYTile = yTile - 1;
-                    nextMoveStatus = PlayerStatus.MOVINGDOWN;
-                }
-            }
-
-            if (yTile + 1 < Parameters.NUM_Y_TILES) {
-                if (count > mapSteps[xTile][yTile + 1] && mapSteps[xTile][yTile + 1] >= 0) {
-                    count = mapSteps[xTile][yTile + 1];
-                    nextXTile = xTile;
-                    nextYTile = yTile + 1;
-                    nextMoveStatus = PlayerStatus.MOVINGUP;
-                }
-            }
-
-            queueMoves.add(nextMoveStatus);
-
-            // Add one action at a time for smooth walking
-            sequenceAction.addAction(parallel(moveTo(nextXTile * Parameters.TILE_PIXEL_WIDTH,
-                    nextYTile * Parameters.TILE_PIXEL_HEIGHT,
-                    moveSpeed), run(new Runnable() {
-                @Override
-                public void run() {
-                    PlayerStatus nextMove = queueMoves.poll();
-                    switch (nextMove) {
-                        case MOVINGDOWN:
-                            playerStatus = PlayerStatus.MOVINGDOWN;
-                            break;
-                        case MOVINGLEFT:
-                            playerStatus = PlayerStatus.MOVINGLEFT;
-                            break;
-                        case MOVINGRIGHT:
-                            playerStatus = PlayerStatus.MOVINGRIGHT;
-                            break;
-                        case MOVINGUP:
-                            playerStatus = PlayerStatus.MOVINGUP;
-                            break;
-                        default:
-                            playerStatus = PlayerStatus.STANDING;
-                    }
-                }
-            })));
-            xTile = nextXTile;
-            yTile = nextYTile;
-        }
-        this.addAction(sequenceAction);
-    }
-
     private void createAnimations(TextureAtlas textureAtlas) {
         TextureRegion[] moveRegion = new TextureRegion[4];
         TextureRegion[] restRegion = new TextureRegion[3];
@@ -253,6 +176,14 @@ public class PlayerActor extends Actor implements TileInterface {
 
     public int getYTile() {
         return yTile;
+    }
+
+    public void setXTile(int xTile) {
+        this.xTile = xTile;
+    }
+
+    public void setYTile(int yTile) {
+        this.yTile = yTile;
     }
 
     public PlayerStatus getPlayerStatus() {

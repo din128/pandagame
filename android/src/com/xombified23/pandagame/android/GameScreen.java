@@ -227,7 +227,7 @@ public class GameScreen implements Screen {
             yTile = rand.nextInt(Parameters.NUM_Y_TILES);
 
             if (!mainTileActorMap[xTile][yTile].isRevealed() && !mainTileActorMap[xTile][yTile].itContainsMonster()) {
-                monsterActorMap[xTile][yTile] = new MonsterActor(xTile, yTile, monsterTexture, mainTileActorMap);
+                monsterActorMap[xTile][yTile] = new MonsterActor(xTile, yTile, monsterTexture);
                 mainTileActorMap[xTile][yTile].setContainsMonster(true);
                 gameAreaGroup.addActor(monsterActorMap[xTile][yTile]);
                 count++;
@@ -276,13 +276,10 @@ public class GameScreen implements Screen {
                 Actor currActor = stage.hit(x, y, true);
                 if (currActor != null) {
                     if (currActor instanceof MainTileActor) {
-                        System.out.println("MapActor clicked");
-                        if (((MainTileActor) currActor).isRevealed()) {
-//                            if (playerActor.getActions().size == 0) {
-                                movePlayer(((MainTileActor) currActor).getXTile(), ((MainTileActor) currActor).getYTile());
-//                            }
+                        if (((MainTileActor) currActor).isRevealed() && playerActor.getPlayerStatus() ==  PlayerActor
+                                .PlayerStatus.STANDING) {
+                            movePlayer(((MainTileActor) currActor).getXTile(), ((MainTileActor) currActor).getYTile());
                         }
-
                     } else if (currActor instanceof MonsterActor) {
                         System.out.println("MonsterActor clicked");
                         int currX = ((MonsterActor) currActor).getXTile();
@@ -320,15 +317,27 @@ public class GameScreen implements Screen {
 
         if (pX - 1 >= 0) {
             mainTileActorMap[pX - 1][pY].setRevealed(true);
+
+            if (mainTileActorMap[pX - 1][pY].itContainsMonster())
+                monsterActorMap[pX - 1][pY].setRevealed(true);
         }
         if (pY - 1 >= 0) {
             mainTileActorMap[pX][pY - 1].setRevealed(true);
+
+            if (mainTileActorMap[pX][pY - 1].itContainsMonster())
+                monsterActorMap[pX][pY - 1].setRevealed(true);
         }
         if (pX + 1 < Parameters.NUM_X_TILES) {
             mainTileActorMap[pX + 1][pY].setRevealed(true);
+
+            if (mainTileActorMap[pX + 1][pY].itContainsMonster())
+                monsterActorMap[pX + 1][pY].setRevealed(true);
         }
         if (pY + 1 < Parameters.NUM_Y_TILES) {
             mainTileActorMap[pX][pY + 1].setRevealed(true);
+
+            if (mainTileActorMap[pX][pY + 1].itContainsMonster())
+                monsterActorMap[pX][pY + 1].setRevealed(true);
         }
     }
 
