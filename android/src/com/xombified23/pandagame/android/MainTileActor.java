@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 /**
  *  Created by Xombified on 7/27/2014.
  */
-public class MainTileActor extends Actor {
+public class MainTileActor extends Actor implements TileInterface {
     private int xTile;
     private int yTile;
     private Texture fogTexture;

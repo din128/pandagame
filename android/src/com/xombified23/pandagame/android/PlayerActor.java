@@ -16,9 +16,11 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 /**
  *  Created by Xombified on 7/27/2014.
  */
-public class PlayerActor extends Actor {
+public class PlayerActor extends Actor implements TileInterface {
     private int xTile;
     private int yTile;
+    private int nextXTile;
+    private int nextYTile;
     private PlayerStatus playerStatus;
     private Animation moveAnim;
     private Animation restAnim;
@@ -26,6 +28,7 @@ public class PlayerActor extends Actor {
     private PlayerStatus nextMoveStatus;
     private Queue<PlayerStatus> queueMoves;
     private float elapsedTime;
+    private SequenceAction moveAction;
 
     public PlayerActor(int x, int y, TextureAtlas textureAtlas) {
         xTile = x;
@@ -33,6 +36,7 @@ public class PlayerActor extends Actor {
         nextMoveStatus = null;
         elapsedTime = 0;
         queueMoves = new LinkedList<PlayerStatus>();
+        moveAction = new SequenceAction();
 
         moveSpeed = 0.2f;
         playerStatus = PlayerStatus.STANDING;
@@ -74,9 +78,81 @@ public class PlayerActor extends Actor {
         }
     }
 
+    public void movePlayer(int[][] mapSteps, int destXTile, int destYTile) {
+        nextXTile = xTile;
+        nextYTile = yTile;
+        int count = 1000;
+
+        moveAction.reset();
+        queueMoves.clear();
+
+        // Find shortest path
+        while ((xTile != destXTile) || (yTile != destYTile)) {
+            if (xTile - 1 >= 0 && count > mapSteps[xTile - 1][yTile] && mapSteps[xTile - 1][yTile] >= 0) {
+                count = mapSteps[xTile - 1][yTile];
+                nextXTile = xTile - 1;
+                nextYTile = yTile;
+                nextMoveStatus = PlayerStatus.MOVINGLEFT;
+            }
+
+            if (xTile + 1 < Parameters.NUM_X_TILES && count > mapSteps[xTile + 1][yTile] && mapSteps[xTile +
+                    1][yTile] >= 0) {
+                count = mapSteps[xTile + 1][yTile];
+                nextXTile = xTile + 1;
+                nextYTile = yTile;
+                nextMoveStatus = PlayerStatus.MOVINGRIGHT;
+            }
+
+            if (yTile - 1 >= 0 && count > mapSteps[xTile][yTile - 1] && mapSteps[xTile][yTile - 1] >= 0) {
+                count = mapSteps[xTile][yTile - 1];
+                nextXTile = xTile;
+                nextYTile = yTile - 1;
+                nextMoveStatus = PlayerStatus.MOVINGDOWN;
+            }
+
+            if (yTile + 1 < Parameters.NUM_Y_TILES && count > mapSteps[xTile][yTile + 1] && mapSteps[xTile][yTile +
+                    1] >= 0) {
+                count = mapSteps[xTile][yTile + 1];
+                nextXTile = xTile;
+                nextYTile = yTile + 1;
+                nextMoveStatus = PlayerStatus.MOVINGUP;
+            }
+
+            queueMoves.add(nextMoveStatus);
+
+            // Add one action at a time for smooth walking
+            moveAction.addAction(parallel(moveTo(nextXTile * Parameters.TILE_PIXEL_WIDTH,
+                    nextYTile * Parameters.TILE_PIXEL_HEIGHT,
+                    moveSpeed), run(new Runnable() {
+                @Override
+                public void run() {
+                    switch (queueMoves.poll()) {
+                        case MOVINGDOWN:
+                            playerStatus = PlayerStatus.MOVINGDOWN;
+                            break;
+                        case MOVINGLEFT:
+                            playerStatus = PlayerStatus.MOVINGLEFT;
+                            break;
+                        case MOVINGRIGHT:
+                            playerStatus = PlayerStatus.MOVINGRIGHT;
+                            break;
+                        case MOVINGUP:
+                            playerStatus = PlayerStatus.MOVINGUP;
+                            break;
+                        default:
+                            playerStatus = PlayerStatus.STANDING;
+                    }
+                }
+            })));
+            xTile = nextXTile;
+            yTile = nextYTile;
+        }
+        this.addAction(moveAction);
+    }
+
     public void moveCoord(int[][] mapSteps, int destXTile, int destYTile) {
-        int nextXTile = 999;
-        int nextYTile = 999;
+        nextXTile = 999;
+        nextYTile = 999;
         int count = 999;
         SequenceAction sequenceAction = new SequenceAction();
 

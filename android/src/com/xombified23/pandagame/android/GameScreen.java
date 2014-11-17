@@ -95,9 +95,6 @@ public class GameScreen implements Screen {
         if (playerActor.getActions().size == 0) {
             revealAround();
         }
-
-        // TODO: Testing:
-        lifeLabel.setText("Life: ");
         // fpsLogger.log();
     }
 
@@ -132,6 +129,7 @@ public class GameScreen implements Screen {
         addStageTouch();
         createUIFrame();  // TODO: UI Placeholder
 
+        playerActor.setZIndex(500); // TODO: Need to calculate Z-Order in complex cases later on
         stage.addActor(UImainTable);
     }
 
@@ -158,6 +156,7 @@ public class GameScreen implements Screen {
         LabelStyle labelStyle = new LabelStyle(font, Color.BLUE);
         lifeLabel = new Label("", labelStyle);
         UImainTable.add(lifeLabel).expandX().left().height(420);
+        lifeLabel.setText("Life: ");
     }
 
     /**
@@ -279,9 +278,9 @@ public class GameScreen implements Screen {
                     if (currActor instanceof MainTileActor) {
                         System.out.println("MapActor clicked");
                         if (((MainTileActor) currActor).isRevealed()) {
-                            if (playerActor.getActions().size == 0) {
+//                            if (playerActor.getActions().size == 0) {
                                 movePlayer(((MainTileActor) currActor).getXTile(), ((MainTileActor) currActor).getYTile());
-                            }
+//                            }
                         }
 
                     } else if (currActor instanceof MonsterActor) {
@@ -366,7 +365,7 @@ public class GameScreen implements Screen {
 
             // If path is found, pass the mapSteps to let PlayerActor animate and render
             if (currPos.x == playerActor.getXTile() && currPos.y == playerActor.getYTile()) {
-                playerActor.moveCoord(mapSteps, destXTile, destYTile);
+                playerActor.movePlayer(mapSteps, destXTile, destYTile);
                 break;
             }
 
