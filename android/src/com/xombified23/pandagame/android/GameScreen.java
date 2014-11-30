@@ -39,6 +39,11 @@ public class GameScreen implements Screen {
     private Texture fogTexture;
     private Texture monsterTexture;
 
+    // TODO: Test
+    private Texture blueTexture;
+    private Texture redTexture;
+    private Texture greenTexture;
+
     // Others
     // private FPSLogger fpsLogger;
     private Table UImainTable;
@@ -63,6 +68,9 @@ public class GameScreen implements Screen {
         floorAtlas = new TextureAtlas(Gdx.files.internal("jei/StandardTiles/StandardTiles.atlas"));
         playerAtlas = new TextureAtlas(Gdx.files.internal("jei/Warrior/Warrior_all/Atlas/Hero_Atlas.atlas"));
         fogTexture = new Texture(Gdx.files.internal("others/blacktile.png"));
+        redTexture = new Texture(Gdx.files.internal("others/redtile.png"));
+        blueTexture = new Texture(Gdx.files.internal("others/bluetile.png"));
+        greenTexture = new Texture(Gdx.files.internal("others/greentile.png"));
         backTexture = new Texture(Gdx.files.internal("others/background.png"));
         monsterTexture = new Texture(Gdx.files.internal("others/playerSprite.png"));
         mapSteps = new int[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
@@ -80,6 +88,9 @@ public class GameScreen implements Screen {
         fogTexture.dispose();
         monsterTexture.dispose();
         stage.dispose();
+        blueTexture.dispose();
+        redTexture.dispose();
+        greenTexture.dispose();
 
         // TODO: Testing
         batch.dispose();
@@ -130,6 +141,8 @@ public class GameScreen implements Screen {
         createUIFrame();  // TODO: UI Placeholder
         playerActor.setZIndex(500); // TODO: Need to calculate Z-Order in complex cases later on
 
+        ActorsRef.playerActor = playerActor;
+
         stage.addActor(UImainTable);
     }
 
@@ -167,7 +180,7 @@ public class GameScreen implements Screen {
 
         for (int j = 0; j < Parameters.NUM_Y_TILES; j++) {
             for (int i = 0; i < Parameters.NUM_X_TILES; i++) {
-                mainTileActorMap[i][j] = new MainTileActor(i, j, fogTexture);
+                mainTileActorMap[i][j] = new MainTileActor(i, j, fogTexture, blueTexture, redTexture, greenTexture);
                 gameAreaGroup.addActor(mainTileActorMap[i][j]);
             }
         }

@@ -19,7 +19,13 @@ public class MainTileActor extends Actor implements TileInterface {
     private boolean containsMonster;
     private boolean isAggroed;
 
-    public MainTileActor(int x, int y, Texture fogTexture) {
+    // TODO: Test
+    private Texture blueTexture;
+    private Texture redTexture;
+    private Texture greenTexture;
+
+    public MainTileActor(int x, int y, Texture fogTexture, Texture blueTexture, Texture redTexture,
+                         Texture greenTexture) {
         xTile = x;
         yTile = y;
         isRevealed = false;
@@ -27,6 +33,9 @@ public class MainTileActor extends Actor implements TileInterface {
         transparencyLvl = 0.5f;
         fadeSpeed = 1.5f;
         this.fogTexture = fogTexture;
+        this.blueTexture = blueTexture;
+        this.redTexture = redTexture;
+        this.greenTexture = greenTexture;
 
         // Set Map Actor boundaries
         setBounds(xTile * Parameters.TILE_PIXEL_WIDTH, yTile * Parameters.TILE_PIXEL_HEIGHT,
@@ -51,7 +60,13 @@ public class MainTileActor extends Actor implements TileInterface {
             }
         }
         batch.setColor(0, 0, 0, transparencyLvl);
-        batch.draw(fogTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
+
+        if (testPlayerTile()) {
+            batch.setColor(Color.WHITE);
+            batch.draw(blueTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
+        } else {
+            batch.draw(fogTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
+        }
 
         // Reset color to default to allow other textures render properly
         batch.setColor(Color.WHITE);
@@ -83,5 +98,10 @@ public class MainTileActor extends Actor implements TileInterface {
 
     public void setAggro(boolean aggroed) {
         isAggroed = aggroed;
+    }
+
+    // TODO: Test method
+    private boolean testPlayerTile() {
+        return (ActorsRef.playerActor.getX() == this.getX() && ActorsRef.playerActor.getY() == this.getY());
     }
 }
