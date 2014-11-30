@@ -17,6 +17,7 @@ public class MainTileActor extends Actor implements TileInterface {
     private float transparencyLvl;
     private float fadeSpeed;
     private boolean containsMonster;
+    private boolean isAggroed;
 
     public MainTileActor(int x, int y, Texture fogTexture) {
         xTile = x;
@@ -78,5 +79,9 @@ public class MainTileActor extends Actor implements TileInterface {
 
     public int getYTile() {
         return yTile;
+    }
+
+    public void setAggro(boolean aggroed) {
+        isAggroed = aggroed;
     }
 }

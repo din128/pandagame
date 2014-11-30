@@ -40,6 +40,10 @@ public class MonsterActor extends Actor {
         isRevealed = revealed;
     }
 
+    public void setMainTileActorMap(MainTileActor[][] mainTileActorMap) {
+        this.mainTileActorMap = mainTileActorMap;
+    }
+
     public int getXTile() {
         return xTile;
     }
@@ -47,4 +51,5 @@ public class MonsterActor extends Actor {
     public int getYTile() {
         return yTile;
     }
+
 }

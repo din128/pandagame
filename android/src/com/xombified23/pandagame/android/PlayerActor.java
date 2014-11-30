@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
 
 import java.util.LinkedList;
@@ -126,7 +128,8 @@ public class PlayerActor extends Actor implements TileInterface {
                     moveSpeed), run(new Runnable() {
                 @Override
                 public void run() {
-                    switch (queueMoves.poll()) {
+                    PlayerStatus moveStatus = queueMoves.poll();
+                    switch (moveStatus) {
                         case MOVINGDOWN:
                             playerStatus = PlayerStatus.MOVINGDOWN;
                             break;

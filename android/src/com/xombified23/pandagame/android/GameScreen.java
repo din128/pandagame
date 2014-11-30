@@ -128,8 +128,8 @@ public class GameScreen implements Screen {
         spawnMonsters(Parameters.NUM_MONSTERS);
         addStageTouch();
         createUIFrame();  // TODO: UI Placeholder
-
         playerActor.setZIndex(500); // TODO: Need to calculate Z-Order in complex cases later on
+
         stage.addActor(UImainTable);
     }
 
@@ -318,27 +318,54 @@ public class GameScreen implements Screen {
         if (pX - 1 >= 0) {
             mainTileActorMap[pX - 1][pY].setRevealed(true);
 
-            if (mainTileActorMap[pX - 1][pY].itContainsMonster())
+            if (mainTileActorMap[pX - 1][pY].itContainsMonster()) {
                 monsterActorMap[pX - 1][pY].setRevealed(true);
+                setAggroPerimeter(pX - 1, pY);
+            }
         }
         if (pY - 1 >= 0) {
             mainTileActorMap[pX][pY - 1].setRevealed(true);
 
-            if (mainTileActorMap[pX][pY - 1].itContainsMonster())
+            if (mainTileActorMap[pX][pY - 1].itContainsMonster()) {
                 monsterActorMap[pX][pY - 1].setRevealed(true);
+                setAggroPerimeter(pX, pY - 1);
+            }
         }
         if (pX + 1 < Parameters.NUM_X_TILES) {
             mainTileActorMap[pX + 1][pY].setRevealed(true);
 
-            if (mainTileActorMap[pX + 1][pY].itContainsMonster())
+            if (mainTileActorMap[pX + 1][pY].itContainsMonster()) {
                 monsterActorMap[pX + 1][pY].setRevealed(true);
+                setAggroPerimeter(pX + 1, pY);
+            }
         }
         if (pY + 1 < Parameters.NUM_Y_TILES) {
             mainTileActorMap[pX][pY + 1].setRevealed(true);
 
-            if (mainTileActorMap[pX][pY + 1].itContainsMonster())
+            if (mainTileActorMap[pX][pY + 1].itContainsMonster()) {
                 monsterActorMap[pX][pY + 1].setRevealed(true);
+                setAggroPerimeter(pX, pY + 1);
+            }
         }
+    }
+
+    private void setAggroPerimeter(int xTile, int yTile) {
+        if (xTile-1 >= 0)
+            mainTileActorMap[xTile-1][yTile].setAggro(true);
+        if (xTile-1 >= 0 && yTile-1 >= 0)
+            mainTileActorMap[xTile-1][yTile-1].setAggro(true);
+        if (yTile-1 >= 0)
+            mainTileActorMap[xTile][yTile-1].setAggro(true);
+        if (xTile+1 < Parameters.NUM_X_TILES && yTile-1 >= 0)
+            mainTileActorMap[xTile+1][yTile-1].setAggro(true);
+        if (xTile+1 < Parameters.NUM_X_TILES)
+            mainTileActorMap[xTile+1][yTile].setAggro(true);
+        if (xTile+1 < Parameters.NUM_X_TILES && yTile+1 < Parameters.NUM_Y_TILES)
+            mainTileActorMap[xTile+1][yTile+1].setAggro(true);
+        if (yTile+1 < Parameters.NUM_Y_TILES)
+            mainTileActorMap[xTile][yTile+1].setAggro(true);
+        if (xTile-1 >= 0 && yTile+1 < Parameters.NUM_Y_TILES)
+            mainTileActorMap[xTile-1][yTile+1].setAggro(true);
     }
 
     /**
