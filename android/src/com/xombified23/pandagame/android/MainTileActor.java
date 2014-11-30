@@ -64,6 +64,9 @@ public class MainTileActor extends Actor implements TileInterface {
         if (testPlayerTile()) {
             batch.setColor(Color.WHITE);
             batch.draw(blueTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
+        } else if (this.isRevealed() && this.isAggroed && !testPlayerTile()) {
+            batch.setColor(Color.WHITE);
+            batch.draw(redTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
         } else {
             batch.draw(fogTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
         }
@@ -102,6 +105,6 @@ public class MainTileActor extends Actor implements TileInterface {
 
     // TODO: Test method
     private boolean testPlayerTile() {
-        return (ActorsRef.playerActor.getX() == this.getX() && ActorsRef.playerActor.getY() == this.getY());
+        return (References.playerActor.getX() == this.getX() && References.playerActor.getY() == this.getY());
     }
 }
