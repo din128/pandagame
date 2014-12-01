@@ -101,9 +101,6 @@ public class GameScreen implements Screen {
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
 
-        if (playerActor.getActions().size == 0) {
-            revealAround();
-        }
         // fpsLogger.log();
     }
 
@@ -133,14 +130,10 @@ public class GameScreen implements Screen {
         createFloorTilesActors();
         createMainTilesActors();
         spawnPlayer();
-        revealAround();
         spawnMonsters(Parameters.NUM_MONSTERS);
         addStageTouch();
         createUIFrame();  // TODO: UI Placeholder
         playerActor.setZIndex(500); // TODO: Need to calculate Z-Order in complex cases later on
-
-        References.playerActor = playerActor;
-        References.mainTileActorMap = mainTileActorMap;
 
         stage.addActor(UImainTable);
     }
@@ -183,6 +176,7 @@ public class GameScreen implements Screen {
                 gameAreaGroup.addActor(mainTileActorMap[i][j]);
             }
         }
+        References.mainTileActorMap = mainTileActorMap;
     }
 
     /**
@@ -245,6 +239,7 @@ public class GameScreen implements Screen {
                 count++;
             }
         }
+        References.monsterActorMap = monsterActorMap;
     }
 
     /**
@@ -276,6 +271,7 @@ public class GameScreen implements Screen {
         }
 
         playerActor = new PlayerActor(x, y, playerAtlas);
+        References.playerActor = playerActor;
         gameAreaGroup.addActor(playerActor);
     }
 
@@ -302,6 +298,7 @@ public class GameScreen implements Screen {
                                 && Math.abs(playerActor.getYTile() - currY) <= 1
                                 && playerActor.getPlayerStatus() == PlayerActor.PlayerStatus.STANDING) {
                             mainTileActorMap[currX][currY].setContainsMonster(false);
+                            ((MonsterActor) currActor).removeMonster();
                             currActor.remove();
                         }
 
@@ -313,48 +310,6 @@ public class GameScreen implements Screen {
                 return true;
             }
         });
-    }
-
-    /**
-     * Reveal around the player
-     */
-    private void revealAround() {
-        int pX = playerActor.getXTile();
-        int pY = playerActor.getYTile();
-
-        playerActor.setPlayerStatus(PlayerActor.PlayerStatus.STANDING);
-
-        // Reveal tiles with the player
-        mainTileActorMap[pX][pY].setRevealed(true);
-
-        if (pX - 1 >= 0) {
-            mainTileActorMap[pX - 1][pY].setRevealed(true);
-
-            if (mainTileActorMap[pX - 1][pY].itContainsMonster()) {
-                monsterActorMap[pX - 1][pY].setRevealed(true);
-            }
-        }
-        if (pY - 1 >= 0) {
-            mainTileActorMap[pX][pY - 1].setRevealed(true);
-
-            if (mainTileActorMap[pX][pY - 1].itContainsMonster()) {
-                monsterActorMap[pX][pY - 1].setRevealed(true);
-            }
-        }
-        if (pX + 1 < Parameters.NUM_X_TILES) {
-            mainTileActorMap[pX + 1][pY].setRevealed(true);
-
-            if (mainTileActorMap[pX + 1][pY].itContainsMonster()) {
-                monsterActorMap[pX + 1][pY].setRevealed(true);
-            }
-        }
-        if (pY + 1 < Parameters.NUM_Y_TILES) {
-            mainTileActorMap[pX][pY + 1].setRevealed(true);
-
-            if (mainTileActorMap[pX][pY + 1].itContainsMonster()) {
-                monsterActorMap[pX][pY + 1].setRevealed(true);
-            }
-        }
     }
 
     /**

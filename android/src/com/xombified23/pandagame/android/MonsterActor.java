@@ -27,7 +27,6 @@ public class MonsterActor extends Actor {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         if (isRevealed()) {
-            setAggroPerimeter(xTile, yTile);
             batch.draw(monsterTexture, getX(), getY(), monsterTexture.getWidth() * 5, monsterTexture.getHeight() * 5);
         }
     }
@@ -38,6 +37,7 @@ public class MonsterActor extends Actor {
 
     public void setRevealed(boolean revealed) {
         isRevealed = revealed;
+        setAggroPerimeter(1);
     }
 
     public int getXTile() {
@@ -48,22 +48,26 @@ public class MonsterActor extends Actor {
         return yTile;
     }
 
-    private void setAggroPerimeter(int xTile, int yTile) {
+    public void removeMonster() {
+        setAggroPerimeter(-1);
+    }
+
+    private void setAggroPerimeter(int counter) {
         if (xTile-1 >= 0)
-            References.mainTileActorMap[xTile-1][yTile].setAggro(true);
+            References.mainTileActorMap[xTile-1][yTile].addAggro(counter);
         if (xTile-1 >= 0 && yTile-1 >= 0)
-            References.mainTileActorMap[xTile-1][yTile-1].setAggro(true);
+            References.mainTileActorMap[xTile-1][yTile-1].addAggro(counter);
         if (yTile-1 >= 0)
-            References.mainTileActorMap[xTile][yTile-1].setAggro(true);
+            References.mainTileActorMap[xTile][yTile-1].addAggro(counter);
         if (xTile+1 < Parameters.NUM_X_TILES && yTile-1 >= 0)
-            References.mainTileActorMap[xTile+1][yTile-1].setAggro(true);
+            References.mainTileActorMap[xTile+1][yTile-1].addAggro(counter);
         if (xTile+1 < Parameters.NUM_X_TILES)
-            References.mainTileActorMap[xTile+1][yTile].setAggro(true);
+            References.mainTileActorMap[xTile+1][yTile].addAggro(counter);
         if (xTile+1 < Parameters.NUM_X_TILES && yTile+1 < Parameters.NUM_Y_TILES)
-            References.mainTileActorMap[xTile+1][yTile+1].setAggro(true);
+            References.mainTileActorMap[xTile+1][yTile+1].addAggro(counter);
         if (yTile+1 < Parameters.NUM_Y_TILES)
-            References.mainTileActorMap[xTile][yTile+1].setAggro(true);
+            References.mainTileActorMap[xTile][yTile+1].addAggro(counter);
         if (xTile-1 >= 0 && yTile+1 < Parameters.NUM_Y_TILES)
-            References.mainTileActorMap[xTile-1][yTile+1].setAggro(true);
+            References.mainTileActorMap[xTile-1][yTile+1].addAggro(counter);
     }
 }

@@ -17,7 +17,7 @@ public class MainTileActor extends Actor implements TileInterface {
     private float transparencyLvl;
     private float fadeSpeed;
     private boolean containsMonster;
-    private boolean isAggroed;
+    private int aggroCount;
 
     // TODO: Test
     private Texture blueTexture;
@@ -36,6 +36,7 @@ public class MainTileActor extends Actor implements TileInterface {
         this.blueTexture = blueTexture;
         this.redTexture = redTexture;
         this.greenTexture = greenTexture;
+        aggroCount = 0;
 
         // Set Map Actor boundaries
         setBounds(xTile * Parameters.TILE_PIXEL_WIDTH, yTile * Parameters.TILE_PIXEL_HEIGHT,
@@ -61,15 +62,19 @@ public class MainTileActor extends Actor implements TileInterface {
         }
         batch.setColor(0, 0, 0, transparencyLvl);
 
+        // TODO: Test Start: debug tiles
         if (testPlayerTile()) {
             batch.setColor(Color.WHITE);
             batch.draw(blueTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
-        } else if (this.isRevealed() && this.isAggroed && !testPlayerTile()) {
+        } else if (this.isRevealed() && aggroCount > 0 && !testPlayerTile()) {
             batch.setColor(Color.WHITE);
             batch.draw(redTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
         } else {
             batch.draw(fogTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
         }
+        // TODO: Test End
+
+        // batch.draw(fogTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
 
         // Reset color to default to allow other textures render properly
         batch.setColor(Color.WHITE);
@@ -99,8 +104,9 @@ public class MainTileActor extends Actor implements TileInterface {
         return yTile;
     }
 
-    public void setAggro(boolean aggroed) {
-        isAggroed = aggroed;
+    public void addAggro(int counter) {
+        aggroCount += counter;
+        System.out.println("aggroCount = " + aggroCount);
     }
 
     // TODO: Test method

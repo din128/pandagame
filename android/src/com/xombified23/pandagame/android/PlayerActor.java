@@ -45,6 +45,8 @@ public class PlayerActor extends Actor implements TileInterface {
         setBounds(xTile * Parameters.TILE_PIXEL_WIDTH, yTile * Parameters.TILE_PIXEL_HEIGHT, Parameters.TILE_PIXEL_WIDTH,
                 Parameters.TILE_PIXEL_HEIGHT);
         createAnimations(textureAtlas);
+        References.mainTileActorMap[xTile][yTile].setRevealed(true);
+        revealAround();
     }
 
     @Override
@@ -150,6 +152,13 @@ public class PlayerActor extends Actor implements TileInterface {
             xTile = nextXTile;
             yTile = nextYTile;
         }
+        moveAction.addAction(run(new Runnable() {
+            @Override
+            public void run() {
+                playerStatus = PlayerStatus.STANDING;
+                revealAround();
+            }
+        }));
         this.addAction(moveAction);
     }
 
@@ -199,6 +208,40 @@ public class PlayerActor extends Actor implements TileInterface {
 
     public enum PlayerStatus {
         STANDING, MOVINGLEFT, MOVINGRIGHT, MOVINGUP, MOVINGDOWN
+    }
+
+    /**
+     * Reveal around the player
+     */
+    private void revealAround() {
+        if (xTile - 1 >= 0 && !References.mainTileActorMap[xTile - 1][yTile].isRevealed()) {
+            References.mainTileActorMap[xTile - 1][yTile].setRevealed(true);
+
+            if (References.mainTileActorMap[xTile - 1][yTile].itContainsMonster()) {
+                References.monsterActorMap[xTile - 1][yTile].setRevealed(true);
+            }
+        }
+        if (yTile - 1 >= 0 && !References.mainTileActorMap[xTile][yTile - 1].isRevealed()) {
+            References.mainTileActorMap[xTile][yTile - 1].setRevealed(true);
+
+            if (References.mainTileActorMap[xTile][yTile - 1].itContainsMonster()) {
+                References.monsterActorMap[xTile][yTile - 1].setRevealed(true);
+            }
+        }
+        if (xTile + 1 < Parameters.NUM_X_TILES && !References.mainTileActorMap[xTile + 1][yTile].isRevealed()) {
+            References.mainTileActorMap[xTile + 1][yTile].setRevealed(true);
+
+            if (References.mainTileActorMap[xTile + 1][yTile].itContainsMonster()) {
+                References.monsterActorMap[xTile + 1][yTile].setRevealed(true);
+            }
+        }
+        if (yTile + 1 < Parameters.NUM_Y_TILES && !References.mainTileActorMap[xTile][yTile + 1].isRevealed()) {
+            References.mainTileActorMap[xTile][yTile + 1].setRevealed(true);
+
+            if (References.mainTileActorMap[xTile][yTile + 1].itContainsMonster()) {
+                References.monsterActorMap[xTile][yTile + 1].setRevealed(true);
+            }
+        }
     }
 
 }
