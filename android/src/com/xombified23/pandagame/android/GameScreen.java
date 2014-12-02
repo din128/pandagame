@@ -13,10 +13,9 @@ import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Array;
 
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Random;
+import java.util.*;
 
 public class GameScreen implements Screen {
     // General
@@ -46,6 +45,7 @@ public class GameScreen implements Screen {
     // private FPSLogger fpsLogger;
     private Table UImainTable;
     private Group gameAreaGroup;
+    private ActorComparator myComparator;
 
     // TODO: Testing Label
     private SpriteBatch batch;
@@ -72,6 +72,7 @@ public class GameScreen implements Screen {
         backTexture = new Texture(Gdx.files.internal("others/background.png"));
         monsterTexture = new Texture(Gdx.files.internal("others/playerSprite.png"));
         mapSteps = new int[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
+        myComparator = new ActorComparator();
 
         // TODO: Testing Label
         batch = new SpriteBatch();
@@ -99,8 +100,10 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         camera.update();
         stage.act(Gdx.graphics.getDeltaTime());
-        stage.draw();
 
+        // Sort Z order
+        gameAreaGroup.getChildren().sort(myComparator);
+        stage.draw();
         // fpsLogger.log();
     }
 
@@ -133,8 +136,8 @@ public class GameScreen implements Screen {
         spawnMonsters(Parameters.NUM_MONSTERS);
         addStageTouch();
         createUIFrame();  // TODO: UI Placeholder
-        playerActor.setZIndex(500); // TODO: Need to calculate Z-Order in complex cases later on
 
+        // Add actor to Stage
         stage.addActor(UImainTable);
     }
 

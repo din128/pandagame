@@ -12,4 +12,10 @@ public final class Parameters {
     public final static int MAX_NUM_MONSTERS = NUM_X_TILES * NUM_Y_TILES - 3;
     public final static int SCREEN_WIDTH = 1080;
     public final static int SCREEN_HEIGHT = 1920;
+
+    // Z-Order Constant
+    public final static int Z_BACKGROUND = 1;
+    public final static int Z_FLOOR = 2;
+    public final static int Z_MAIN = 3;
+    public final static int Z_CHARACTERS = 10000; // TODO: Need to find a better way for this
 }

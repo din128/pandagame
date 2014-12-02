@@ -7,27 +7,29 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 /**
  *  Created by Xombified on 8/9/2014.
  */
-public class MonsterActor extends Actor {
+public class MonsterActor extends BaseActor {
     private int xTile;
     private int yTile;
     private Texture monsterTexture;
     private boolean isRevealed;
+    private float zOrder;
 
     // TODO: USE INTERFACE for MainTileActor
     public MonsterActor(int xTile, int yTile, Texture monsterTexture) {
         this.xTile = xTile;
         this.yTile = yTile;
         isRevealed = false;
-
         this.monsterTexture = monsterTexture;
         setBounds(xTile * Parameters.TILE_PIXEL_WIDTH, yTile * Parameters.TILE_PIXEL_HEIGHT, Parameters.TILE_PIXEL_WIDTH,
                 Parameters.TILE_PIXEL_HEIGHT);
+
+        zOrder = Parameters.Z_CHARACTERS - getY();
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
         if (isRevealed()) {
-            batch.draw(monsterTexture, getX(), getY(), monsterTexture.getWidth() * 5, monsterTexture.getHeight() * 5);
+            batch.draw(monsterTexture, getX(), getY(), monsterTexture.getWidth() * 5, monsterTexture.getHeight() * 7);
         }
     }
 
@@ -40,12 +42,19 @@ public class MonsterActor extends Actor {
         setAggroPerimeter(1);
     }
 
+    @Override
     public int getXTile() {
         return xTile;
     }
 
+    @Override
     public int getYTile() {
         return yTile;
+    }
+
+    @Override
+    public float getZ() {
+        return zOrder;
     }
 
     public void removeMonster() {

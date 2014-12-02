@@ -18,7 +18,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 /**
  *  Created by Xombified on 7/27/2014.
  */
-public class PlayerActor extends Actor implements TileInterface {
+public class PlayerActor extends BaseActor {
     private int xTile;
     private int yTile;
     private int nextXTile;
@@ -31,6 +31,7 @@ public class PlayerActor extends Actor implements TileInterface {
     private Queue<PlayerStatus> queueMoves;
     private float elapsedTime;
     private SequenceAction moveAction;
+    private float zOrder;
 
     public PlayerActor(int x, int y, TextureAtlas textureAtlas) {
         xTile = x;
@@ -39,6 +40,7 @@ public class PlayerActor extends Actor implements TileInterface {
         elapsedTime = 0;
         queueMoves = new LinkedList<PlayerStatus>();
         moveAction = new SequenceAction();
+        zOrder = Parameters.Z_CHARACTERS - getY();
 
         moveSpeed = 0.2f;
         playerStatus = PlayerStatus.STANDING;
@@ -51,6 +53,8 @@ public class PlayerActor extends Actor implements TileInterface {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
+        zOrder = Parameters.Z_CHARACTERS - getY();
+
         // TODO: Hard coded sprite size and position for testing. Need to fix with new assets
         int sizeX = 320;
         int sizeY = 320;
@@ -188,6 +192,11 @@ public class PlayerActor extends Actor implements TileInterface {
 
     public int getYTile() {
         return yTile;
+    }
+
+    @Override
+    public float getZ() {
+        return zOrder;
     }
 
     public void setXTile(int xTile) {

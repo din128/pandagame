@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 /**
  *  Created by Xombified on 7/27/2014.
  */
-public class MainTileActor extends Actor implements TileInterface {
+public class MainTileActor extends BaseActor {
     private int xTile;
     private int yTile;
     private Texture fogTexture;
@@ -18,6 +18,7 @@ public class MainTileActor extends Actor implements TileInterface {
     private float fadeSpeed;
     private boolean containsMonster;
     private int aggroCount;
+    private float zOrder;
 
     // TODO: Test
     private Texture blueTexture;
@@ -26,6 +27,7 @@ public class MainTileActor extends Actor implements TileInterface {
 
     public MainTileActor(int x, int y, Texture fogTexture, Texture blueTexture, Texture redTexture,
                          Texture greenTexture) {
+        zOrder = Parameters.Z_MAIN;
         xTile = x;
         yTile = y;
         isRevealed = false;
@@ -104,9 +106,13 @@ public class MainTileActor extends Actor implements TileInterface {
         return yTile;
     }
 
+    @Override
+    public float getZ() {
+        return zOrder;
+    }
+
     public void addAggro(int counter) {
         aggroCount += counter;
-        System.out.println("aggroCount = " + aggroCount);
     }
 
     // TODO: Test method
