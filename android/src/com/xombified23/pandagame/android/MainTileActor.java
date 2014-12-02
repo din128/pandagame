@@ -17,6 +17,7 @@ public class MainTileActor extends BaseActor {
     private float transparencyLvl;
     private float fadeSpeed;
     private boolean containsMonster;
+    private boolean containsWall;
     private int aggroCount;
     private float zOrder;
 
@@ -32,6 +33,7 @@ public class MainTileActor extends BaseActor {
         yTile = y;
         isRevealed = false;
         containsMonster = false;
+        containsWall = false;
         transparencyLvl = 0.5f;
         fadeSpeed = 1.5f;
         this.fogTexture = fogTexture;
@@ -96,6 +98,14 @@ public class MainTileActor extends BaseActor {
 
     public void setContainsMonster(boolean contains) {
         containsMonster = contains;
+    }
+
+    public boolean itContainsWall() {
+        return containsWall;
+    }
+
+    public void setContainsWall(boolean contains) {
+        containsWall = contains;
     }
 
     public int getXTile() {

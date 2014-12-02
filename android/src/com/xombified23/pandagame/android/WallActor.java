@@ -6,25 +6,24 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 /**
  *  Created by Xombified on 9/1/2014.
  */
-public class FloorActor extends BaseActor {
-    private TextureRegion floorTexture;
+public class WallActor extends BaseActor {
+    private TextureRegion wallTexture;
     private int xTile;
     private int yTile;
     private float zOrder;
 
-    public FloorActor(int xTile, int yTile, TextureRegion floorTexture) {
-        this.floorTexture = floorTexture;
+    public WallActor(int xTile, int yTile, TextureRegion wallTexture) {
+        this.wallTexture = wallTexture;
         this.xTile = xTile;
         this.yTile = yTile;
-        zOrder = Parameters.Z_FLOOR;
-
         setBounds(xTile * Parameters.TILE_PIXEL_WIDTH, yTile * Parameters.TILE_PIXEL_HEIGHT, Parameters.TILE_PIXEL_WIDTH,
                 Parameters.TILE_PIXEL_HEIGHT);
+        zOrder = Parameters.Z_CHARACTERS - getY();
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        batch.draw(floorTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
+        batch.draw(wallTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
     }
 
     @Override

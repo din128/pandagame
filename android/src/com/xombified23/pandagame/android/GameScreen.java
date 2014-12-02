@@ -13,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.Array;
 
 import java.util.*;
 
@@ -26,6 +25,7 @@ public class GameScreen implements Screen {
     private MainTileActor[][] mainTileActorMap;
     private FloorActor[][] floorActorMap;
     private MonsterActor[][] monsterActorMap;
+    private WallActor[][] wallActorMap;
     private PlayerActor playerActor;
     private BackgroundActor backgroundActor;
 
@@ -110,8 +110,10 @@ public class GameScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         // TODO: Temporal Zoom out for older devices
-        camera.viewportWidth = width * 2;
-        camera.viewportHeight = height * 2;
+//        camera.viewportWidth = width * 2;
+//        camera.viewportHeight = height * 2;
+        camera.viewportWidth = width;
+        camera.viewportHeight = height;
 
         camera.position.set(width / 2f, height / 2f, 0);
     }
@@ -133,6 +135,7 @@ public class GameScreen implements Screen {
         createFloorTilesActors();
         createMainTilesActors();
         spawnPlayer();
+        createWalls(2);
         spawnMonsters(Parameters.NUM_MONSTERS);
         addStageTouch();
         createUIFrame();  // TODO: UI Placeholder
@@ -196,7 +199,7 @@ public class GameScreen implements Screen {
             for (int i = 0; i < Parameters.NUM_X_TILES; i++) {
                 Random rand = new Random();
                 TextureRegion floorTile;
-                switch (rand.nextInt(4)) {
+                switch (rand.nextInt(5)) {
                     case 0:
                         floorTile = floorAtlas.findRegion("tile1");
                         break;
@@ -206,8 +209,11 @@ public class GameScreen implements Screen {
                     case 2:
                         floorTile = floorAtlas.findRegion("tile3");
                         break;
-                    default:
+                    case 3:
                         floorTile = floorAtlas.findRegion("tile4");
+                        break;
+                    default:
+                        floorTile = floorAtlas.findRegion("tile_cracked");
                 }
 
                 floorActorMap[i][j] = new FloorActor(i, j, floorTile);
@@ -220,7 +226,7 @@ public class GameScreen implements Screen {
      * Spawn monsters
      */
     private void spawnMonsters(int numMonsters) {
-        if (numMonsters > (Parameters.MAX_NUM_MONSTERS)) {
+        if (numMonsters > (Parameters.MAX_NUM_TILES)) {
             throw new Error();
         }
 
@@ -235,7 +241,8 @@ public class GameScreen implements Screen {
             xTile = rand.nextInt(Parameters.NUM_X_TILES);
             yTile = rand.nextInt(Parameters.NUM_Y_TILES);
 
-            if (!mainTileActorMap[xTile][yTile].isRevealed() && !mainTileActorMap[xTile][yTile].itContainsMonster()) {
+            if (!mainTileActorMap[xTile][yTile].isRevealed() && !mainTileActorMap[xTile][yTile].itContainsMonster()
+                    && !mainTileActorMap[xTile][yTile].itContainsWall()) {
                 monsterActorMap[xTile][yTile] = new MonsterActor(xTile, yTile, monsterTexture);
                 mainTileActorMap[xTile][yTile].setContainsMonster(true);
                 gameAreaGroup.addActor(monsterActorMap[xTile][yTile]);
@@ -243,6 +250,43 @@ public class GameScreen implements Screen {
             }
         }
         References.monsterActorMap = monsterActorMap;
+    }
+
+    /**
+     * Create Walls
+     */
+    private void createWalls(int numWalls) {
+        if (numWalls > (Parameters.MAX_NUM_TILES)) {
+            throw new Error();
+        }
+
+        wallActorMap = new WallActor[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
+        Random rand = new Random();
+        int xTile;
+        int yTile;
+        int count = 0;
+
+        // TODO: Need a better way to spawn walls based on counter
+        while (count < numWalls) {
+            xTile = rand.nextInt(Parameters.NUM_X_TILES);
+            yTile = rand.nextInt(Parameters.NUM_Y_TILES);
+
+            if (!mainTileActorMap[xTile][yTile].isRevealed() && !mainTileActorMap[xTile][yTile].itContainsWall()) {
+                TextureRegion floorTile;
+                switch (rand.nextInt(2)) {
+                    case 0:
+                        floorTile = floorAtlas.findRegion("wood");
+                        break;
+                    default:
+                        floorTile = floorAtlas.findRegion("locker");
+                }
+
+                wallActorMap[xTile][yTile] = new WallActor(xTile, yTile, floorTile);
+                mainTileActorMap[xTile][yTile].setContainsWall(true);
+                gameAreaGroup.addActor(wallActorMap[xTile][yTile]);
+                count++;
+            }
+        }
     }
 
     /**
@@ -357,6 +401,7 @@ public class GameScreen implements Screen {
 
             if ((currPos.x - 1 >= 0) && (mainTileActorMap[currPos.x - 1][currPos.y].isRevealed())
                     && !mainTileActorMap[currPos.x - 1][currPos.y].itContainsMonster()
+                    && !mainTileActorMap[currPos.x - 1][currPos.y].itContainsWall()
                     && (mapSteps[currPos.x - 1][currPos.y] == -1)) {
                 Point newPos = new Point();
                 newPos.x = currPos.x - 1;
@@ -367,6 +412,7 @@ public class GameScreen implements Screen {
 
             if (currPos.x + 1 < Parameters.NUM_X_TILES && mainTileActorMap[currPos.x + 1][currPos.y].isRevealed()
                     && !mainTileActorMap[currPos.x + 1][currPos.y].itContainsMonster()
+                    && !mainTileActorMap[currPos.x + 1][currPos.y].itContainsWall()
                     && mapSteps[currPos.x + 1][currPos.y] == -1) {
                 Point newPos = new Point();
                 newPos.x = currPos.x + 1;
@@ -377,6 +423,7 @@ public class GameScreen implements Screen {
 
             if (currPos.y - 1 >= 0 && mainTileActorMap[currPos.x][currPos.y - 1].isRevealed()
                     && !mainTileActorMap[currPos.x][currPos.y - 1].itContainsMonster()
+                    && !mainTileActorMap[currPos.x][currPos.y - 1].itContainsWall()
                     && mapSteps[currPos.x][currPos.y - 1] == -1) {
                 Point newPos = new Point();
                 newPos.x = currPos.x;
@@ -387,6 +434,7 @@ public class GameScreen implements Screen {
 
             if (currPos.y + 1 < Parameters.NUM_Y_TILES && mainTileActorMap[currPos.x][currPos.y + 1].isRevealed()
                     && !mainTileActorMap[currPos.x][currPos.y + 1].itContainsMonster()
+                    && !mainTileActorMap[currPos.x][currPos.y + 1].itContainsWall()
                     && mapSteps[currPos.x][currPos.y + 1] == -1) {
                 Point newPos = new Point();
                 newPos.x = currPos.x;

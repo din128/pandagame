@@ -62,21 +62,31 @@ public class MonsterActor extends BaseActor {
     }
 
     private void setAggroPerimeter(int counter) {
-        if (xTile-1 >= 0)
+        if (xTile-1 >= 0 && !References.mainTileActorMap[xTile-1][yTile].itContainsWall())
             References.mainTileActorMap[xTile-1][yTile].addAggro(counter);
-        if (xTile-1 >= 0 && yTile-1 >= 0)
+
+        if (xTile-1 >= 0 && yTile-1 >= 0 && !References.mainTileActorMap[xTile-1][yTile-1].itContainsWall())
             References.mainTileActorMap[xTile-1][yTile-1].addAggro(counter);
-        if (yTile-1 >= 0)
+
+        if (yTile-1 >= 0 && !References.mainTileActorMap[xTile][yTile-1].itContainsWall())
             References.mainTileActorMap[xTile][yTile-1].addAggro(counter);
-        if (xTile+1 < Parameters.NUM_X_TILES && yTile-1 >= 0)
+
+        if (xTile+1 < Parameters.NUM_X_TILES && yTile-1 >= 0 && !References.mainTileActorMap[xTile+1][yTile-1]
+                .itContainsWall())
             References.mainTileActorMap[xTile+1][yTile-1].addAggro(counter);
-        if (xTile+1 < Parameters.NUM_X_TILES)
+
+        if (xTile+1 < Parameters.NUM_X_TILES && !References.mainTileActorMap[xTile+1][yTile].itContainsWall())
             References.mainTileActorMap[xTile+1][yTile].addAggro(counter);
-        if (xTile+1 < Parameters.NUM_X_TILES && yTile+1 < Parameters.NUM_Y_TILES)
+
+        if (xTile+1 < Parameters.NUM_X_TILES && yTile+1 < Parameters.NUM_Y_TILES && !References
+                .mainTileActorMap[xTile+1][yTile+1].itContainsWall())
             References.mainTileActorMap[xTile+1][yTile+1].addAggro(counter);
-        if (yTile+1 < Parameters.NUM_Y_TILES)
+
+        if (yTile+1 < Parameters.NUM_Y_TILES && !References.mainTileActorMap[xTile][yTile+1].itContainsWall())
             References.mainTileActorMap[xTile][yTile+1].addAggro(counter);
-        if (xTile-1 >= 0 && yTile+1 < Parameters.NUM_Y_TILES)
+
+        if (xTile-1 >= 0 && yTile+1 < Parameters.NUM_Y_TILES && !References.mainTileActorMap[xTile-1][yTile+1]
+                .itContainsWall())
             References.mainTileActorMap[xTile-1][yTile+1].addAggro(counter);
     }
 }
