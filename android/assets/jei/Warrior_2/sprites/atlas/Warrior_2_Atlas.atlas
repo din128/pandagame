@@ -1,0 +1,96 @@
+
+Warrior_2_Atlas.png
+format: RGB565
+filter: Nearest,Nearest
+repeat: none
+body
+  rotate: false
+  xy: 1, 1
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+Head
+  rotate: false
+  xy: 1027, 1
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+L_ankle
+  rotate: false
+  xy: 2053, 1
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+L_hand
+  rotate: false
+  xy: 3079, 1
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+L_leg
+  rotate: false
+  xy: 4105, 1
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+L_lower
+  rotate: false
+  xy: 5131, 1
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+L_shoulder
+  rotate: false
+  xy: 6157, 1
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+R_ankle
+  rotate: false
+  xy: 7183, 1
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+R_hand
+  rotate: false
+  xy: 8209, 1
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+R_leg
+  rotate: false
+  xy: 9235, 1
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+R_lower
+  rotate: false
+  xy: 10261, 1
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+R_shoulder
+  rotate: false
+  xy: 11287, 1
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
+wasit
+  rotate: false
+  xy: 12313, 1
+  size: 1024, 1024
+  orig: 1024, 1024
+  offset: 0, 0
+  index: -1
