@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 
 /**
  *  Created by Xombified on 7/27/2014.
@@ -22,9 +21,9 @@ public class MainTileActor extends BaseActor {
     private float zOrder;
 
     // TODO: Test
-    private Texture blueTexture;
-    private Texture redTexture;
-    private Texture greenTexture;
+//    private Texture blueTexture;
+//    private Texture redTexture;
+//    private Texture greenTexture;
 
     public MainTileActor(int x, int y, Texture fogTexture, Texture blueTexture, Texture redTexture,
                          Texture greenTexture) {
@@ -37,9 +36,9 @@ public class MainTileActor extends BaseActor {
         transparencyLvl = 0.5f;
         fadeSpeed = 1.5f;
         this.fogTexture = fogTexture;
-        this.blueTexture = blueTexture;
-        this.redTexture = redTexture;
-        this.greenTexture = greenTexture;
+//        this.blueTexture = blueTexture;
+//        this.redTexture = redTexture;
+//        this.greenTexture = greenTexture;
         aggroCount = 0;
 
         // Set Map Actor boundaries
@@ -69,10 +68,10 @@ public class MainTileActor extends BaseActor {
         // TODO: Test Start: debug tiles
         if (testPlayerTile()) {
             batch.setColor(Color.WHITE);
-            batch.draw(blueTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
+            // batch.draw(blueTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
         } else if (this.isRevealed() && aggroCount > 0 && !testPlayerTile()) {
             batch.setColor(Color.WHITE);
-            batch.draw(redTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
+            // batch.draw(redTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
         } else {
             batch.draw(fogTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
         }

@@ -1,95 +1,67 @@
 package com.xombified23.pandagame.android;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
+import com.esotericsoftware.spine.*;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
-/**
- *  Created by Xombified on 7/27/2014.
- */
 public class PlayerActor extends BaseActor {
     private int xTile;
     private int yTile;
-    private int nextXTile;
-    private int nextYTile;
     private PlayerStatus playerStatus;
-    private Animation moveAnim;
-    private Animation restAnim;
-    private float moveSpeed;
     private PlayerStatus nextMoveStatus;
     private Queue<PlayerStatus> queueMoves;
-    private float elapsedTime;
     private SequenceAction moveAction;
     private float zOrder;
+    private Skeleton skeleton;
+    private AnimationState animState;
+    private SkeletonRenderer renderer;
+    private float marginX = Parameters.PLAYER_MARGINX_DEFAULT;
 
     public PlayerActor(int x, int y, TextureAtlas textureAtlas) {
         xTile = x;
         yTile = y;
         nextMoveStatus = null;
-        elapsedTime = 0;
         queueMoves = new LinkedList<PlayerStatus>();
         moveAction = new SequenceAction();
-        zOrder = Parameters.Z_CHARACTERS - getY();
+        renderer = new SkeletonRenderer();
+        renderer.setPremultipliedAlpha(false);
+        zOrder = Parameters.Z_CHARACTERS - getY(); // Dynamic Z-Order for players
 
-        moveSpeed = 0.2f;
         playerStatus = PlayerStatus.STANDING;
         setBounds(xTile * Parameters.TILE_PIXEL_WIDTH, yTile * Parameters.TILE_PIXEL_HEIGHT, Parameters.TILE_PIXEL_WIDTH,
                 Parameters.TILE_PIXEL_HEIGHT);
         createAnimations(textureAtlas);
-        References.mainTileActorMap[xTile][yTile].setRevealed(true);
-        revealAround();
+
+        if (References.mainTileActorMap == null) {
+            throw new Error();
+        } else {
+            References.mainTileActorMap[xTile][yTile].setRevealed(true);
+            revealAround();
+        }
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
         zOrder = Parameters.Z_CHARACTERS - getY();
+        animState.update(Gdx.graphics.getDeltaTime());
 
-        // TODO: Hard coded sprite size and position for testing. Need to fix with new assets
-        int sizeX = 320;
-        int sizeY = 320;
-
-        // TODO: Need to remove this eventually
-        int margin = 40;
-
-        elapsedTime += Gdx.graphics.getDeltaTime();
-        switch (playerStatus) {
-            // TODO: Hard coding position
-            case STANDING:
-                batch.draw(restAnim.getKeyFrame(elapsedTime, true), getX() - margin, getY(), sizeX, sizeY);
-                break;
-            case MOVINGDOWN:
-                batch.draw(moveAnim.getKeyFrame(elapsedTime, true), getX() - margin, getY(), sizeX, sizeY);
-                break;
-            case MOVINGUP:
-                batch.draw(moveAnim.getKeyFrame(elapsedTime, true), getX() - margin, getY(), sizeX, sizeY);
-                break;
-            case MOVINGLEFT:
-                batch.draw(moveAnim.getKeyFrame(elapsedTime, true), getX() - margin, getY(), sizeX, sizeY);
-                break;
-            case MOVINGRIGHT:
-                batch.draw(moveAnim.getKeyFrame(elapsedTime, true), getX() - margin, getY(), sizeX, sizeY);
-                break;
-            default:
-                batch.draw(restAnim.getKeyFrame(elapsedTime, true), getX() - margin, getY(), sizeX, sizeY);
-                break;
-        }
+        animState.apply(skeleton);
+        skeleton.updateWorldTransform();
+        skeleton.setPosition(getX() + marginX, getY() + Parameters.PLAYER_MARGINY);
+        renderer.draw(batch, skeleton);
     }
 
     public void movePlayer(int[][] mapSteps, int destXTile, int destYTile) {
-        nextXTile = xTile;
-        nextYTile = yTile;
-        int count = 1000;
+        int nextXTile = xTile;
+        int nextYTile = yTile;
+        int count = 1000; // TODO: Need to make this count more stable
 
         moveAction.reset();
         queueMoves.clear();
@@ -131,59 +103,82 @@ public class PlayerActor extends BaseActor {
             // Add one action at a time for smooth walking
             moveAction.addAction(parallel(moveTo(nextXTile * Parameters.TILE_PIXEL_WIDTH,
                     nextYTile * Parameters.TILE_PIXEL_HEIGHT,
-                    moveSpeed), run(new Runnable() {
+                    Parameters.PLAYER_MOVE_SPEED), run(new Runnable() {
                 @Override
                 public void run() {
                     PlayerStatus moveStatus = queueMoves.poll();
+
                     switch (moveStatus) {
                         case MOVINGDOWN:
+                            if (playerStatus == PlayerStatus.STANDING) {
+                                animState.setAnimation(0, "Walking", true);
+                            }
+
                             playerStatus = PlayerStatus.MOVINGDOWN;
                             break;
+
                         case MOVINGLEFT:
+                            if (playerStatus == PlayerStatus.STANDING) {
+                                animState.setAnimation(0, "Walking", true);
+                            }
+                            skeleton.setFlipX(true);
+                            marginX = Parameters.PLAYER_MARGINX_FLIPPED;
                             playerStatus = PlayerStatus.MOVINGLEFT;
                             break;
+
                         case MOVINGRIGHT:
+                            if (playerStatus == PlayerStatus.STANDING) {
+                                animState.setAnimation(0, "Walking", true);
+                            }
+                            skeleton.setFlipX(false);
+                            marginX = Parameters.PLAYER_MARGINX_DEFAULT;
                             playerStatus = PlayerStatus.MOVINGRIGHT;
                             break;
+
                         case MOVINGUP:
+                            if (playerStatus == PlayerStatus.STANDING) {
+                                animState.setAnimation(0, "Walking", true);
+                            }
                             playerStatus = PlayerStatus.MOVINGUP;
                             break;
                         default:
+                            if (playerStatus != PlayerStatus.STANDING) {
+                                animState.setAnimation(0, "Standing", true);
+                            }
+
                             playerStatus = PlayerStatus.STANDING;
                     }
                 }
             })));
+
+            // Update tiles
             xTile = nextXTile;
             yTile = nextYTile;
         }
+
+        // Queue Standing action after movements are completed
         moveAction.addAction(run(new Runnable() {
             @Override
             public void run() {
                 playerStatus = PlayerStatus.STANDING;
+                animState.setAnimation(0, "Standing", true);
                 revealAround();
             }
         }));
-        this.addAction(moveAction);
+
+        this.addAction(moveAction); // Add the moveAction to the main action
     }
 
     private void createAnimations(TextureAtlas textureAtlas) {
-        TextureRegion[] moveRegion = new TextureRegion[4];
-        TextureRegion[] restRegion = new TextureRegion[3];
-        float moveAnimSpeed = 0.1f;
-        float restAnimSpeed = 0.75f;
+        SkeletonJson json = new SkeletonJson(textureAtlas);
+        json.setScale(Parameters.PLAYER_SPRITE_SCALE);
+        SkeletonData skeletonData = json.readSkeletonData(Gdx.files.internal("jei/Warrior2/skeleton.json"));
+        AnimationStateData stateData = new AnimationStateData(skeletonData);
 
-        // Move
-        moveRegion[0] = (textureAtlas.findRegion("walking0001"));
-        moveRegion[1] = (textureAtlas.findRegion("walking0002"));
-        moveRegion[2] = (textureAtlas.findRegion("walking0003"));
-        moveRegion[3] = (textureAtlas.findRegion("walking0004"));
-        moveAnim = new Animation(moveAnimSpeed, moveRegion);
-
-        // Resting
-        restRegion[0] = (textureAtlas.findRegion("resting0001"));
-        restRegion[1] = (textureAtlas.findRegion("resting0002"));
-        restRegion[2] = (textureAtlas.findRegion("resting0003"));
-        restAnim = new Animation(restAnimSpeed, restRegion);
+        // Create Skeleton and AnimationState for the character
+        skeleton = new Skeleton(skeletonData);
+        animState = new AnimationState(stateData);
+        // animState.setTimeScale(0.5f);
     }
 
     public int getXTile() {
@@ -199,20 +194,8 @@ public class PlayerActor extends BaseActor {
         return zOrder;
     }
 
-    public void setXTile(int xTile) {
-        this.xTile = xTile;
-    }
-
-    public void setYTile(int yTile) {
-        this.yTile = yTile;
-    }
-
     public PlayerStatus getPlayerStatus() {
         return playerStatus;
-    }
-
-    public void setPlayerStatus(PlayerStatus newPlayerStatus) {
-        playerStatus = newPlayerStatus;
     }
 
     public enum PlayerStatus {

@@ -50,7 +50,6 @@ public class GameScreen implements Screen {
     // TODO: Testing Label
     private SpriteBatch batch;
     private BitmapFont font;
-    private Label lifeLabel;
 
     // Double array to handle shortest path
     private int[][] mapSteps;
@@ -64,7 +63,7 @@ public class GameScreen implements Screen {
         // fpsLogger = new FPSLogger();
         camera = new OrthographicCamera();
         floorAtlas = new TextureAtlas(Gdx.files.internal("jei/StandardTiles/StandardTiles.atlas"));
-        playerAtlas = new TextureAtlas(Gdx.files.internal("jei/Warrior/Warrior_all/Atlas/Hero_Atlas.atlas"));
+        playerAtlas = new TextureAtlas(Gdx.files.internal("jei/Warrior2/atlas/Warrior_2_Atlas.atlas"));
         fogTexture = new Texture(Gdx.files.internal("others/blacktile.png"));
         redTexture = new Texture(Gdx.files.internal("others/redtile.png"));
         blueTexture = new Texture(Gdx.files.internal("others/bluetile.png"));
@@ -110,10 +109,10 @@ public class GameScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         // TODO: Temporal Zoom out for older devices
-//        camera.viewportWidth = width * 2;
-//        camera.viewportHeight = height * 2;
-        camera.viewportWidth = width;
-        camera.viewportHeight = height;
+        camera.viewportWidth = width * 2;
+        camera.viewportHeight = height * 2;
+//        camera.viewportWidth = width;
+//        camera.viewportHeight = height;
 
         camera.position.set(width / 2f, height / 2f, 0);
     }
@@ -165,7 +164,7 @@ public class GameScreen implements Screen {
         UImainTable.row();
         font.setScale(8, 8);
         LabelStyle labelStyle = new LabelStyle(font, Color.BLUE);
-        lifeLabel = new Label("", labelStyle);
+        Label lifeLabel = new Label("", labelStyle);
         UImainTable.add(lifeLabel).expandX().left().height(420);
         lifeLabel.setText("Life: ");
     }

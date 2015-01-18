@@ -2,11 +2,7 @@ package com.xombified23.pandagame.android;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 
-/**
- *  Created by Xombified on 8/9/2014.
- */
 public class MonsterActor extends BaseActor {
     private int xTile;
     private int yTile;

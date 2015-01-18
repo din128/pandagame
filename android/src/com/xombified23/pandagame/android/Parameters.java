@@ -1,8 +1,5 @@
 package com.xombified23.pandagame.android;
 
-/**
- * Created by Xombified on 8/9/2014.
- */
 public final class Parameters {
     public final static int NUM_X_TILES = 5;
     public final static int NUM_Y_TILES = 6;
@@ -12,6 +9,13 @@ public final class Parameters {
     public final static int MAX_NUM_TILES = NUM_X_TILES * NUM_Y_TILES - 3;
     public final static int SCREEN_WIDTH = 1080;
     public final static int SCREEN_HEIGHT = 1920;
+    public final static float PLAYER_SPRITE_SCALE = 0.25f;
+
+    // Player Constants
+    public final static float PLAYER_MOVE_SPEED = 0.5f;
+    public final static float PLAYER_MARGINY = 20;
+    public final static float PLAYER_MARGINX_DEFAULT = 80f;
+    public final static float PLAYER_MARGINX_FLIPPED = 120f;
 
     // Z-Order Constant
     public final static int Z_BACKGROUND = 1;
