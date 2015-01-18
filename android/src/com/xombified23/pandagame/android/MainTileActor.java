@@ -5,9 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 
-/**
- *  Created by Xombified on 7/27/2014.
- */
 public class MainTileActor extends BaseActor {
     private int xTile;
     private int yTile;

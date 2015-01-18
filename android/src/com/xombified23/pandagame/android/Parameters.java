@@ -9,7 +9,7 @@ public final class Parameters {
     public final static int MAX_NUM_TILES = NUM_X_TILES * NUM_Y_TILES - 3;
     public final static int SCREEN_WIDTH = 1080;
     public final static int SCREEN_HEIGHT = 1920;
-    public final static float PLAYER_SPRITE_SCALE = 0.25f;
+    public final static float CHARACTER_SCALE = 0.25f;
 
     // Player Constants
     public final static float PLAYER_MOVE_SPEED = 0.5f;

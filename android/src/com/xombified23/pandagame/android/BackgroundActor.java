@@ -3,9 +3,6 @@ package com.xombified23.pandagame.android;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 
-/**
- *  Created by Xombified on 8/9/2014.
- */
 public class BackgroundActor extends BaseActor {
     private Texture texture;
     private float zOrder;

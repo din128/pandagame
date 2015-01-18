@@ -2,6 +2,7 @@ package com.xombified23.pandagame.android;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,10 +12,13 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.esotericsoftware.spine.*;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Random;
 
 public class GameScreen implements Screen {
     // General
@@ -34,7 +38,7 @@ public class GameScreen implements Screen {
     private TextureAtlas playerAtlas;
     private Texture backTexture;
     private Texture fogTexture;
-    private Texture monsterTexture;
+    // private Texture monsterTexture;
 
     // TODO: Test
     private Texture blueTexture;
@@ -69,7 +73,7 @@ public class GameScreen implements Screen {
         blueTexture = new Texture(Gdx.files.internal("others/bluetile.png"));
         greenTexture = new Texture(Gdx.files.internal("others/greentile.png"));
         backTexture = new Texture(Gdx.files.internal("others/background.png"));
-        monsterTexture = new Texture(Gdx.files.internal("others/playerSprite.png"));
+        // monsterTexture = new Texture(Gdx.files.internal("others/playerSprite.png"));
         mapSteps = new int[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
         myComparator = new ActorComparator();
 
@@ -84,7 +88,7 @@ public class GameScreen implements Screen {
         playerAtlas.dispose();
         floorAtlas.dispose();
         fogTexture.dispose();
-        monsterTexture.dispose();
+        // monsterTexture.dispose();
         stage.dispose();
         blueTexture.dispose();
         redTexture.dispose();
@@ -234,6 +238,10 @@ public class GameScreen implements Screen {
         int xTile;
         int yTile;
         int count = 0;
+        FileHandle jsonSkeleton = Gdx.files.internal("jei/Warrior2/skeleton.json");
+
+        // TODO: Using player Atlas for testing
+        SpineObject spineObject = createAnimations(playerAtlas, jsonSkeleton); // create animation skeleton
 
         // TODO: Need a better way to spawn monsters based on counter
         while (count < numMonsters) {
@@ -242,7 +250,8 @@ public class GameScreen implements Screen {
 
             if (!mainTileActorMap[xTile][yTile].isRevealed() && !mainTileActorMap[xTile][yTile].itContainsMonster()
                     && !mainTileActorMap[xTile][yTile].itContainsWall()) {
-                monsterActorMap[xTile][yTile] = new MonsterActor(xTile, yTile, monsterTexture);
+
+                monsterActorMap[xTile][yTile] = new MonsterActor(xTile, yTile, spineObject);
                 mainTileActorMap[xTile][yTile].setContainsMonster(true);
                 gameAreaGroup.addActor(monsterActorMap[xTile][yTile]);
                 count++;
@@ -315,8 +324,10 @@ public class GameScreen implements Screen {
                 y = Parameters.NUM_Y_TILES - 1;
                 break;
         }
+        FileHandle jsonSkeleton = Gdx.files.internal("jei/Warrior2/skeleton.json");
+        SpineObject spineObject = createAnimations(playerAtlas, jsonSkeleton); // create animation skeleton
 
-        playerActor = new PlayerActor(x, y, playerAtlas);
+        playerActor = new PlayerActor(x, y, spineObject);
         References.playerActor = playerActor;
         gameAreaGroup.addActor(playerActor);
     }
@@ -330,7 +341,7 @@ public class GameScreen implements Screen {
                 Actor currActor = stage.hit(x, y, true);
                 if (currActor != null) {
                     if (currActor instanceof MainTileActor) {
-                        if (((MainTileActor) currActor).isRevealed() && playerActor.getPlayerStatus() ==  PlayerActor
+                        if (((MainTileActor) currActor).isRevealed() && playerActor.getPlayerStatus() == PlayerActor
                                 .PlayerStatus.STANDING) {
                             movePlayer(((MainTileActor) currActor).getXTile(), ((MainTileActor) currActor).getYTile());
                         }
@@ -360,6 +371,7 @@ public class GameScreen implements Screen {
 
     /**
      * Move players algorithm
+     *
      * @param destXTile destination X
      * @param destYTile destination Y
      */
@@ -442,6 +454,22 @@ public class GameScreen implements Screen {
                 mapSteps[newPos.x][newPos.y] = count;
             }
         } // end of while loop
+    }
+
+    private SpineObject createAnimations(TextureAtlas textureAtlas, FileHandle jsonSkeleton) {
+        SkeletonJson json = new SkeletonJson(textureAtlas);
+        json.setScale(Parameters.CHARACTER_SCALE);
+        SkeletonData skeletonData = json.readSkeletonData(jsonSkeleton);
+        AnimationStateData stateData = new AnimationStateData(skeletonData);
+
+        Skeleton skeleton = new Skeleton(skeletonData);
+        AnimationState animState = new AnimationState(stateData);
+        // animState.setTimeScale(0.5f);
+        SpineObject spineObject = new SpineObject();
+        spineObject.skeleton = skeleton;
+        spineObject.animState = animState;
+
+        return spineObject;
     }
 }
 

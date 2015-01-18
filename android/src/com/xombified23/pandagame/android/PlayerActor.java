@@ -2,9 +2,10 @@ package com.xombified23.pandagame.android;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
-import com.esotericsoftware.spine.*;
+import com.esotericsoftware.spine.AnimationState;
+import com.esotericsoftware.spine.Skeleton;
+import com.esotericsoftware.spine.SkeletonRenderer;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -24,7 +25,7 @@ public class PlayerActor extends BaseActor {
     private SkeletonRenderer renderer;
     private float marginX = Parameters.PLAYER_MARGINX_DEFAULT;
 
-    public PlayerActor(int x, int y, TextureAtlas textureAtlas) {
+    public PlayerActor(int x, int y, SpineObject spineObject) {
         xTile = x;
         yTile = y;
         nextMoveStatus = null;
@@ -32,12 +33,13 @@ public class PlayerActor extends BaseActor {
         moveAction = new SequenceAction();
         renderer = new SkeletonRenderer();
         renderer.setPremultipliedAlpha(false);
+        skeleton = spineObject.skeleton;
+        animState = spineObject.animState;
         zOrder = Parameters.Z_CHARACTERS - getY(); // Dynamic Z-Order for players
 
         playerStatus = PlayerStatus.STANDING;
         setBounds(xTile * Parameters.TILE_PIXEL_WIDTH, yTile * Parameters.TILE_PIXEL_HEIGHT, Parameters.TILE_PIXEL_WIDTH,
                 Parameters.TILE_PIXEL_HEIGHT);
-        createAnimations(textureAtlas);
 
         if (References.mainTileActorMap == null) {
             throw new Error();
@@ -167,18 +169,6 @@ public class PlayerActor extends BaseActor {
         }));
 
         this.addAction(moveAction); // Add the moveAction to the main action
-    }
-
-    private void createAnimations(TextureAtlas textureAtlas) {
-        SkeletonJson json = new SkeletonJson(textureAtlas);
-        json.setScale(Parameters.PLAYER_SPRITE_SCALE);
-        SkeletonData skeletonData = json.readSkeletonData(Gdx.files.internal("jei/Warrior2/skeleton.json"));
-        AnimationStateData stateData = new AnimationStateData(skeletonData);
-
-        // Create Skeleton and AnimationState for the character
-        skeleton = new Skeleton(skeletonData);
-        animState = new AnimationState(stateData);
-        // animState.setTimeScale(0.5f);
     }
 
     public int getXTile() {
