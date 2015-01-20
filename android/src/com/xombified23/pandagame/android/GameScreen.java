@@ -10,20 +10,20 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.esotericsoftware.spine.*;
 
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Random;
 
 public class GameScreen implements Screen {
     // General
     private Stage stage;
     private OrthographicCamera camera;
+    private MainLogic mainLogic;
 
     // Actors
     private MainTileActor[][] mainTileActorMap;
@@ -38,12 +38,14 @@ public class GameScreen implements Screen {
     private TextureAtlas playerAtlas;
     private Texture backTexture;
     private Texture fogTexture;
-    // private Texture monsterTexture;
 
-    // TODO: Test
+    // TODO: Debug stuff
     private Texture blueTexture;
     private Texture redTexture;
     private Texture greenTexture;
+    private SpriteBatch batch;
+    private BitmapFont font;
+    private Label debugLabel;
 
     // Others
     // private FPSLogger fpsLogger;
@@ -51,19 +53,13 @@ public class GameScreen implements Screen {
     private Group gameAreaGroup;
     private ActorComparator myComparator;
 
-    // TODO: Testing Label
-    private SpriteBatch batch;
-    private BitmapFont font;
-
-    // Double array to handle shortest path
-    private int[][] mapSteps;
-
     public GameScreen(final MainGame game) {
-
         // Instantiate New Objects
         gameAreaGroup = new Group();
         UImainTable = new Table();
         stage = new Stage();
+        References.stage = stage;
+
         // fpsLogger = new FPSLogger();
         camera = new OrthographicCamera();
         floorAtlas = new TextureAtlas(Gdx.files.internal("jei/StandardTiles/StandardTiles.atlas"));
@@ -73,11 +69,9 @@ public class GameScreen implements Screen {
         blueTexture = new Texture(Gdx.files.internal("others/bluetile.png"));
         greenTexture = new Texture(Gdx.files.internal("others/greentile.png"));
         backTexture = new Texture(Gdx.files.internal("others/background.png"));
-        // monsterTexture = new Texture(Gdx.files.internal("others/playerSprite.png"));
-        mapSteps = new int[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
         myComparator = new ActorComparator();
 
-        // TODO: Testing Label
+        // TODO: Debug Stuff
         batch = new SpriteBatch();
         font = new BitmapFont();
     }
@@ -88,13 +82,12 @@ public class GameScreen implements Screen {
         playerAtlas.dispose();
         floorAtlas.dispose();
         fogTexture.dispose();
-        // monsterTexture.dispose();
         stage.dispose();
         blueTexture.dispose();
         redTexture.dispose();
         greenTexture.dispose();
 
-        // TODO: Testing
+        // TODO: Debug Stuff
         batch.dispose();
         font.dispose();
     }
@@ -104,6 +97,9 @@ public class GameScreen implements Screen {
         camera.update();
         stage.act(Gdx.graphics.getDeltaTime());
 
+        // TODO: Debug Stuff
+        debugLabel.setText(mainLogic.getText());
+
         // Sort Z order
         gameAreaGroup.getChildren().sort(myComparator);
         stage.draw();
@@ -112,7 +108,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        // TODO: Temporal Zoom out for older devices
+        // TODO: Later: Temporal Zoom out for older devices
         camera.viewportWidth = width * 2;
         camera.viewportHeight = height * 2;
 //        camera.viewportWidth = width;
@@ -140,8 +136,8 @@ public class GameScreen implements Screen {
         spawnPlayer();
         createWalls(2);
         spawnMonsters(Parameters.NUM_MONSTERS);
-        addStageTouch();
-        createUIFrame();  // TODO: UI Placeholder
+        createGameLogic();
+        createUIFrame();  // TODO: Later: UI Placeholder
 
         // Add actor to Stage
         stage.addActor(UImainTable);
@@ -166,11 +162,10 @@ public class GameScreen implements Screen {
         UImainTable.setBounds(0, 0, Parameters.SCREEN_WIDTH, Parameters.SCREEN_HEIGHT);
         UImainTable.add(gameAreaGroup).expand().left().bottom();
         UImainTable.row();
-        font.setScale(8, 8);
+        font.setScale(4, 4);
         LabelStyle labelStyle = new LabelStyle(font, Color.BLUE);
-        Label lifeLabel = new Label("", labelStyle);
-        UImainTable.add(lifeLabel).expandX().left().height(420);
-        lifeLabel.setText("Life: ");
+        debugLabel = new Label("", labelStyle);
+        UImainTable.add(debugLabel).expandX().left().height(420);
     }
 
     /**
@@ -240,9 +235,6 @@ public class GameScreen implements Screen {
         int count = 0;
         FileHandle jsonSkeleton = Gdx.files.internal("jei/Warrior2/skeleton.json");
 
-        // TODO: Using player Atlas for testing
-        SpineObject spineObject = createAnimations(playerAtlas, jsonSkeleton); // create animation skeleton
-
         // TODO: Need a better way to spawn monsters based on counter
         while (count < numMonsters) {
             xTile = rand.nextInt(Parameters.NUM_X_TILES);
@@ -251,7 +243,7 @@ public class GameScreen implements Screen {
             if (!mainTileActorMap[xTile][yTile].isRevealed() && !mainTileActorMap[xTile][yTile].itContainsMonster()
                     && !mainTileActorMap[xTile][yTile].itContainsWall()) {
 
-                monsterActorMap[xTile][yTile] = new MonsterActor(xTile, yTile, spineObject);
+                monsterActorMap[xTile][yTile] = new MonsterActor(xTile, yTile, createAnimations(playerAtlas, jsonSkeleton));
                 mainTileActorMap[xTile][yTile].setContainsMonster(true);
                 gameAreaGroup.addActor(monsterActorMap[xTile][yTile]);
                 count++;
@@ -335,125 +327,9 @@ public class GameScreen implements Screen {
     /**
      * Add Input Listener to the Stage
      */
-    private void addStageTouch() {
-        stage.addListener(new InputListener() {
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Actor currActor = stage.hit(x, y, true);
-                if (currActor != null) {
-                    if (currActor instanceof MainTileActor) {
-                        if (((MainTileActor) currActor).isRevealed() && playerActor.getPlayerStatus() == PlayerActor
-                                .PlayerStatus.STANDING) {
-                            movePlayer(((MainTileActor) currActor).getXTile(), ((MainTileActor) currActor).getYTile());
-                        }
-                    } else if (currActor instanceof MonsterActor) {
-                        System.out.println("MonsterActor clicked");
-                        int currX = ((MonsterActor) currActor).getXTile();
-                        int currY = ((MonsterActor) currActor).getYTile();
-
-                        if (mainTileActorMap[currX][currY].isRevealed()
-                                && Math.abs(playerActor.getXTile() - currX) <= 1
-                                && Math.abs(playerActor.getYTile() - currY) <= 1
-                                && playerActor.getPlayerStatus() == PlayerActor.PlayerStatus.STANDING) {
-                            mainTileActorMap[currX][currY].setContainsMonster(false);
-                            ((MonsterActor) currActor).removeMonster();
-                            currActor.remove();
-                        }
-
-                    } else {
-                        // TODO: Abilities?
-                        System.out.println("Nothing clicked");
-                    }
-                }
-                return true;
-            }
-        });
-    }
-
-    /**
-     * Move players algorithm
-     *
-     * @param destXTile destination X
-     * @param destYTile destination Y
-     */
-    private void movePlayer(int destXTile, int destYTile) {
-        class Point {
-            int x;
-            int y;
-        }
-        int count = 0;
-
-        // Reset mapSteps to check for shortest path
-        for (int j = 0; j < Parameters.NUM_Y_TILES; j++) {
-            for (int i = 0; i < Parameters.NUM_X_TILES; i++) {
-                mapSteps[i][j] = -1;
-            }
-        }
-
-        Queue<Point> queue = new LinkedList<Point>();
-        Point initPos = new Point();
-        initPos.x = destXTile;
-        initPos.y = destYTile;
-        queue.add(initPos);
-
-        // Add first tile weighted as 0. Subsequent tiles away from initial point, will increase "count"
-        mapSteps[initPos.x][initPos.y] = 0;
-
-        while (!queue.isEmpty()) {
-            Point currPos = queue.poll();
-
-            // If path is found, pass the mapSteps to let PlayerActor animate and render
-            if (currPos.x == playerActor.getXTile() && currPos.y == playerActor.getYTile()) {
-                playerActor.movePlayer(mapSteps, destXTile, destYTile);
-                break;
-            }
-
-            // Add an extra count for each step away from destination
-            ++count;
-
-            if ((currPos.x - 1 >= 0) && (mainTileActorMap[currPos.x - 1][currPos.y].isRevealed())
-                    && !mainTileActorMap[currPos.x - 1][currPos.y].itContainsMonster()
-                    && !mainTileActorMap[currPos.x - 1][currPos.y].itContainsWall()
-                    && (mapSteps[currPos.x - 1][currPos.y] == -1)) {
-                Point newPos = new Point();
-                newPos.x = currPos.x - 1;
-                newPos.y = currPos.y;
-                queue.add(newPos);
-                mapSteps[newPos.x][newPos.y] = count;
-            }
-
-            if (currPos.x + 1 < Parameters.NUM_X_TILES && mainTileActorMap[currPos.x + 1][currPos.y].isRevealed()
-                    && !mainTileActorMap[currPos.x + 1][currPos.y].itContainsMonster()
-                    && !mainTileActorMap[currPos.x + 1][currPos.y].itContainsWall()
-                    && mapSteps[currPos.x + 1][currPos.y] == -1) {
-                Point newPos = new Point();
-                newPos.x = currPos.x + 1;
-                newPos.y = currPos.y;
-                queue.add(newPos);
-                mapSteps[newPos.x][newPos.y] = count;
-            }
-
-            if (currPos.y - 1 >= 0 && mainTileActorMap[currPos.x][currPos.y - 1].isRevealed()
-                    && !mainTileActorMap[currPos.x][currPos.y - 1].itContainsMonster()
-                    && !mainTileActorMap[currPos.x][currPos.y - 1].itContainsWall()
-                    && mapSteps[currPos.x][currPos.y - 1] == -1) {
-                Point newPos = new Point();
-                newPos.x = currPos.x;
-                newPos.y = currPos.y - 1;
-                queue.add(newPos);
-                mapSteps[newPos.x][newPos.y] = count;
-            }
-
-            if (currPos.y + 1 < Parameters.NUM_Y_TILES && mainTileActorMap[currPos.x][currPos.y + 1].isRevealed()
-                    && !mainTileActorMap[currPos.x][currPos.y + 1].itContainsMonster()
-                    && !mainTileActorMap[currPos.x][currPos.y + 1].itContainsWall()
-                    && mapSteps[currPos.x][currPos.y + 1] == -1) {
-                Point newPos = new Point();
-                newPos.x = currPos.x;
-                newPos.y = currPos.y + 1;
-                queue.add(newPos);
-                mapSteps[newPos.x][newPos.y] = count;
-            }
-        } // end of while loop
+    private void createGameLogic() {
+        mainLogic = new MainLogic(stage, playerActor, mainTileActorMap, monsterActorMap);
+        stage.addListener(mainLogic);
     }
 
     private SpineObject createAnimations(TextureAtlas textureAtlas, FileHandle jsonSkeleton) {

@@ -24,6 +24,7 @@ public class PlayerActor extends BaseActor {
     private AnimationState animState;
     private SkeletonRenderer renderer;
     private float marginX = Parameters.PLAYER_MARGINX_DEFAULT;
+    private boolean inCombat = false;
 
     public PlayerActor(int x, int y, SpineObject spineObject) {
         xTile = x;
@@ -36,6 +37,8 @@ public class PlayerActor extends BaseActor {
         skeleton = spineObject.skeleton;
         animState = spineObject.animState;
         zOrder = Parameters.Z_CHARACTERS - getY(); // Dynamic Z-Order for players
+
+        animState.setAnimation(0, "Standing", true);
 
         playerStatus = PlayerStatus.STANDING;
         setBounds(xTile * Parameters.TILE_PIXEL_WIDTH, yTile * Parameters.TILE_PIXEL_HEIGHT, Parameters.TILE_PIXEL_WIDTH,
@@ -61,6 +64,10 @@ public class PlayerActor extends BaseActor {
     }
 
     public void movePlayer(int[][] mapSteps, int destXTile, int destYTile) {
+        if (inCombat) {
+            return;
+        }
+
         int nextXTile = xTile;
         int nextYTile = yTile;
         int count = 1000; // TODO: Need to make this count more stable
@@ -226,4 +233,16 @@ public class PlayerActor extends BaseActor {
         }
     }
 
+    public boolean inCombat() {
+        return inCombat;
+    }
+
+    public void setInCombat(boolean inCombat) {
+        this.inCombat = inCombat;
+        References.mainTileActorMap[xTile][yTile].togglePlayerTile(inCombat);
+    }
+
+    public void attack() {
+        animState.setAnimation(0, "Attack", false);
+    }
 }

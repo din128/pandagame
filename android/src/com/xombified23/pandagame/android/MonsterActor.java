@@ -7,6 +7,8 @@ import com.esotericsoftware.spine.Skeleton;
 import com.esotericsoftware.spine.SkeletonRenderer;
 
 // TODO: Using Player's sprite and animation for testing
+// TODO: *Priority* Need to remove References, and move dependencies in better places:
+// Things stopping this includes, MonsterActor array requires the map instance...
 public class MonsterActor extends BaseActor {
     private int xTile;
     private int yTile;
@@ -15,6 +17,7 @@ public class MonsterActor extends BaseActor {
     private SkeletonRenderer renderer;
     private boolean isRevealed;
     private float zOrder;
+    private float marginX = Parameters.PLAYER_MARGINX_DEFAULT;
 
     public MonsterActor(int xTile, int yTile, SpineObject spineObject) {
         this.xTile = xTile;
@@ -25,7 +28,7 @@ public class MonsterActor extends BaseActor {
         renderer = new SkeletonRenderer();
         renderer.setPremultipliedAlpha(false);
 
-        animState.setAnimation(0, "Dead", false);
+        animState.setAnimation(0, "Standing", true);
 
         setBounds(xTile * Parameters.TILE_PIXEL_WIDTH, yTile * Parameters.TILE_PIXEL_HEIGHT, Parameters.TILE_PIXEL_WIDTH,
                 Parameters.TILE_PIXEL_HEIGHT);
@@ -39,7 +42,8 @@ public class MonsterActor extends BaseActor {
             animState.update(Gdx.graphics.getDeltaTime());
             animState.apply(skeleton);
             skeleton.updateWorldTransform();
-            skeleton.setPosition(getX() + Parameters.PLAYER_MARGINX_DEFAULT, getY() + Parameters.PLAYER_MARGINY);
+            skeleton.setPosition(getX() + marginX, getY() + Parameters.PLAYER_MARGINY);
+            skeleton.getColor().set(0, 1, 1, 1);
             renderer.draw(batch, skeleton);
         }
     }
@@ -99,5 +103,16 @@ public class MonsterActor extends BaseActor {
         if (xTile - 1 >= 0 && yTile + 1 < Parameters.NUM_Y_TILES && !References.mainTileActorMap[xTile - 1][yTile + 1]
                 .itContainsWall())
             References.mainTileActorMap[xTile - 1][yTile + 1].addAggro(counter);
+    }
+
+    public void confrontPlayer() {
+        animState.setAnimation(0, "Attack", false);
+        if (xTile > References.playerActor.getXTile()) {
+            skeleton.setFlipX(true);
+            marginX = Parameters.PLAYER_MARGINX_FLIPPED;
+        } else {
+            skeleton.setFlipX(false);
+            marginX = Parameters.PLAYER_MARGINX_DEFAULT;
+        }
     }
 }

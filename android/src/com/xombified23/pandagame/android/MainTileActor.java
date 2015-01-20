@@ -17,10 +17,11 @@ public class MainTileActor extends BaseActor {
     private int aggroCount;
     private float zOrder;
 
-    // TODO: Test
-//    private Texture blueTexture;
+    // TODO: Debug
+    private Texture blueTexture;
 //    private Texture redTexture;
 //    private Texture greenTexture;
+    private boolean togglePlayerTile;
 
     public MainTileActor(int x, int y, Texture fogTexture, Texture blueTexture, Texture redTexture,
                          Texture greenTexture) {
@@ -33,9 +34,10 @@ public class MainTileActor extends BaseActor {
         transparencyLvl = 0.5f;
         fadeSpeed = 1.5f;
         this.fogTexture = fogTexture;
-//        this.blueTexture = blueTexture;
+        this.blueTexture = blueTexture;
 //        this.redTexture = redTexture;
 //        this.greenTexture = greenTexture;
+        togglePlayerTile = false;
         aggroCount = 0;
 
         // Set Map Actor boundaries
@@ -63,19 +65,20 @@ public class MainTileActor extends BaseActor {
         batch.setColor(0, 0, 0, transparencyLvl);
 
         // TODO: Test Start: debug tiles
-        if (testPlayerTile()) {
+        if (togglePlayerTile) {
             batch.setColor(Color.WHITE);
-            // batch.draw(blueTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
-        } else if (this.isRevealed() && aggroCount > 0 && !testPlayerTile()) {
-            batch.setColor(Color.WHITE);
-            // batch.draw(redTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
-        } else {
+            batch.draw(blueTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
+        }
+
+//        else if (this.isRevealed() && aggroCount > 0 && !togglePlayerTile) {
+//            batch.setColor(Color.WHITE);
+//            batch.draw(redTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
+        else {
             batch.draw(fogTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
         }
         // TODO: Test End
 
         // batch.draw(fogTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
-
         // Reset color to default to allow other textures render properly
         batch.setColor(Color.WHITE);
     }
@@ -121,8 +124,8 @@ public class MainTileActor extends BaseActor {
         aggroCount += counter;
     }
 
-    // TODO: Test method
-    private boolean testPlayerTile() {
-        return (References.playerActor.getX() == this.getX() && References.playerActor.getY() == this.getY());
+    // TODO: Debug stuff
+    public void togglePlayerTile(boolean toggle) {
+        togglePlayerTile = toggle;
     }
 }
