@@ -12,6 +12,7 @@ import java.util.Queue;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
+// TODO: Need to add confront Enemies (face enemies) during combat
 public class PlayerActor extends BaseActor {
     private int xTile;
     private int yTile;
@@ -44,10 +45,10 @@ public class PlayerActor extends BaseActor {
         setBounds(xTile * Parameters.TILE_PIXEL_WIDTH, yTile * Parameters.TILE_PIXEL_HEIGHT, Parameters.TILE_PIXEL_WIDTH,
                 Parameters.TILE_PIXEL_HEIGHT);
 
-        if (References.mainTileActorMap == null) {
+        if (References.GetMainTileActorMap() == null) {
             throw new Error();
         } else {
-            References.mainTileActorMap[xTile][yTile].setRevealed(true);
+            References.GetMainTileActorMap()[xTile][yTile].setRevealed(true);
             revealAround();
         }
     }
@@ -203,43 +204,39 @@ public class PlayerActor extends BaseActor {
      * Reveal around the player
      */
     private void revealAround() {
-        if (xTile - 1 >= 0 && !References.mainTileActorMap[xTile - 1][yTile].isRevealed()) {
-            References.mainTileActorMap[xTile - 1][yTile].setRevealed(true);
+        if (xTile - 1 >= 0 && !References.GetMainTileActorMap()[xTile - 1][yTile].isRevealed()) {
+            References.GetMainTileActorMap()[xTile - 1][yTile].setRevealed(true);
 
-            if (References.mainTileActorMap[xTile - 1][yTile].itContainsMonster()) {
-                References.monsterActorMap[xTile - 1][yTile].setRevealed(true);
+            if (References.GetMainTileActorMap()[xTile - 1][yTile].itContainsMonster()) {
+                References.GetMonsterActorMap()[xTile - 1][yTile].setRevealed(true);
             }
         }
-        if (yTile - 1 >= 0 && !References.mainTileActorMap[xTile][yTile - 1].isRevealed()) {
-            References.mainTileActorMap[xTile][yTile - 1].setRevealed(true);
+        if (yTile - 1 >= 0 && !References.GetMainTileActorMap()[xTile][yTile - 1].isRevealed()) {
+            References.GetMainTileActorMap()[xTile][yTile - 1].setRevealed(true);
 
-            if (References.mainTileActorMap[xTile][yTile - 1].itContainsMonster()) {
-                References.monsterActorMap[xTile][yTile - 1].setRevealed(true);
+            if (References.GetMainTileActorMap()[xTile][yTile - 1].itContainsMonster()) {
+                References.GetMonsterActorMap()[xTile][yTile - 1].setRevealed(true);
             }
         }
-        if (xTile + 1 < Parameters.NUM_X_TILES && !References.mainTileActorMap[xTile + 1][yTile].isRevealed()) {
-            References.mainTileActorMap[xTile + 1][yTile].setRevealed(true);
+        if (xTile + 1 < Parameters.NUM_X_TILES && !References.GetMainTileActorMap()[xTile + 1][yTile].isRevealed()) {
+            References.GetMainTileActorMap()[xTile + 1][yTile].setRevealed(true);
 
-            if (References.mainTileActorMap[xTile + 1][yTile].itContainsMonster()) {
-                References.monsterActorMap[xTile + 1][yTile].setRevealed(true);
+            if (References.GetMainTileActorMap()[xTile + 1][yTile].itContainsMonster()) {
+                References.GetMonsterActorMap()[xTile + 1][yTile].setRevealed(true);
             }
         }
-        if (yTile + 1 < Parameters.NUM_Y_TILES && !References.mainTileActorMap[xTile][yTile + 1].isRevealed()) {
-            References.mainTileActorMap[xTile][yTile + 1].setRevealed(true);
+        if (yTile + 1 < Parameters.NUM_Y_TILES && !References.GetMainTileActorMap()[xTile][yTile + 1].isRevealed()) {
+            References.GetMainTileActorMap()[xTile][yTile + 1].setRevealed(true);
 
-            if (References.mainTileActorMap[xTile][yTile + 1].itContainsMonster()) {
-                References.monsterActorMap[xTile][yTile + 1].setRevealed(true);
+            if (References.GetMainTileActorMap()[xTile][yTile + 1].itContainsMonster()) {
+                References.GetMonsterActorMap()[xTile][yTile + 1].setRevealed(true);
             }
         }
-    }
-
-    public boolean inCombat() {
-        return inCombat;
     }
 
     public void setInCombat(boolean inCombat) {
         this.inCombat = inCombat;
-        References.mainTileActorMap[xTile][yTile].togglePlayerTile(inCombat);
+        References.GetMainTileActorMap()[xTile][yTile].togglePlayerTile(inCombat);
     }
 
     public void attack() {

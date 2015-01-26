@@ -27,7 +27,7 @@ public class MonsterActor extends BaseActor {
         animState = spineObject.animState;
         renderer = new SkeletonRenderer();
         renderer.setPremultipliedAlpha(false);
-
+        
         animState.setAnimation(0, "Standing", true);
 
         setBounds(xTile * Parameters.TILE_PIXEL_WIDTH, yTile * Parameters.TILE_PIXEL_HEIGHT, Parameters.TILE_PIXEL_WIDTH,
@@ -77,37 +77,36 @@ public class MonsterActor extends BaseActor {
     }
 
     private void setAggroPerimeter(int counter) {
-        if (xTile - 1 >= 0 && !References.mainTileActorMap[xTile - 1][yTile].itContainsWall())
-            References.mainTileActorMap[xTile - 1][yTile].addAggro(counter);
+        if (xTile - 1 >= 0 && !References.GetMainTileActorMap()[xTile - 1][yTile].itContainsWall())
+            References.GetMainTileActorMap()[xTile - 1][yTile].addAggro(counter);
 
-        if (xTile - 1 >= 0 && yTile - 1 >= 0 && !References.mainTileActorMap[xTile - 1][yTile - 1].itContainsWall())
-            References.mainTileActorMap[xTile - 1][yTile - 1].addAggro(counter);
+        if (xTile - 1 >= 0 && yTile - 1 >= 0 && !References.GetMainTileActorMap()[xTile - 1][yTile - 1].itContainsWall())
+            References.GetMainTileActorMap()[xTile - 1][yTile - 1].addAggro(counter);
 
-        if (yTile - 1 >= 0 && !References.mainTileActorMap[xTile][yTile - 1].itContainsWall())
-            References.mainTileActorMap[xTile][yTile - 1].addAggro(counter);
+        if (yTile - 1 >= 0 && !References.GetMainTileActorMap()[xTile][yTile - 1].itContainsWall())
+            References.GetMainTileActorMap()[xTile][yTile - 1].addAggro(counter);
 
-        if (xTile + 1 < Parameters.NUM_X_TILES && yTile - 1 >= 0 && !References.mainTileActorMap[xTile + 1][yTile - 1]
+        if (xTile + 1 < Parameters.NUM_X_TILES && yTile - 1 >= 0 && !References.GetMainTileActorMap()[xTile + 1][yTile - 1]
                 .itContainsWall())
-            References.mainTileActorMap[xTile + 1][yTile - 1].addAggro(counter);
+            References.GetMainTileActorMap()[xTile + 1][yTile - 1].addAggro(counter);
 
-        if (xTile + 1 < Parameters.NUM_X_TILES && !References.mainTileActorMap[xTile + 1][yTile].itContainsWall())
-            References.mainTileActorMap[xTile + 1][yTile].addAggro(counter);
+        if (xTile + 1 < Parameters.NUM_X_TILES && !References.GetMainTileActorMap()[xTile + 1][yTile].itContainsWall())
+            References.GetMainTileActorMap()[xTile + 1][yTile].addAggro(counter);
 
-        if (xTile + 1 < Parameters.NUM_X_TILES && yTile + 1 < Parameters.NUM_Y_TILES && !References
-                .mainTileActorMap[xTile + 1][yTile + 1].itContainsWall())
-            References.mainTileActorMap[xTile + 1][yTile + 1].addAggro(counter);
+        if (xTile + 1 < Parameters.NUM_X_TILES && yTile + 1 < Parameters.NUM_Y_TILES && !References.GetMainTileActorMap()[xTile + 1][yTile + 1].itContainsWall())
+            References.GetMainTileActorMap()[xTile + 1][yTile + 1].addAggro(counter);
 
-        if (yTile + 1 < Parameters.NUM_Y_TILES && !References.mainTileActorMap[xTile][yTile + 1].itContainsWall())
-            References.mainTileActorMap[xTile][yTile + 1].addAggro(counter);
+        if (yTile + 1 < Parameters.NUM_Y_TILES && !References.GetMainTileActorMap()[xTile][yTile + 1].itContainsWall())
+            References.GetMainTileActorMap()[xTile][yTile + 1].addAggro(counter);
 
-        if (xTile - 1 >= 0 && yTile + 1 < Parameters.NUM_Y_TILES && !References.mainTileActorMap[xTile - 1][yTile + 1]
+        if (xTile - 1 >= 0 && yTile + 1 < Parameters.NUM_Y_TILES && !References.GetMainTileActorMap()[xTile - 1][yTile + 1]
                 .itContainsWall())
-            References.mainTileActorMap[xTile - 1][yTile + 1].addAggro(counter);
+            References.GetMainTileActorMap()[xTile - 1][yTile + 1].addAggro(counter);
     }
 
     public void confrontPlayer() {
         animState.setAnimation(0, "Attack", false);
-        if (xTile > References.playerActor.getXTile()) {
+        if (xTile > References.GetPlayerActor().getXTile()) {
             skeleton.setFlipX(true);
             marginX = Parameters.PLAYER_MARGINX_FLIPPED;
         } else {

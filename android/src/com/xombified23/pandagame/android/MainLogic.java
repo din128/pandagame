@@ -18,12 +18,11 @@ public class MainLogic extends InputListener {
     private int monsterCount = 0;
     private boolean inCombat = false;
 
-    public MainLogic(Stage stage, PlayerActor playerActor, MainTileActor[][] mainTileActorMap, MonsterActor[][]
-            monsterActorMap) {
-        this.stage = stage;
-        this.playerActor = playerActor;
-        this.mainTileActorMap = mainTileActorMap;
-        this.monsterActorMap = monsterActorMap;
+    public MainLogic() {
+        stage = References.GetStage();
+        playerActor = References.GetPlayerActor();
+        mainTileActorMap = References.GetMainTileActorMap();
+        monsterActorMap = References.GetMonsterActorMap();
         mapSteps = new int[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
     }
 
@@ -31,7 +30,7 @@ public class MainLogic extends InputListener {
         Actor currActor = stage.hit(x, y, true);
         if (currActor != null) {
             if (currActor instanceof MainTileActor) {
-                if (((MainTileActor) currActor).isRevealed() && References.playerActor.getPlayerStatus() == PlayerActor
+                if (((MainTileActor) currActor).isRevealed() && playerActor.getPlayerStatus() == PlayerActor
                         .PlayerStatus.STANDING) {
 
                     if (!inCombat) {
@@ -43,10 +42,10 @@ public class MainLogic extends InputListener {
                 int currXTile = ((MonsterActor) currActor).getXTile();
                 int currYTile = ((MonsterActor) currActor).getYTile();
 
-                if (References.mainTileActorMap[currXTile][currYTile].isRevealed()
-                        && Math.abs(References.playerActor.getXTile() - currXTile) <= 1
-                        && Math.abs(References.playerActor.getYTile() - currYTile) <= 1
-                        && References.playerActor.getPlayerStatus() == PlayerActor.PlayerStatus.STANDING) {
+                if (mainTileActorMap[currXTile][currYTile].isRevealed()
+                        && Math.abs(playerActor.getXTile() - currXTile) <= 1
+                        && Math.abs(playerActor.getYTile() - currYTile) <= 1
+                        && playerActor.getPlayerStatus() == PlayerActor.PlayerStatus.STANDING) {
 
                     if (!inCombat) {
                         startCombat();
@@ -101,17 +100,17 @@ public class MainLogic extends InputListener {
             Point currPos = queue.poll();
 
             // If path is found, pass the mapSteps to let PlayerActor animate and render
-            if (currPos.x == References.playerActor.getXTile() && currPos.y == References.playerActor.getYTile()) {
-                References.playerActor.movePlayer(mapSteps, destXTile, destYTile);
+            if (currPos.x == playerActor.getXTile() && currPos.y == playerActor.getYTile()) {
+                playerActor.movePlayer(mapSteps, destXTile, destYTile);
                 break;
             }
 
             // Add an extra count for each step away from destination
             ++count;
 
-            if ((currPos.x - 1 >= 0) && (References.mainTileActorMap[currPos.x - 1][currPos.y].isRevealed())
-                    && !References.mainTileActorMap[currPos.x - 1][currPos.y].itContainsMonster()
-                    && !References.mainTileActorMap[currPos.x - 1][currPos.y].itContainsWall()
+            if ((currPos.x - 1 >= 0) && (mainTileActorMap[currPos.x - 1][currPos.y].isRevealed())
+                    && !mainTileActorMap[currPos.x - 1][currPos.y].itContainsMonster()
+                    && !mainTileActorMap[currPos.x - 1][currPos.y].itContainsWall()
                     && (mapSteps[currPos.x - 1][currPos.y] == -1)) {
                 Point newPos = new Point();
                 newPos.x = currPos.x - 1;
@@ -120,9 +119,9 @@ public class MainLogic extends InputListener {
                 mapSteps[newPos.x][newPos.y] = count;
             }
 
-            if (currPos.x + 1 < Parameters.NUM_X_TILES && References.mainTileActorMap[currPos.x + 1][currPos.y].isRevealed()
-                    && !References.mainTileActorMap[currPos.x + 1][currPos.y].itContainsMonster()
-                    && !References.mainTileActorMap[currPos.x + 1][currPos.y].itContainsWall()
+            if (currPos.x + 1 < Parameters.NUM_X_TILES && mainTileActorMap[currPos.x + 1][currPos.y].isRevealed()
+                    && !mainTileActorMap[currPos.x + 1][currPos.y].itContainsMonster()
+                    && !mainTileActorMap[currPos.x + 1][currPos.y].itContainsWall()
                     && mapSteps[currPos.x + 1][currPos.y] == -1) {
                 Point newPos = new Point();
                 newPos.x = currPos.x + 1;
@@ -131,9 +130,9 @@ public class MainLogic extends InputListener {
                 mapSteps[newPos.x][newPos.y] = count;
             }
 
-            if (currPos.y - 1 >= 0 && References.mainTileActorMap[currPos.x][currPos.y - 1].isRevealed()
-                    && !References.mainTileActorMap[currPos.x][currPos.y - 1].itContainsMonster()
-                    && !References.mainTileActorMap[currPos.x][currPos.y - 1].itContainsWall()
+            if (currPos.y - 1 >= 0 && mainTileActorMap[currPos.x][currPos.y - 1].isRevealed()
+                    && !mainTileActorMap[currPos.x][currPos.y - 1].itContainsMonster()
+                    && !mainTileActorMap[currPos.x][currPos.y - 1].itContainsWall()
                     && mapSteps[currPos.x][currPos.y - 1] == -1) {
                 Point newPos = new Point();
                 newPos.x = currPos.x;
@@ -142,9 +141,9 @@ public class MainLogic extends InputListener {
                 mapSteps[newPos.x][newPos.y] = count;
             }
 
-            if (currPos.y + 1 < Parameters.NUM_Y_TILES && References.mainTileActorMap[currPos.x][currPos.y + 1].isRevealed()
-                    && !References.mainTileActorMap[currPos.x][currPos.y + 1].itContainsMonster()
-                    && !References.mainTileActorMap[currPos.x][currPos.y + 1].itContainsWall()
+            if (currPos.y + 1 < Parameters.NUM_Y_TILES && mainTileActorMap[currPos.x][currPos.y + 1].isRevealed()
+                    && !mainTileActorMap[currPos.x][currPos.y + 1].itContainsMonster()
+                    && !mainTileActorMap[currPos.x][currPos.y + 1].itContainsWall()
                     && mapSteps[currPos.x][currPos.y + 1] == -1) {
                 Point newPos = new Point();
                 newPos.x = currPos.x;

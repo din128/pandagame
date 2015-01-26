@@ -2,7 +2,6 @@ package com.xombified23.pandagame.android;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -15,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.esotericsoftware.spine.*;
 
 import java.util.Random;
 
@@ -25,24 +23,10 @@ public class GameScreen implements Screen {
     private OrthographicCamera camera;
     private MainLogic mainLogic;
 
-    // Actors
-    private MainTileActor[][] mainTileActorMap;
-    private FloorActor[][] floorActorMap;
-    private MonsterActor[][] monsterActorMap;
-    private WallActor[][] wallActorMap;
-    private PlayerActor playerActor;
-    private BackgroundActor backgroundActor;
-
     // Textures
     private TextureAtlas floorAtlas;
-    private TextureAtlas playerAtlas;
     private Texture backTexture;
-    private Texture fogTexture;
 
-    // TODO: Debug stuff
-    private Texture blueTexture;
-    private Texture redTexture;
-    private Texture greenTexture;
     private SpriteBatch batch;
     private BitmapFont font;
     private Label debugLabel;
@@ -55,19 +39,13 @@ public class GameScreen implements Screen {
 
     public GameScreen(final MainGame game) {
         // Instantiate New Objects
-        gameAreaGroup = new Group();
+        gameAreaGroup = References.GetUIGroup();
         UImainTable = new Table();
-        stage = new Stage();
-        References.stage = stage;
+        stage = References.GetStage();
 
         // fpsLogger = new FPSLogger();
         camera = new OrthographicCamera();
         floorAtlas = new TextureAtlas(Gdx.files.internal("jei/StandardTiles/StandardTiles.atlas"));
-        playerAtlas = new TextureAtlas(Gdx.files.internal("jei/Warrior2/atlas/Warrior_2_Atlas.atlas"));
-        fogTexture = new Texture(Gdx.files.internal("others/blacktile.png"));
-        redTexture = new Texture(Gdx.files.internal("others/redtile.png"));
-        blueTexture = new Texture(Gdx.files.internal("others/bluetile.png"));
-        greenTexture = new Texture(Gdx.files.internal("others/greentile.png"));
         backTexture = new Texture(Gdx.files.internal("others/background.png"));
         myComparator = new ActorComparator();
 
@@ -79,13 +57,8 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         backTexture.dispose();
-        playerAtlas.dispose();
         floorAtlas.dispose();
-        fogTexture.dispose();
-        stage.dispose();
-        blueTexture.dispose();
-        redTexture.dispose();
-        greenTexture.dispose();
+        References.dispose();
 
         // TODO: Debug Stuff
         batch.dispose();
@@ -132,10 +105,10 @@ public class GameScreen implements Screen {
 
         createBackgroundActor();
         createFloorTilesActors();
-        createMainTilesActors();
-        spawnPlayer();
-        createWalls(2);
-        spawnMonsters(Parameters.NUM_MONSTERS);
+        References.GetMainTileActorMap();
+        References.GetPlayerActor();
+        References.GetWallActorMap();
+        References.GetMonsterActorMap();
         createGameLogic();
         createUIFrame();  // TODO: Later: UI Placeholder
 
@@ -154,7 +127,7 @@ public class GameScreen implements Screen {
     }
 
     private void createBackgroundActor() {
-        backgroundActor = new BackgroundActor(backTexture);
+        BackgroundActor backgroundActor = new BackgroundActor(backTexture);
         gameAreaGroup.addActor(backgroundActor);
     }
 
@@ -169,18 +142,11 @@ public class GameScreen implements Screen {
     }
 
     /**
-     * Create Actors for Tiled Map
+     * Add Input Listener to the Stage
      */
-    private void createMainTilesActors() {
-        mainTileActorMap = new MainTileActor[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
-
-        for (int j = 0; j < Parameters.NUM_Y_TILES; j++) {
-            for (int i = 0; i < Parameters.NUM_X_TILES; i++) {
-                mainTileActorMap[i][j] = new MainTileActor(i, j, fogTexture, blueTexture, redTexture, greenTexture);
-                gameAreaGroup.addActor(mainTileActorMap[i][j]);
-            }
-        }
-        References.mainTileActorMap = mainTileActorMap;
+    private void createGameLogic() {
+        mainLogic = new MainLogic();
+        stage.addListener(mainLogic);
     }
 
     /**
@@ -191,7 +157,7 @@ public class GameScreen implements Screen {
             throw new Error();
         }
 
-        floorActorMap = new FloorActor[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
+        FloorActor[][] floorActorMap = new FloorActor[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
 
         for (int j = 0; j < Parameters.NUM_Y_TILES; j++) {
             for (int i = 0; i < Parameters.NUM_X_TILES; i++) {
@@ -218,134 +184,6 @@ public class GameScreen implements Screen {
                 gameAreaGroup.addActor(floorActorMap[i][j]);
             }
         }
-    }
-
-    /**
-     * Spawn monsters
-     */
-    private void spawnMonsters(int numMonsters) {
-        if (numMonsters > (Parameters.MAX_NUM_TILES)) {
-            throw new Error();
-        }
-
-        monsterActorMap = new MonsterActor[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
-        Random rand = new Random();
-        int xTile;
-        int yTile;
-        int count = 0;
-        FileHandle jsonSkeleton = Gdx.files.internal("jei/Warrior2/skeleton.json");
-
-        // TODO: Need a better way to spawn monsters based on counter
-        while (count < numMonsters) {
-            xTile = rand.nextInt(Parameters.NUM_X_TILES);
-            yTile = rand.nextInt(Parameters.NUM_Y_TILES);
-
-            if (!mainTileActorMap[xTile][yTile].isRevealed() && !mainTileActorMap[xTile][yTile].itContainsMonster()
-                    && !mainTileActorMap[xTile][yTile].itContainsWall()) {
-
-                monsterActorMap[xTile][yTile] = new MonsterActor(xTile, yTile, createAnimations(playerAtlas, jsonSkeleton));
-                mainTileActorMap[xTile][yTile].setContainsMonster(true);
-                gameAreaGroup.addActor(monsterActorMap[xTile][yTile]);
-                count++;
-            }
-        }
-        References.monsterActorMap = monsterActorMap;
-    }
-
-    /**
-     * Create Walls
-     */
-    private void createWalls(int numWalls) {
-        if (numWalls > (Parameters.MAX_NUM_TILES)) {
-            throw new Error();
-        }
-
-        wallActorMap = new WallActor[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
-        Random rand = new Random();
-        int xTile;
-        int yTile;
-        int count = 0;
-
-        // TODO: Need a better way to spawn walls based on counter
-        while (count < numWalls) {
-            xTile = rand.nextInt(Parameters.NUM_X_TILES);
-            yTile = rand.nextInt(Parameters.NUM_Y_TILES);
-
-            if (!mainTileActorMap[xTile][yTile].isRevealed() && !mainTileActorMap[xTile][yTile].itContainsWall()) {
-                TextureRegion floorTile;
-                switch (rand.nextInt(2)) {
-                    case 0:
-                        floorTile = floorAtlas.findRegion("wood");
-                        break;
-                    default:
-                        floorTile = floorAtlas.findRegion("locker");
-                }
-
-                wallActorMap[xTile][yTile] = new WallActor(xTile, yTile, floorTile);
-                mainTileActorMap[xTile][yTile].setContainsWall(true);
-                gameAreaGroup.addActor(wallActorMap[xTile][yTile]);
-                count++;
-            }
-        }
-    }
-
-    /**
-     * Spawn player at either corner
-     */
-    private void spawnPlayer() {
-        Random rand = new Random();
-        int randomInt = rand.nextInt(4);
-        int x;
-        int y;
-
-        switch (randomInt) {
-            case 0:
-                x = 0;
-                y = 0;
-                break;
-            case 1:
-                x = 0;
-                y = Parameters.NUM_Y_TILES - 1;
-                break;
-            case 2:
-                x = Parameters.NUM_X_TILES - 1;
-                y = 0;
-                break;
-            default:
-                x = Parameters.NUM_X_TILES - 1;
-                y = Parameters.NUM_Y_TILES - 1;
-                break;
-        }
-        FileHandle jsonSkeleton = Gdx.files.internal("jei/Warrior2/skeleton.json");
-        SpineObject spineObject = createAnimations(playerAtlas, jsonSkeleton); // create animation skeleton
-
-        playerActor = new PlayerActor(x, y, spineObject);
-        References.playerActor = playerActor;
-        gameAreaGroup.addActor(playerActor);
-    }
-
-    /**
-     * Add Input Listener to the Stage
-     */
-    private void createGameLogic() {
-        mainLogic = new MainLogic(stage, playerActor, mainTileActorMap, monsterActorMap);
-        stage.addListener(mainLogic);
-    }
-
-    private SpineObject createAnimations(TextureAtlas textureAtlas, FileHandle jsonSkeleton) {
-        SkeletonJson json = new SkeletonJson(textureAtlas);
-        json.setScale(Parameters.CHARACTER_SCALE);
-        SkeletonData skeletonData = json.readSkeletonData(jsonSkeleton);
-        AnimationStateData stateData = new AnimationStateData(skeletonData);
-
-        Skeleton skeleton = new Skeleton(skeletonData);
-        AnimationState animState = new AnimationState(stateData);
-        // animState.setTimeScale(0.5f);
-        SpineObject spineObject = new SpineObject();
-        spineObject.skeleton = skeleton;
-        spineObject.animState = animState;
-
-        return spineObject;
     }
 }
 
