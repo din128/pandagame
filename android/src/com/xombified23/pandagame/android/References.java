@@ -18,7 +18,7 @@ import java.util.Random;
 public class References {
     // Singleton Objects
     private static PlayerActor playerActor = null;
-    private static MainTileActor[][] GetTileActorMap = null;
+    private static MainTileActor[][] mainTileActorMap = null;
     private static MonsterActor[][] monsterActorMap = null;
     private static Stage stage = null;
     private static Group gameAreaGroup = null;
@@ -39,6 +39,13 @@ public class References {
         redTexture.dispose();
         greenTexture.dispose();
         floorAtlas.dispose();
+
+        playerActor = null;
+        mainTileActorMap = null;
+        monsterActorMap = null;
+        stage = null;
+        gameAreaGroup = null;
+        wallActorMap = null;
     }
 
     public static Stage GetStage() {
@@ -97,22 +104,22 @@ public class References {
     }
 
     public static MainTileActor[][] GetMainTileActorMap() {
-        if (GetTileActorMap != null) {
-            return GetTileActorMap;
+        if (mainTileActorMap != null) {
+            return mainTileActorMap;
         } else {
             fogTexture = new Texture(Gdx.files.internal("others/blacktile.png"));
             redTexture = new Texture(Gdx.files.internal("others/redtile.png"));
             blueTexture = new Texture(Gdx.files.internal("others/bluetile.png"));
             greenTexture = new Texture(Gdx.files.internal("others/greentile.png"));
-            GetTileActorMap = new MainTileActor[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
+            mainTileActorMap = new MainTileActor[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
 
             for (int j = 0; j < Parameters.NUM_Y_TILES; j++) {
                 for (int i = 0; i < Parameters.NUM_X_TILES; i++) {
-                    GetTileActorMap[i][j] = new MainTileActor(i, j, fogTexture, blueTexture, redTexture, greenTexture);
-                    GetUIGroup().addActor(GetTileActorMap[i][j]);
+                    mainTileActorMap[i][j] = new MainTileActor(i, j, fogTexture, blueTexture, redTexture, greenTexture);
+                    GetUIGroup().addActor(mainTileActorMap[i][j]);
                 }
             }
-            return GetTileActorMap;
+            return mainTileActorMap;
         }
     }
 
