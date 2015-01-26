@@ -60,7 +60,6 @@ public class MainLogic extends InputListener {
                 }
 
             } else {
-                // TODO: Abilities?
                 System.out.println("Nothing clicked");
             }
         }

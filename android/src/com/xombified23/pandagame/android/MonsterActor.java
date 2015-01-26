@@ -6,8 +6,6 @@ import com.esotericsoftware.spine.AnimationState;
 import com.esotericsoftware.spine.Skeleton;
 import com.esotericsoftware.spine.SkeletonRenderer;
 
-// TODO: Using Player's sprite and animation for testing
-// TODO: *Priority* Need to remove References, and move dependencies in better places:
 // Things stopping this includes, MonsterActor array requires the map instance...
 public class MonsterActor extends BaseActor {
     private int xTile;
