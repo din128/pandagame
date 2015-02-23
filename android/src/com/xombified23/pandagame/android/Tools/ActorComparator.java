@@ -1,6 +1,7 @@
-package com.xombified23.pandagame.android;
+package com.xombified23.pandagame.android.Tools;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.xombified23.pandagame.android.Actors.BaseActor;
 
 import java.util.Comparator;
 

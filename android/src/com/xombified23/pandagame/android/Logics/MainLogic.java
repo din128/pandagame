@@ -1,9 +1,14 @@
-package com.xombified23.pandagame.android;
+package com.xombified23.pandagame.android.Logics;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.xombified23.pandagame.android.Actors.MainTileActor;
+import com.xombified23.pandagame.android.Actors.MonsterActor;
+import com.xombified23.pandagame.android.Actors.PlayerActor;
+import com.xombified23.pandagame.android.Parameters;
+import com.xombified23.pandagame.android.References;
 
 import java.util.LinkedList;
 import java.util.Queue;

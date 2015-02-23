@@ -3,6 +3,7 @@ package com.xombified23.pandagame.android;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.xombified23.pandagame.android.Screens.GameScreen;
 
 /**
  * The {@link com.badlogic.gdx.ApplicationListener} for this project, create(), resize() and

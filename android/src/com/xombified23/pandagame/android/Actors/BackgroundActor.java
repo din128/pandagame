@@ -1,7 +1,8 @@
-package com.xombified23.pandagame.android;
+package com.xombified23.pandagame.android.Actors;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.xombified23.pandagame.android.Parameters;
 
 public class BackgroundActor extends BaseActor {
     private Texture texture;

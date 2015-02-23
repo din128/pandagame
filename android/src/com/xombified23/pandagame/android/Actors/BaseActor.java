@@ -1,4 +1,4 @@
-package com.xombified23.pandagame.android;
+package com.xombified23.pandagame.android.Actors;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 

@@ -1,9 +1,10 @@
-package com.xombified23.pandagame.android;
+package com.xombified23.pandagame.android.Actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.xombified23.pandagame.android.Parameters;
 
 public class MainTileActor extends BaseActor {
     private int xTile;
@@ -17,7 +18,7 @@ public class MainTileActor extends BaseActor {
     private int aggroCount;
     private float zOrder;
 
-    // TODO: Debug
+    // TODO: Debug Stuff
     private Texture blueTexture;
 //    private Texture redTexture;
 //    private Texture greenTexture;
@@ -64,7 +65,7 @@ public class MainTileActor extends BaseActor {
         }
         batch.setColor(0, 0, 0, transparencyLvl);
 
-        // TODO: Test Start: debug tiles
+        // TODO: Test Start: Debug Stuff
         if (togglePlayerTile) {
             batch.setColor(Color.WHITE);
             batch.draw(blueTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
@@ -76,7 +77,7 @@ public class MainTileActor extends BaseActor {
         else {
             batch.draw(fogTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
         }
-        // TODO: Test End
+        // TODO: Test End: Debug Stuff
 
         // batch.draw(fogTexture, getX(), getY(), Parameters.TILE_PIXEL_WIDTH, Parameters.TILE_PIXEL_HEIGHT);
         // Reset color to default to allow other textures render properly
