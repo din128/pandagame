@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.xombified23.pandagame.android.Actors.MainTileActor;
 import com.xombified23.pandagame.android.Actors.MonsterActor;
 import com.xombified23.pandagame.android.Actors.PlayerActor;
+import com.xombified23.pandagame.android.Actors.WallActor;
 import com.xombified23.pandagame.android.Parameters;
 import com.xombified23.pandagame.android.References;
 
@@ -19,14 +20,16 @@ public class MainLogic extends InputListener {
     private PlayerActor playerActor;
     private MainTileActor mainTileActorMap[][];
     private MonsterActor monsterActorMap[][];
+    private WallActor wallActorMap[][];
     private String debugText;
     private int monsterCount = 0;
     private boolean inCombat = false;
 
     public MainLogic() {
         stage = References.GetStage();
-        playerActor = References.GetPlayerActor();
         mainTileActorMap = References.GetMainTileActorMap();
+        playerActor = References.GetPlayerActor();
+        wallActorMap = References.GetWallActorMap();
         monsterActorMap = References.GetMonsterActorMap();
         mapSteps = new int[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
     }

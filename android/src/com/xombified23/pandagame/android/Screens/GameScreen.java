@@ -112,10 +112,6 @@ public class GameScreen implements Screen {
 
         createBackgroundActor();
         createFloorTilesActors();
-        References.GetMainTileActorMap();
-        References.GetPlayerActor();
-        References.GetWallActorMap();
-        References.GetMonsterActorMap();
         createGameLogic();
         createUIFrame();  // TODO: Later: UI Placeholder
 
