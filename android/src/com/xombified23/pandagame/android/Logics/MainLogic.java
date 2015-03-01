@@ -35,8 +35,7 @@ public class MainLogic extends InputListener {
         Actor currActor = stage.hit(x, y, true);
         if (currActor != null) {
             if (currActor instanceof MainTileActor) {
-                if (((MainTileActor) currActor).isRevealed() && playerActor.getPlayerStatus() == PlayerActor
-                        .PlayerStatus.STANDING) {
+                if (((MainTileActor) currActor).isRevealed()) {
 
                     if (!inCombat) {
                         movePlayer(((MainTileActor) currActor).getXTile(), ((MainTileActor) currActor).getYTile());
@@ -84,6 +83,7 @@ public class MainLogic extends InputListener {
         }
         int count = 0;
 
+        // TODO: Optmize this for loop
         // Reset mapSteps to check for shortest path
         for (int j = 0; j < Parameters.NUM_Y_TILES; j++) {
             for (int i = 0; i < Parameters.NUM_X_TILES; i++) {
