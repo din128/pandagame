@@ -8,8 +8,8 @@ import com.xombified23.pandagame.android.Actors.MainTileActor;
 import com.xombified23.pandagame.android.Actors.MonsterActor;
 import com.xombified23.pandagame.android.Actors.PlayerActor;
 import com.xombified23.pandagame.android.Actors.WallActor;
-import com.xombified23.pandagame.android.Parameters;
-import com.xombified23.pandagame.android.References;
+import com.xombified23.pandagame.android.Tools.Parameters;
+import com.xombified23.pandagame.android.Actors.SingletonActors;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -26,11 +26,11 @@ public class MainLogic extends InputListener {
     private boolean inCombat = false;
 
     public MainLogic() {
-        stage = References.GetStage();
-        mainTileActorMap = References.GetMainTileActorMap();
-        playerActor = References.GetPlayerActor();
-        wallActorMap = References.GetWallActorMap();
-        monsterActorMap = References.GetMonsterActorMap();
+        stage = SingletonActors.GetStage();
+        mainTileActorMap = SingletonActors.GetMainTileActorMap();
+        playerActor = SingletonActors.GetPlayerActor();
+        wallActorMap = SingletonActors.GetWallActorMap();
+        monsterActorMap = SingletonActors.GetMonsterActorMap();
         mapSteps = new int[Parameters.NUM_X_TILES][Parameters.NUM_Y_TILES];
     }
 

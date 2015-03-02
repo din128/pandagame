@@ -2,7 +2,7 @@ package com.xombified23.pandagame.android.Actors;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.xombified23.pandagame.android.Parameters;
+import com.xombified23.pandagame.android.Tools.Parameters;
 
 public class FloorActor extends BaseActor {
     private TextureRegion floorTexture;

@@ -5,8 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.esotericsoftware.spine.AnimationState;
 import com.esotericsoftware.spine.Skeleton;
 import com.esotericsoftware.spine.SkeletonRenderer;
-import com.xombified23.pandagame.android.Parameters;
-import com.xombified23.pandagame.android.References;
+import com.xombified23.pandagame.android.Tools.Parameters;
 import com.xombified23.pandagame.android.Tools.SpineObject;
 
 // Things stopping this includes, MonsterActor array requires the map instance...
@@ -78,36 +77,36 @@ public class MonsterActor extends BaseActor {
     }
 
     private void setAggroPerimeter(int counter) {
-        if (xTile - 1 >= 0 && !References.GetMainTileActorMap()[xTile - 1][yTile].itContainsWall())
-            References.GetMainTileActorMap()[xTile - 1][yTile].addAggro(counter);
+        if (xTile - 1 >= 0 && !SingletonActors.GetMainTileActorMap()[xTile - 1][yTile].itContainsWall())
+            SingletonActors.GetMainTileActorMap()[xTile - 1][yTile].addAggro(counter);
 
-        if (xTile - 1 >= 0 && yTile - 1 >= 0 && !References.GetMainTileActorMap()[xTile - 1][yTile - 1].itContainsWall())
-            References.GetMainTileActorMap()[xTile - 1][yTile - 1].addAggro(counter);
+        if (xTile - 1 >= 0 && yTile - 1 >= 0 && !SingletonActors.GetMainTileActorMap()[xTile - 1][yTile - 1].itContainsWall())
+            SingletonActors.GetMainTileActorMap()[xTile - 1][yTile - 1].addAggro(counter);
 
-        if (yTile - 1 >= 0 && !References.GetMainTileActorMap()[xTile][yTile - 1].itContainsWall())
-            References.GetMainTileActorMap()[xTile][yTile - 1].addAggro(counter);
+        if (yTile - 1 >= 0 && !SingletonActors.GetMainTileActorMap()[xTile][yTile - 1].itContainsWall())
+            SingletonActors.GetMainTileActorMap()[xTile][yTile - 1].addAggro(counter);
 
-        if (xTile + 1 < Parameters.NUM_X_TILES && yTile - 1 >= 0 && !References.GetMainTileActorMap()[xTile + 1][yTile - 1]
+        if (xTile + 1 < Parameters.NUM_X_TILES && yTile - 1 >= 0 && !SingletonActors.GetMainTileActorMap()[xTile + 1][yTile - 1]
                 .itContainsWall())
-            References.GetMainTileActorMap()[xTile + 1][yTile - 1].addAggro(counter);
+            SingletonActors.GetMainTileActorMap()[xTile + 1][yTile - 1].addAggro(counter);
 
-        if (xTile + 1 < Parameters.NUM_X_TILES && !References.GetMainTileActorMap()[xTile + 1][yTile].itContainsWall())
-            References.GetMainTileActorMap()[xTile + 1][yTile].addAggro(counter);
+        if (xTile + 1 < Parameters.NUM_X_TILES && !SingletonActors.GetMainTileActorMap()[xTile + 1][yTile].itContainsWall())
+            SingletonActors.GetMainTileActorMap()[xTile + 1][yTile].addAggro(counter);
 
-        if (xTile + 1 < Parameters.NUM_X_TILES && yTile + 1 < Parameters.NUM_Y_TILES && !References.GetMainTileActorMap()[xTile + 1][yTile + 1].itContainsWall())
-            References.GetMainTileActorMap()[xTile + 1][yTile + 1].addAggro(counter);
+        if (xTile + 1 < Parameters.NUM_X_TILES && yTile + 1 < Parameters.NUM_Y_TILES && !SingletonActors.GetMainTileActorMap()[xTile + 1][yTile + 1].itContainsWall())
+            SingletonActors.GetMainTileActorMap()[xTile + 1][yTile + 1].addAggro(counter);
 
-        if (yTile + 1 < Parameters.NUM_Y_TILES && !References.GetMainTileActorMap()[xTile][yTile + 1].itContainsWall())
-            References.GetMainTileActorMap()[xTile][yTile + 1].addAggro(counter);
+        if (yTile + 1 < Parameters.NUM_Y_TILES && !SingletonActors.GetMainTileActorMap()[xTile][yTile + 1].itContainsWall())
+            SingletonActors.GetMainTileActorMap()[xTile][yTile + 1].addAggro(counter);
 
-        if (xTile - 1 >= 0 && yTile + 1 < Parameters.NUM_Y_TILES && !References.GetMainTileActorMap()[xTile - 1][yTile + 1]
+        if (xTile - 1 >= 0 && yTile + 1 < Parameters.NUM_Y_TILES && !SingletonActors.GetMainTileActorMap()[xTile - 1][yTile + 1]
                 .itContainsWall())
-            References.GetMainTileActorMap()[xTile - 1][yTile + 1].addAggro(counter);
+            SingletonActors.GetMainTileActorMap()[xTile - 1][yTile + 1].addAggro(counter);
     }
 
     public void confrontPlayer() {
         animState.setAnimation(0, "Attack", false);
-        if (xTile > References.GetPlayerActor().getXTile()) {
+        if (xTile > SingletonActors.GetPlayerActor().getXTile()) {
             skeleton.setFlipX(true);
             marginX = Parameters.PLAYER_MARGINX_FLIPPED;
         } else {

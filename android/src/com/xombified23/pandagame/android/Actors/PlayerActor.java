@@ -7,8 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.ParallelAction;
 import com.esotericsoftware.spine.AnimationState;
 import com.esotericsoftware.spine.Skeleton;
 import com.esotericsoftware.spine.SkeletonRenderer;
-import com.xombified23.pandagame.android.Parameters;
-import com.xombified23.pandagame.android.References;
+import com.xombified23.pandagame.android.Tools.Parameters;
 import com.xombified23.pandagame.android.Tools.SpineObject;
 
 import java.util.Queue;
@@ -44,12 +43,8 @@ public class PlayerActor extends BaseActor {
         setBounds(xTile * Parameters.TILE_PIXEL_WIDTH, yTile * Parameters.TILE_PIXEL_HEIGHT, Parameters.TILE_PIXEL_WIDTH,
                 Parameters.TILE_PIXEL_HEIGHT);
 
-        if (References.GetMainTileActorMap() == null) {
-            throw new Error();
-        } else {
-            References.GetMainTileActorMap()[xTile][yTile].setRevealed(true);
-            revealAround();
-        }
+        SingletonActors.GetMainTileActorMap()[xTile][yTile].setRevealed(true);
+        revealAround();
     }
 
     @Override
@@ -118,7 +113,6 @@ public class PlayerActor extends BaseActor {
             public void run() {
                 playerStatus = PlayerStatus.STANDING;
                 animState.setAnimation(0, "Standing", true);
-                revealAround();
             }
         }));
 
@@ -134,6 +128,7 @@ public class PlayerActor extends BaseActor {
             public void run() {
                 xTile = nextXTile;
                 yTile = nextYTile;
+                revealAround();
 
                 switch (nextMoveStatus) {
                     case MOVINGDOWN:
@@ -205,38 +200,38 @@ public class PlayerActor extends BaseActor {
      * Reveal around the player
      */
     private void revealAround() {
-        if (xTile - 1 >= 0 && !References.GetMainTileActorMap()[xTile - 1][yTile].isRevealed()) {
-            References.GetMainTileActorMap()[xTile - 1][yTile].setRevealed(true);
+        if (xTile - 1 >= 0 && !SingletonActors.GetMainTileActorMap()[xTile - 1][yTile].isRevealed()) {
+            SingletonActors.GetMainTileActorMap()[xTile - 1][yTile].setRevealed(true);
 
-            if (References.GetMainTileActorMap()[xTile - 1][yTile].itContainsMonster()) {
-                References.GetMonsterActorMap()[xTile - 1][yTile].setRevealed(true);
+            if (SingletonActors.GetMainTileActorMap()[xTile - 1][yTile].itContainsMonster()) {
+                SingletonActors.GetMonsterActorMap()[xTile - 1][yTile].setRevealed(true);
             }
         }
-        if (yTile - 1 >= 0 && !References.GetMainTileActorMap()[xTile][yTile - 1].isRevealed()) {
-            References.GetMainTileActorMap()[xTile][yTile - 1].setRevealed(true);
+        if (yTile - 1 >= 0 && !SingletonActors.GetMainTileActorMap()[xTile][yTile - 1].isRevealed()) {
+            SingletonActors.GetMainTileActorMap()[xTile][yTile - 1].setRevealed(true);
 
-            if (References.GetMainTileActorMap()[xTile][yTile - 1].itContainsMonster()) {
-                References.GetMonsterActorMap()[xTile][yTile - 1].setRevealed(true);
+            if (SingletonActors.GetMainTileActorMap()[xTile][yTile - 1].itContainsMonster()) {
+                SingletonActors.GetMonsterActorMap()[xTile][yTile - 1].setRevealed(true);
             }
         }
-        if (xTile + 1 < Parameters.NUM_X_TILES && !References.GetMainTileActorMap()[xTile + 1][yTile].isRevealed()) {
-            References.GetMainTileActorMap()[xTile + 1][yTile].setRevealed(true);
+        if (xTile + 1 < Parameters.NUM_X_TILES && !SingletonActors.GetMainTileActorMap()[xTile + 1][yTile].isRevealed()) {
+            SingletonActors.GetMainTileActorMap()[xTile + 1][yTile].setRevealed(true);
 
-            if (References.GetMainTileActorMap()[xTile + 1][yTile].itContainsMonster()) {
-                References.GetMonsterActorMap()[xTile + 1][yTile].setRevealed(true);
+            if (SingletonActors.GetMainTileActorMap()[xTile + 1][yTile].itContainsMonster()) {
+                SingletonActors.GetMonsterActorMap()[xTile + 1][yTile].setRevealed(true);
             }
         }
-        if (yTile + 1 < Parameters.NUM_Y_TILES && !References.GetMainTileActorMap()[xTile][yTile + 1].isRevealed()) {
-            References.GetMainTileActorMap()[xTile][yTile + 1].setRevealed(true);
+        if (yTile + 1 < Parameters.NUM_Y_TILES && !SingletonActors.GetMainTileActorMap()[xTile][yTile + 1].isRevealed()) {
+            SingletonActors.GetMainTileActorMap()[xTile][yTile + 1].setRevealed(true);
 
-            if (References.GetMainTileActorMap()[xTile][yTile + 1].itContainsMonster()) {
-                References.GetMonsterActorMap()[xTile][yTile + 1].setRevealed(true);
+            if (SingletonActors.GetMainTileActorMap()[xTile][yTile + 1].itContainsMonster()) {
+                SingletonActors.GetMonsterActorMap()[xTile][yTile + 1].setRevealed(true);
             }
         }
     }
 
     public void setInCombat(boolean inCombat) {
-        References.GetMainTileActorMap()[xTile][yTile].togglePlayerTile(inCombat);
+        SingletonActors.GetMainTileActorMap()[xTile][yTile].togglePlayerTile(inCombat);
     }
 
     public void attack() {

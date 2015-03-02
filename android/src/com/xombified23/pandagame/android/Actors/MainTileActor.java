@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.xombified23.pandagame.android.Parameters;
+import com.xombified23.pandagame.android.Tools.Parameters;
 
 public class MainTileActor extends BaseActor {
     private int xTile;

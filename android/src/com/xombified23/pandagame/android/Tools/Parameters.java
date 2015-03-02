@@ -1,4 +1,4 @@
-package com.xombified23.pandagame.android;
+package com.xombified23.pandagame.android.Tools;
 
 public final class Parameters {
     public final static int NUM_X_TILES = 5;
@@ -12,7 +12,7 @@ public final class Parameters {
     public final static float CHARACTER_SCALE = 0.25f;
 
     // Player Constants
-    public final static float PLAYER_MOVE_SPEED = 0.5f;
+    public final static float PLAYER_MOVE_SPEED = 0.25f;
     public final static float PLAYER_MARGINY = 20;
     public final static float PLAYER_MARGINX_DEFAULT = 80f;
     public final static float PLAYER_MARGINX_FLIPPED = 120f;
@@ -21,5 +21,5 @@ public final class Parameters {
     public final static int Z_BACKGROUND = 1;
     public final static int Z_FLOOR = 2;
     public final static int Z_MAIN = 3;
-    public final static int Z_CHARACTERS = 10000; // TODO: Need to find a better way for this
+    public final static int Z_CHARACTERS = Integer.MAX_VALUE;
 }

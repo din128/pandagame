@@ -18,8 +18,8 @@ import com.xombified23.pandagame.android.Actors.BackgroundActor;
 import com.xombified23.pandagame.android.Actors.FloorActor;
 import com.xombified23.pandagame.android.MainGame;
 import com.xombified23.pandagame.android.Logics.MainLogic;
-import com.xombified23.pandagame.android.Parameters;
-import com.xombified23.pandagame.android.References;
+import com.xombified23.pandagame.android.Tools.Parameters;
+import com.xombified23.pandagame.android.Actors.SingletonActors;
 import com.xombified23.pandagame.android.Tools.ActorComparator;
 
 import java.util.Random;
@@ -46,9 +46,9 @@ public class GameScreen implements Screen {
 
     public GameScreen(final MainGame game) {
         // Instantiate New Objects
-        gameAreaGroup = References.GetUIGroup();
+        gameAreaGroup = SingletonActors.GetUIGroup();
         UImainTable = new Table();
-        stage = References.GetStage();
+        stage = SingletonActors.GetStage();
 
         // fpsLogger = new FPSLogger();
         camera = new OrthographicCamera();
@@ -65,7 +65,7 @@ public class GameScreen implements Screen {
     public void dispose() {
         backTexture.dispose();
         floorAtlas.dispose();
-        References.dispose();
+        SingletonActors.dispose();
 
         // TODO: Debug Stuff
         batch.dispose();
