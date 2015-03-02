@@ -82,6 +82,7 @@ public class GameScreen implements Screen {
 
         // Sort Z order
         gameAreaGroup.getChildren().sort(myComparator);
+        mainLogic.revealAround();
         stage.draw();
         // fpsLogger.log();
     }

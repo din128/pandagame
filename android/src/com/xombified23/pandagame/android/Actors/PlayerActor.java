@@ -44,7 +44,6 @@ public class PlayerActor extends BaseActor {
                 Parameters.TILE_PIXEL_HEIGHT);
 
         SingletonActors.GetMainTileActorMap()[xTile][yTile].setRevealed(true);
-        revealAround();
     }
 
     @Override
@@ -128,7 +127,6 @@ public class PlayerActor extends BaseActor {
             public void run() {
                 xTile = nextXTile;
                 yTile = nextYTile;
-                revealAround();
 
                 switch (nextMoveStatus) {
                     case MOVINGDOWN:
@@ -194,40 +192,6 @@ public class PlayerActor extends BaseActor {
 
     public enum PlayerStatus {
         STANDING, MOVINGLEFT, MOVINGRIGHT, MOVINGUP, MOVINGDOWN
-    }
-
-    /**
-     * Reveal around the player
-     */
-    private void revealAround() {
-        if (xTile - 1 >= 0 && !SingletonActors.GetMainTileActorMap()[xTile - 1][yTile].isRevealed()) {
-            SingletonActors.GetMainTileActorMap()[xTile - 1][yTile].setRevealed(true);
-
-            if (SingletonActors.GetMainTileActorMap()[xTile - 1][yTile].itContainsMonster()) {
-                SingletonActors.GetMonsterActorMap()[xTile - 1][yTile].setRevealed(true);
-            }
-        }
-        if (yTile - 1 >= 0 && !SingletonActors.GetMainTileActorMap()[xTile][yTile - 1].isRevealed()) {
-            SingletonActors.GetMainTileActorMap()[xTile][yTile - 1].setRevealed(true);
-
-            if (SingletonActors.GetMainTileActorMap()[xTile][yTile - 1].itContainsMonster()) {
-                SingletonActors.GetMonsterActorMap()[xTile][yTile - 1].setRevealed(true);
-            }
-        }
-        if (xTile + 1 < Parameters.NUM_X_TILES && !SingletonActors.GetMainTileActorMap()[xTile + 1][yTile].isRevealed()) {
-            SingletonActors.GetMainTileActorMap()[xTile + 1][yTile].setRevealed(true);
-
-            if (SingletonActors.GetMainTileActorMap()[xTile + 1][yTile].itContainsMonster()) {
-                SingletonActors.GetMonsterActorMap()[xTile + 1][yTile].setRevealed(true);
-            }
-        }
-        if (yTile + 1 < Parameters.NUM_Y_TILES && !SingletonActors.GetMainTileActorMap()[xTile][yTile + 1].isRevealed()) {
-            SingletonActors.GetMainTileActorMap()[xTile][yTile + 1].setRevealed(true);
-
-            if (SingletonActors.GetMainTileActorMap()[xTile][yTile + 1].itContainsMonster()) {
-                SingletonActors.GetMonsterActorMap()[xTile][yTile + 1].setRevealed(true);
-            }
-        }
     }
 
     public void setInCombat(boolean inCombat) {

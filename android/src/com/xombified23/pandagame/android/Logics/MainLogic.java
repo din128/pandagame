@@ -38,11 +38,8 @@ public class MainLogic extends InputListener {
         Actor currActor = stage.hit(x, y, true);
         if (currActor != null) {
             if (currActor instanceof MainTileActor) {
-                if (((MainTileActor) currActor).isRevealed()) {
-
-                    if (!inCombat) {
-                        movePlayer(((MainTileActor) currActor).getXTile(), ((MainTileActor) currActor).getYTile());
-                    }
+                if (!inCombat) {
+                    movePlayer(((MainTileActor) currActor).getXTile(), ((MainTileActor) currActor).getYTile());
                 }
             } else if (currActor instanceof MonsterActor) {
                 System.out.println("MonsterActor clicked");
@@ -115,7 +112,7 @@ public class MainLogic extends InputListener {
             // Add an extra count for each step away from destination
             ++count;
 
-            if ((currPos.x - 1 >= 0) && (mainTileActorMap[currPos.x - 1][currPos.y].isRevealed())
+            if ((currPos.x - 1 >= 0)
                     && !mainTileActorMap[currPos.x - 1][currPos.y].itContainsMonster()
                     && !mainTileActorMap[currPos.x - 1][currPos.y].itContainsWall()
                     && (mapSteps[currPos.x - 1][currPos.y] == -1)) {
@@ -126,7 +123,7 @@ public class MainLogic extends InputListener {
                 mapSteps[newPos.x][newPos.y] = count;
             }
 
-            if (currPos.x + 1 < Parameters.NUM_X_TILES && mainTileActorMap[currPos.x + 1][currPos.y].isRevealed()
+            if (currPos.x + 1 < Parameters.NUM_X_TILES
                     && !mainTileActorMap[currPos.x + 1][currPos.y].itContainsMonster()
                     && !mainTileActorMap[currPos.x + 1][currPos.y].itContainsWall()
                     && mapSteps[currPos.x + 1][currPos.y] == -1) {
@@ -137,7 +134,7 @@ public class MainLogic extends InputListener {
                 mapSteps[newPos.x][newPos.y] = count;
             }
 
-            if (currPos.y - 1 >= 0 && mainTileActorMap[currPos.x][currPos.y - 1].isRevealed()
+            if (currPos.y - 1 >= 0
                     && !mainTileActorMap[currPos.x][currPos.y - 1].itContainsMonster()
                     && !mainTileActorMap[currPos.x][currPos.y - 1].itContainsWall()
                     && mapSteps[currPos.x][currPos.y - 1] == -1) {
@@ -148,7 +145,7 @@ public class MainLogic extends InputListener {
                 mapSteps[newPos.x][newPos.y] = count;
             }
 
-            if (currPos.y + 1 < Parameters.NUM_Y_TILES && mainTileActorMap[currPos.x][currPos.y + 1].isRevealed()
+            if (currPos.y + 1 < Parameters.NUM_Y_TILES
                     && !mainTileActorMap[currPos.x][currPos.y + 1].itContainsMonster()
                     && !mainTileActorMap[currPos.x][currPos.y + 1].itContainsWall()
                     && mapSteps[currPos.x][currPos.y + 1] == -1) {
@@ -217,6 +214,37 @@ public class MainLogic extends InputListener {
             monsterCount++;
         }
     }
+
+    /**
+     * Reveal around the player
+     */
+    public void revealAround() {
+        int xTile = SingletonActors.GetPlayerActor().getXTile();
+        int yTile = SingletonActors.GetPlayerActor().getYTile();
+
+        for (int i = 0; i < Parameters.NUM_X_TILES; i++) {
+            for (int j = 0; j < Parameters.NUM_Y_TILES; j++) {
+                if ((i == xTile && j == yTile) || (i == xTile-1 && j == yTile)
+                        || (i == xTile-1 && j == yTile-1) || (i == xTile && j == yTile-1)
+                        || (i == xTile+1 && j == yTile-1) || (i == xTile+1 && j == yTile)
+                        || (i == xTile+1 && j == yTile+1) || (i == xTile && j == yTile+1)
+                        || (i == xTile-1 && j == yTile+1)) {
+                    if (!SingletonActors.GetMainTileActorMap()[i][j].isRevealed()) {
+                        SingletonActors.GetMainTileActorMap()[i][j].setRevealed(true);
+
+                        if (SingletonActors.GetMainTileActorMap()[i][j].itContainsMonster())
+                            SingletonActors.GetMonsterActorMap()[i][j].setRevealed(true);
+                    }
+                } else if (SingletonActors.GetMainTileActorMap()[i][j].isRevealed()) {
+                    SingletonActors.GetMainTileActorMap()[i][j].setRevealed(false);
+
+                    if (SingletonActors.GetMainTileActorMap()[i][j].itContainsMonster())
+                        SingletonActors.GetMonsterActorMap()[i][j].setRevealed(false);
+                }
+            }
+        }
+    }
+
 
     public String getText() {
         return debugText;

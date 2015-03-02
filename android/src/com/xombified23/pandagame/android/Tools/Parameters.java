@@ -5,14 +5,14 @@ public final class Parameters {
     public final static int NUM_Y_TILES = 6;
     public final static int TILE_PIXEL_WIDTH = 216;
     public final static int TILE_PIXEL_HEIGHT = 216;
-    public final static int NUM_MONSTERS = 0;
+    public final static int NUM_MONSTERS = 5;
     public final static int NUM_WALLS = 2;
     public final static int SCREEN_WIDTH = 1080;
     public final static int SCREEN_HEIGHT = 1920;
     public final static float CHARACTER_SCALE = 0.25f;
 
     // Player Constants
-    public final static float PLAYER_MOVE_SPEED = 0.25f;
+    public final static float PLAYER_MOVE_SPEED = 0.35f;
     public final static float PLAYER_MARGINY = 20;
     public final static float PLAYER_MARGINX_DEFAULT = 80f;
     public final static float PLAYER_MARGINX_FLIPPED = 120f;
