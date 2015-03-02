@@ -9,10 +9,10 @@ public final class Parameters {
     public final static int NUM_WALLS = 2;
     public final static int SCREEN_WIDTH = 1080;
     public final static int SCREEN_HEIGHT = 1920;
-    public final static float CHARACTER_SCALE = 0.25f;
+    public final static float CHARACTER_SCALE = 1.0f;
 
     // Player Constants
-    public final static float PLAYER_MOVE_SPEED = 0.35f;
+    public final static float PLAYER_MOVE_SPEED = 0.45f;
     public final static float PLAYER_MARGINY = 20;
     public final static float PLAYER_MARGINX_DEFAULT = 80f;
     public final static float PLAYER_MARGINX_FLIPPED = 120f;

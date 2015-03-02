@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.esotericsoftware.spine.*;
+import com.xombified23.pandagame.android.Actors.Monsters.MonsterActor;
 import com.xombified23.pandagame.android.Tools.Parameters;
 import com.xombified23.pandagame.android.Tools.SpineObject;
 
@@ -134,8 +135,8 @@ public class SingletonActors {
             int xTile;
             int yTile;
             int count = 0;
-            FileHandle jsonSkeleton = Gdx.files.internal("jei/Warrior2/skeleton.json");
-            playerAtlas = new TextureAtlas(Gdx.files.internal("jei/Warrior2/atlas/Warrior_2_Atlas.atlas"));
+            FileHandle jsonSkeleton = Gdx.files.internal("jei/Franky/Attack/skeleton.json");
+            playerAtlas = new TextureAtlas(Gdx.files.internal("jei/Franky/atlas/Franky_Atlas.atlas"));
 
             // TODO: Need a better way to spawn monsters based on counter
             while (count < Parameters.NUM_MONSTERS) {
@@ -145,7 +146,9 @@ public class SingletonActors {
                 if (!GetMainTileActorMap()[xTile][yTile].isRevealed() && !GetMainTileActorMap()[xTile][yTile].itContainsMonster()
                         && !GetMainTileActorMap()[xTile][yTile].itContainsWall()) {
 
-                    SpineObject spineObject = createAnimations(playerAtlas, jsonSkeleton); // create animation skeleton
+                    // TODO: Need Jei's new Warrior 2
+                    SpineObject spineObject = createAnimations(playerAtlas, jsonSkeleton, 1.0f); // create animation
+                    // skeleton
                     monsterActorMap[xTile][yTile] = new MonsterActor(xTile, yTile, spineObject);
                     GetMainTileActorMap()[xTile][yTile].setContainsMonster(true);
                     GetUIGroup().addActor(monsterActorMap[xTile][yTile]);
@@ -185,7 +188,7 @@ public class SingletonActors {
             }
             FileHandle jsonSkeleton = Gdx.files.internal("jei/Warrior2/skeleton.json");
             playerAtlas = new TextureAtlas(Gdx.files.internal("jei/Warrior2/atlas/Warrior_2_Atlas.atlas"));
-            SpineObject spineObject = createAnimations(playerAtlas, jsonSkeleton); // create animation skeleton
+            SpineObject spineObject = createAnimations(playerAtlas, jsonSkeleton, 0.25f); // create animation skeleton
 
             playerActor = new PlayerActor(x, y, spineObject);
             GetUIGroup().addActor(playerActor);
@@ -193,9 +196,9 @@ public class SingletonActors {
         }
     }
 
-    private static SpineObject createAnimations(TextureAtlas textureAtlas, FileHandle jsonSkeleton) {
+    private static SpineObject createAnimations(TextureAtlas textureAtlas, FileHandle jsonSkeleton, float scale) {
         SkeletonJson json = new SkeletonJson(textureAtlas);
-        json.setScale(Parameters.CHARACTER_SCALE);
+        json.setScale(scale);
         SkeletonData skeletonData = json.readSkeletonData(jsonSkeleton);
         AnimationStateData stateData = new AnimationStateData(skeletonData);
 

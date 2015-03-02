@@ -5,7 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.xombified23.pandagame.android.Actors.MainTileActor;
-import com.xombified23.pandagame.android.Actors.MonsterActor;
+import com.xombified23.pandagame.android.Actors.Monsters.MonsterActor;
 import com.xombified23.pandagame.android.Actors.PlayerActor;
 import com.xombified23.pandagame.android.Actors.WallActor;
 import com.xombified23.pandagame.android.Tools.Parameters;

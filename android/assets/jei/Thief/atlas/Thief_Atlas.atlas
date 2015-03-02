@@ -1,0 +1,54 @@
+
+Thief_Atlas.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+Arm
+  rotate: false
+  xy: 1, 219
+  size: 216, 216
+  orig: 216, 216
+  offset: 0, 0
+  index: -1
+Body
+  rotate: false
+  xy: 1, 1
+  size: 216, 216
+  orig: 216, 216
+  offset: 0, 0
+  index: -1
+B_arm
+  rotate: false
+  xy: 219, 219
+  size: 216, 216
+  orig: 216, 216
+  offset: 0, 0
+  index: -1
+F_arm
+  rotate: false
+  xy: 219, 1
+  size: 216, 216
+  orig: 216, 216
+  offset: 0, 0
+  index: -1
+head
+  rotate: false
+  xy: 437, 219
+  size: 216, 216
+  orig: 216, 216
+  offset: 0, 0
+  index: -1
+Leg_A
+  rotate: false
+  xy: 437, 1
+  size: 216, 216
+  orig: 216, 216
+  offset: 0, 0
+  index: 1
+Leg_B
+  rotate: false
+  xy: 655, 219
+  size: 216, 216
+  orig: 216, 216
+  offset: 0, 0
+  index: 2

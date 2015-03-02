@@ -48,6 +48,7 @@ public class PlayerActor extends BaseActor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
+        // TODO: Fix bug moving too fast sometimes
         if (!queueAction.isEmpty() && this.getActions().size == 0) {
             this.addAction(queueAction.poll());
         }

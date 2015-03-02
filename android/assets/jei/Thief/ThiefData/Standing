@@ -1,0 +1,12 @@
+{
+class: json
+project: C:\\Users\\J583\\Desktop\\Projects\\Dan _ game project\\Characters\\Thief\\Thief Character.spine
+output: C:/Users/J583/Desktop/Projects/Dan _ game project/Characters/Thief/Thief Data/
+ignored: null
+extension: .json
+format: JSON
+nonessential: true
+prettyPrint: true
+createAtlas: false
+texturePacker: null
+}
